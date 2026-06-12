@@ -281,8 +281,25 @@
       .hero-banner { height: 75vh; min-height: 400px; }
     }
     .hero-slider-container { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-    .hero-slider { display: flex; height: 100%; width: 100%; transform: translateX(0); }
+    .hero-slider { display: flex; height: 100%; width: 100%; transform: translateX(0); transition: transform 0.55s ease; }
     .hero-slide { width: 100%; flex-shrink: 0; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; }
+    .hero-slide.empty { background: linear-gradient(135deg, #0a0a0a, #333); }
+    .hero-content { transition: transform 0.35s ease, opacity 0.35s ease; }
+    .hero-content.changing { opacity: 0; transform: translateY(12px); }
+    .hero-nav {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+      width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.75); color: #000; font-size: 30px; line-height: 1;
+      cursor: pointer; display: none; align-items: center; justify-content: center;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.16); backdrop-filter: blur(6px);
+    }
+    .hero-nav.show { display: flex; }
+    .hero-nav.prev { left: 18px; }
+    .hero-nav.next { right: 18px; }
+    .hero-dots { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 3; display: none; justify-content: center; gap: 8px; }
+    .hero-dots.show { display: flex; }
+    .hero-dot { width: 8px; height: 8px; border-radius: 999px; border: none; background: rgba(0,0,0,0.28); padding: 0; cursor: pointer; transition: width 0.2s, background 0.2s; }
+    .hero-dot.active { width: 22px; background: #000; }
     .hero-overlay {
       position: absolute; inset: 0; z-index: 1;
       background: linear-gradient(to top, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
@@ -521,7 +538,9 @@
         <div class="hero-slider" id="heroSlider"></div>
       </div>
       <div class="hero-overlay"></div>
-      <div class="hero-content">
+      <button class="hero-nav prev" id="heroPrev" aria-label="Slider anterior">‹</button>
+      <button class="hero-nav next" id="heroNext" aria-label="Slider siguiente">›</button>
+      <div class="hero-content" id="heroContent">
         <div class="hero-company-icons">
           <div class="company-icons-row" id="companyIconsRow">
             <p style="color:#666; font-weight:600; font-size:0.85rem;">Cargando...</p>
@@ -530,6 +549,7 @@
         <h1 id="heroTitle">Cargando...</h1>
         <span class="tag" id="heroSubtitle">Cargando...</span>
       </div>
+      <div class="hero-dots" id="heroDots"></div>
     </section>
 
     <!-- PROMO STRIP -->
@@ -869,41 +889,88 @@
     function isLaunchProduct(product) { return Boolean(product?.type?.carrusel || product?.type?.anuncio); }
 
     // ── HERO SLIDER ──
-    async function loadHeroImages() {
-      const heroSlider = document.getElementById('heroSlider');
-      heroSlider.innerHTML = '';
-      try {
-        const listRef = ref(storage, 'hero/');
-        const res = await listAll(listRef);
-        if (res.items.length === 0) { heroSlider.innerHTML = '<div class="hero-slide" style="background:#0a0a0a;"></div>'; return; }
-        const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
-        let html = '';
-        urls.forEach(url => { html += `<div class="hero-slide" style="background-image:url('${url}');"></div>`; });
-        if (urls.length > 1) html += `<div class="hero-slide" style="background-image:url('${urls[0]}');"></div>`;
-        heroSlider.innerHTML = html;
-        if (urls.length > 1) initHeroSlider(urls.length);
-      } catch (e) {
-        console.error("Error cargando hero images:", e);
-        heroSlider.innerHTML = '<div class="hero-slide" style="background:#0a0a0a;"></div>';
+    const heroState = { slides: [], current: 0, timer: null, touchStartX: 0, touchStartY: 0 };
+    function normalizeHeroSlides(data = {}) {
+      const savedSlides = Array.isArray(data.slides) ? data.slides : [];
+      const slides = savedSlides
+        .map((slide, index) => ({
+          titulo: slide.titulo || (index === 0 ? data.titulo : '') || 'Tu Merch',
+          subtitulo: slide.subtitulo || (index === 0 ? data.subtitulo : '') || 'Explora ahora',
+          fondo_url: slide.fondo_url || slide.imageUrl || '',
+          textX: Number.isFinite(Number(slide.textX)) ? Number(slide.textX) : 50,
+          textY: Number.isFinite(Number(slide.textY)) ? Number(slide.textY) : 86
+        }))
+        .filter(slide => slide.titulo || slide.subtitulo || slide.fondo_url);
+      if (slides.length) return slides;
+      const oldUrls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
+      if (oldUrls.length) {
+        return oldUrls.map((url, index) => ({
+          titulo: index === 0 ? (data.titulo || 'Tu Merch') : (data.titulo || 'Tu Merch'),
+          subtitulo: index === 0 ? (data.subtitulo || 'Explora ahora') : (data.subtitulo || 'Explora ahora'),
+          fondo_url: url,
+          textX: 50,
+          textY: 86
+        }));
       }
+      return [{ titulo: data.titulo || 'Tu Merch', subtitulo: data.subtitulo || 'Explora ahora', fondo_url: '', textX: 50, textY: 86 }];
     }
-    function initHeroSlider(numImages) {
+    function renderHeroSlider(slides) {
       const heroSlider = document.getElementById('heroSlider');
-      let current = 0;
-      const holdTime = 3500; const transTime = 600;
-      function showNext() {
-        const next = current + 1;
-        heroSlider.style.transition = `transform ${transTime}ms ease-in-out`;
-        heroSlider.style.transform = `translateX(-${next * 100}%)`;
-        current = next;
-        if (current === numImages) {
-          setTimeout(() => { heroSlider.style.transition = 'none'; heroSlider.style.transform = 'translateX(0%)'; current = 0; }, transTime);
-        }
-        setTimeout(showNext, holdTime + transTime);
-      }
-      setTimeout(showNext, holdTime);
+      const heroDots = document.getElementById('heroDots');
+      const heroPrev = document.getElementById('heroPrev');
+      const heroNext = document.getElementById('heroNext');
+      heroState.slides = slides;
+      heroState.current = Math.min(heroState.current, Math.max(slides.length - 1, 0));
+      heroSlider.innerHTML = slides.map(slide => {
+        const bg = slide.fondo_url ? `background-image:url('${String(slide.fondo_url).replace(/'/g, "%27")}');` : '';
+        return `<div class="hero-slide${slide.fondo_url ? '' : ' empty'}" style="${bg}"></div>`;
+      }).join('');
+      const hasMany = slides.length > 1;
+      heroPrev.classList.toggle('show', hasMany);
+      heroNext.classList.toggle('show', hasMany);
+      heroDots.classList.toggle('show', hasMany);
+      heroDots.innerHTML = slides.map((_, i) => `<button class="hero-dot" data-hero-dot="${i}" aria-label="Ver slider ${i + 1}"></button>`).join('');
+      heroDots.querySelectorAll('[data-hero-dot]').forEach(btn => btn.addEventListener('click', () => goToHeroSlide(Number(btn.dataset.heroDot), true)));
+      goToHeroSlide(heroState.current, false);
+      restartHeroAuto();
     }
-    loadHeroImages();
+    function goToHeroSlide(index, manual = false) {
+      if (!heroState.slides.length) return;
+      const total = heroState.slides.length;
+      heroState.current = (index + total) % total;
+      const heroSlider = document.getElementById('heroSlider');
+      const heroContent = document.getElementById('heroContent');
+      const slide = heroState.slides[heroState.current];
+      heroSlider.style.transform = `translateX(-${heroState.current * 100}%)`;
+      heroContent.classList.add('changing');
+      setTimeout(() => {
+        document.getElementById('heroTitle').textContent = slide.titulo || 'Tu Merch';
+        document.getElementById('heroSubtitle').textContent = slide.subtitulo || 'Explora ahora';
+        heroContent.style.left = `${slide.textX ?? 50}%`;
+        heroContent.style.top = `${slide.textY ?? 86}%`;
+        heroContent.style.transform = 'translate(-50%, -100%)';
+        heroContent.style.position = 'absolute';
+        heroContent.classList.remove('changing');
+      }, 120);
+      document.querySelectorAll('.hero-dot').forEach((dot, i) => dot.classList.toggle('active', i === heroState.current));
+      if (manual) restartHeroAuto();
+    }
+    function restartHeroAuto() {
+      clearInterval(heroState.timer);
+      if (heroState.slides.length > 2) heroState.timer = setInterval(() => goToHeroSlide(heroState.current + 1), 8000);
+    }
+    document.getElementById('heroPrev').addEventListener('click', () => goToHeroSlide(heroState.current - 1, true));
+    document.getElementById('heroNext').addEventListener('click', () => goToHeroSlide(heroState.current + 1, true));
+    const heroTouchArea = document.querySelector('.hero-banner');
+    heroTouchArea.addEventListener('touchstart', e => {
+      heroState.touchStartX = e.touches[0].clientX;
+      heroState.touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    heroTouchArea.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - heroState.touchStartX;
+      const dy = e.changedTouches[0].clientY - heroState.touchStartY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) goToHeroSlide(heroState.current + (dx < 0 ? 1 : -1), true);
+    }, { passive: true });
 
     // ── TOAST ──
     function showToast(msg, t = 2500) {
@@ -1040,13 +1107,10 @@
       }).join('');
     });
 
-    // ── HERO TEXTS ──
+    // ── HERO TEXTS + SLIDES ──
     onSnapshot(doc(db, "textos", "hero"), (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        document.getElementById('heroTitle').textContent = data.titulo || "Tu Merch";
-        document.getElementById('heroSubtitle').textContent = data.subtitulo || "Explora ahora";
-      }
+      const data = snap.exists() ? snap.data() : {};
+      renderHeroSlider(normalizeHeroSlides(data));
     });
 
     // ── OFFER TIMERS ──
