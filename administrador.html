@@ -983,10 +983,10 @@
 
 <script type="module">
   // ──────────────────────────────────────────────
-  // Firebase y seguridad (solo super admins)
+  // Firebase y carga del panel admin (acceso temporal sin inicio de sesión)
   // ──────────────────────────────────────────────
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
   import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, setDoc, getDoc, getDocs, deleteField, orderBy, limit, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
 
@@ -1005,59 +1005,27 @@
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  // Solo estos pueden entrar a este panel
-  const superAdminEmails = [
-    "fernando8aparra@gmail.com",
-    "luisatondo28@gmail.com",
-    "rafaalejandrovm@gmail.com",
-    "fpprem184@gmail.com"
-  ];
-
-  // Ocultamos todo hasta validar
-  document.body.style.display = "none";
-
-  onAuthStateChanged(auth, async (user) => {
+  // Acceso temporal sin validación: permite abrir administrador.html sin iniciar sesión.
+  // Para volver a proteger el panel, restaura la validación con Firebase Auth.
+  function initializeAdminPanel() {
     const loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'none';
 
-    if (!user) {
-      console.log("[AUTH] No autenticado → redirigiendo a login");
-      location.href = "login.html";
-      return;
-    }
+    const currentUser = auth.currentUser;
+    const currentEmail = currentUser?.email || '';
+    document.getElementById('userLogo').textContent = currentUser?.displayName || currentEmail.split('@')[0] || 'Administrador';
 
-    const email = user.email.toLowerCase();
-    console.log("[AUTH] Usuario autenticado:", email);
-
-    let hasAccess = false;
-
-    // Solo super admins pueden entrar a este panel
-    if (superAdminEmails.includes(email)) {
-      console.log("[AUTH] Acceso SUPER ADMIN confirmado");
-      hasAccess = true;
-    }
-
-    if (hasAccess) {
-      loading.style.display = 'none';
-      document.body.style.display = "block";
-      document.getElementById('userLogo').textContent = user.displayName || email.split('@')[0];
-
-      // Cargar contenido
-      loadEditableTexts();
-      loadHeroBgGallery();
-      updateHeroBackground();
-      loadCategories();
-      loadPartners();
-      loadMainPaymentConfig();
-      loadProductsByType('carrusel', 'newCarousel');
-      loadProductsByType('normal', 'productsGrid');
-      listenSupportChats();
-    } else {
-      console.log("[AUTH] Acceso denegado - no es super admin");
-      alert("Acceso denegado.\nEsta sección es exclusiva para super administradores.");
-      await signOut(auth);
-      location.href = "index.html";
-    }
-  });
+    // Cargar contenido sin requerir autenticación.
+    loadEditableTexts();
+    loadHeroBgGallery();
+    updateHeroBackground();
+    loadCategories();
+    loadPartners();
+    loadMainPaymentConfig();
+    loadProductsByType('carrusel', 'newCarousel');
+    loadProductsByType('normal', 'productsGrid');
+    listenSupportChats();
+  }
 
   // ──────────────────────────────────────────────
   // Variables globales
@@ -2599,8 +2567,8 @@
     closeModal('heroBgModal');
   };
 
-  // Carga inicial de productos y textos (se llama cuando se confirma acceso)
-  // Ya está dentro del onAuthStateChanged para super admins
+  // Carga inicial de productos y textos: se ejecuta al abrir el panel admin.
+  initializeAdminPanel();
 </script>
 
 </body>
