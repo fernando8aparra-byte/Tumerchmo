@@ -1,1 +1,2607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Tumerchmo</title>
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/merchct-d059a.firebasestorage.app/o/logo%2Flogo.jpg?alt=media">
 
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    body { margin: 0; padding: 0; padding-top: 60px; font-family: 'Poppins', sans-serif; background: #f9fafc; color: #333; }
+    .header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.35); border-bottom: 1px solid #111; color: #fff; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 20px; max-width: 1400px; margin: 0 auto; }
+    .header-left { display: flex; align-items: center; gap: 24px; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-search { display: flex; align-items: center; gap: 8px; background: #111; border-radius: 14px; padding: 8px 12px; border: 1px solid #222; transition: border-color 0.2s; }
+    .header-search:focus-within { border-color: #3b82f6; background: #111; }
+    .header-search input { border: none; background: transparent; outline: none; font-size: 0.95rem; width: 220px; color: #fff; }
+    .header-search input::placeholder { color: #9ca3af; }
+    .header-search svg { color: #e5e7eb; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    .header-btn { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; border: none; padding: 0; background: transparent; color: #fff; }
+    .header-btn:hover { background: #111; }
+    #addPostBtn { font-size: 32px; font-weight: 300; color: #fff; }
+    .hero-banner { text-align: center; padding: 100px 20px 80px; background: #f0f2f5 url('') center/cover no-repeat; position: relative; min-height: 300px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.7); border-radius: 0 0 24px 24px; }
+    .hero-banner h1 { font-size: 2.8rem; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+    .hero-banner .tag { font-size: 1.2rem; opacity: 0.95; font-weight: 400; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: #ffffff; padding: 32px; border-radius: 24px; width: 90%; max-width: 600px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 0.95rem; margin-bottom: 8px; color: #1a1a1a; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 1px solid #d0d5dd; border-radius: 12px; font-size: 1rem; box-sizing: border-box; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .upload-section { padding: 24px; background: #f9fafb; border: 2px dashed #d0d5dd; border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.3s; }
+    .upload-section:hover { border-color: #3b82f6; background: #eff6ff; }
+    .upload-section label { display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 600; color: #1a1a1a; }
+    .upload-section input[type="file"] { display: none; }
+    .modal button { background: #1a1a1a; color: #fff; padding: 16px; border: none; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 12px; font-size: 1.05rem; font-weight: 600; transition: background 0.2s; }
+    .modal button:hover { background: #000; }
+    .modal button.cancel { background: #6b7280; }
+    .modal button.cancel:hover { background: #4b5563; }
+    #addCompanyModal button {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+    #addCompanyModal button:hover { background: #f3f4f6; }
+    #addCompanyModal button.cancel {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+    #addCompanyModal button.cancel:hover { background: #e5e7eb; }
+    .admin-dropdown { position: absolute; top: 60px; left: 0; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; z-index: 1001; width: 240px; overflow: hidden; }
+    .admin-dropdown.show { display: block; }
+    .admin-dropdown a, .admin-dropdown button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px 24px; color: #1a1a1a; text-decoration: none; background: none; border: none; text-align: left; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: background 0.2s; }
+    .admin-dropdown-section { border-top: 1px solid #f1f5f9; }
+    .admin-dropdown-toggle { justify-content: space-between; font-weight: 600; }
+    .admin-dropdown-toggle span { font-size: 1rem; transition: transform 0.2s ease; }
+    .admin-dropdown-toggle.active span { transform: rotate(180deg); }
+    .admin-submenu { display: none; padding: 8px 16px 16px; gap: 10px; flex-direction: column; }
+    .admin-submenu.show { display: flex; }
+    .admin-association-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    }
+    .admin-association-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .admin-association-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .admin-association-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .admin-association-details strong { font-size: 0.92rem; }
+    .admin-association-details span { font-size: 0.82rem; color: #6b7280; }
+    .admin-association-actions { display: flex; gap: 8px; }
+    .admin-association-actions button {
+      border: none;
+      background: #fff;
+      color: #111;
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      font-weight: 600;
+    }
+    .admin-association-actions button:first-child { background: #111827; color: #fff; }
+    .admin-association-actions button:last-child { background: #fee2e2; color: #b91c1c; }
+    .admin-association-actions button:hover { filter: brightness(0.98); }
+    .admin-dropdown a:hover, .admin-dropdown button:hover { background: #f4f4f5; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f2937; color: #fff; padding: 14px 28px; border-radius: 10px; z-index: 3000; display: none; font-weight: 500; }
+    .toast.show { display: block; animation: fadeInOut 3s; }
+    @keyframes fadeInOut { 0%,100%{opacity:0} 10%,90%{opacity:1} }
+    [contenteditable="true"].editing { outline: 2px dashed #3b82f6; background: rgba(59,130,246,0.05); border-radius: 6px; padding: 6px; }
+    .text-edit-controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #ffffff; padding: 14px 24px; border-radius: 14px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; z-index: 2500; gap: 12px; border: 1px solid #e0e0e0; }
+    .text-edit-controls.active { display: flex; }
+    .text-edit-controls button { background: #1a1a1a; color: #fff; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+    .text-edit-controls button:hover { background: #000; }
+    .text-edit-controls button.cancel { background: #6b7280; }
+    .text-edit-controls button.cancel:hover { background: #4b5563; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; padding: 20px; max-width: 1400px; margin: 0 auto; }
+    .product-card { background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .product-card img { width: 100%; height: 200px; object-fit: cover; }
+    .product-info { padding: 16px; text-align: center; }
+    .stock-info { font-weight: 600; margin: 8px 0; font-size: 1.1rem; }
+    .stock-positive { color: #22c55e; }
+    .stock-negative { color: #ef4444; }
+    .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
+    .card-actions button { background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card-actions button:hover { background: #f4f4f5; }
+    .product-status-badge { position:absolute; left:12px; top:12px; background:#dc2626; color:#fff; padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:700; letter-spacing:0.3px; text-transform:uppercase; }
+    .infinite-carousel-section { padding: 40px 20px; background: #f9fafc; }
+    .company-icons-section { position: relative; padding-top: 70px; margin: 10px 0 20px; }
+    .company-icons-row {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      z-index: 0;
+      padding: 0 12px;
+    }
+    .company-icon-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid #111;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .company-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
+    .company-title { position: relative; z-index: 1; margin-top: 0; }
+    .carousel-track { display:flex; gap:16px; padding:8px; overflow-x:auto; overflow-y:hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+    .carousel-track::-webkit-scrollbar { height: 8px; }
+    .carousel-track::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+    .carousel-track .product-card { flex: 0 0 220px; scroll-snap-align: start; }
+    #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    #loading p { font-size: 1.2rem; color: #4b5563; }
+    .stock-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .stock-row label { font-weight: 600; min-width: 120px; }
+    .stock-row input { width: 140px; padding: 10px; border: 1px solid #d0d5dd; border-radius: 8px; }
+    #editImagesGallery, #addImagesPreview, #editNewPreview, #heroBgGallery, #heroBgNewPreview, #addCompanyPreview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    #editImagesGallery img, #addImagesPreview img, #editNewPreview img, #heroBgGallery img, #heroBgNewPreview img, #addCompanyPreview img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    @media (max-width: 600px) {
+      #editImagesGallery img, #addImagesPreview img, #editNewPreview img, #heroBgGallery img, #heroBgNewPreview img {
+        width: 90px;
+        height: 90px;
+      }
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 16px;
+        padding: 16px;
+      }
+      .product-card {
+        border-radius: 14px;
+        max-width: 180px;
+        margin: 0 auto;
+      }
+      .product-card img {
+        height: 140px;
+      }
+      .carousel-track .product-card {
+        flex: 0 0 160px;
+      }
+    }
+    @media (max-width: 900px) {
+      .header-search input { width: 160px; }
+    }
+    @media (max-width: 700px) {
+      .header-search { width: 100%; }
+      .header-search input { width: 100%; }
+      .header-right { flex: 1; justify-content: flex-end; flex-wrap: wrap; }
+    }
+    .img-wrap { position: relative; display: inline-block; }
+    .remove-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.9rem; line-height: 24px; }
+    #addActionMenu {
+      position: fixed; top: 80px; right: 30px; background: white;
+      border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      padding: 12px 0; min-width: 240px; z-index: 2500; display: none;
+    }
+    #addActionMenu button {
+      width: 100%; padding: 14px 24px; border: none; background: none;
+      text-align: left; font-size: 1rem; cursor: pointer; transition: 0.15s;
+    }
+    #addActionMenu button:hover { background: #f0f4ff; color: #3b82f6; }
+    .category-chip, .plan-option {
+      padding: 12px 18px; margin: 6px 4px; border-radius: 12px;
+      background: #f1f5f9; border: 2px solid transparent; cursor: pointer;
+      transition: all 0.2s; font-weight: 500; text-align: center;
+    }
+    .category-chip .check { margin-left: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; }
+    .category-chip.selected .check { opacity: 1; }
+    .category-chip.selected, .plan-option.selected {
+      background: #e0f2fe; border-color: #3b82f6; color: #1e40af;
+    }
+    #adminjrCategories, #planOptions {
+      display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px;
+    }
+    .payment-config-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .payment-config-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+      border: 1px solid #e5e7eb;
+    }
+    .payment-config-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+    }
+    .payment-config-card p {
+      margin: 0 0 20px;
+      color: #6b7280;
+    }
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      margin-top: 16px;
+    }
+    .toggle-switch label {
+      font-weight: 600;
+      color: #111827;
+    }
+    .toggle-switch input {
+      width: 20px;
+      height: 20px;
+      accent-color: #111827;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #111827;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 18px;
+      width: 100%;
+    }
+    .btn-primary:hover { background: #000; }
+    .payment-icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .payment-icon-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #f9fafb;
+    }
+    .payment-icon-card h4 {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+    .payment-icon-preview {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      object-fit: contain;
+      background: #fff;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+    .payment-icon-placeholder {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .social-admin-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .social-admin-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+    .social-admin-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .social-admin-left img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+    }
+    .social-admin-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .social-admin-text strong,
+    .social-admin-text span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .social-admin-text strong { font-size: 0.95rem; }
+    .social-admin-text span { font-size: 0.82rem; color: #6b7280; }
+    .social-admin-item button {
+      width: auto;
+      margin: 0;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .social-admin-empty {
+      color: #6b7280;
+      font-size: 0.92rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .messages-btn { position: relative; }
+    .messages-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+    }
+    .admin-overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 3200;
+      display: none;
+    }
+    .admin-overlay-backdrop.show { display: block; }
+    .floating-panel {
+      display: none;
+      position: fixed;
+      top: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(96vw, 1400px);
+      max-height: calc(100vh - 104px);
+      overflow: auto;
+      z-index: 3300;
+      margin: 0;
+      padding: 0 20px 24px;
+    }
+    .floating-panel.show { display: block; }
+    .support-admin-section {
+      max-width: 1400px;
+    }
+    .support-admin-grid {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 460px;
+    }
+    .support-chat-list { border-right: 1px solid #eef2f7; overflow-y: auto; max-height: 72vh; }
+    .support-chat-item { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+    .support-chat-item:hover, .support-chat-item.active { background: #eff6ff; }
+    .support-chat-item strong { display: block; font-size: 0.94rem; color: #111827; }
+    .support-chat-item p { margin: 6px 0 0; font-size: 0.82rem; color: #6b7280; }
+    .support-chat-item .meta { margin-top: 8px; display:flex; justify-content: space-between; font-size: 0.74rem; color:#94a3b8; }
+    .support-unread-dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0 6px;
+    }
+    .support-thread { display: flex; flex-direction: column; min-height: 460px; }
+    .support-thread-header { padding: 14px 16px; border-bottom: 1px solid #eef2f7; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .support-thread-header-actions { display:flex; align-items:center; gap:8px; }
+    .support-thread-messages { flex: 1; overflow-y: auto; background: #f8fafc; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .support-msg { max-width: 78%; padding: 10px 12px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 0.9rem; }
+    .support-msg.user { align-self: flex-start; background: #fff; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px; }
+    .support-msg.admin { align-self: flex-end; background: #111827; color: #fff; border-bottom-right-radius: 4px; }
+    .support-msg .meta { margin-top: 7px; font-size: 0.72rem; opacity: 0.75; }
+    .support-thread-form { border-top: 1px solid #eef2f7; padding: 12px; display: grid; gap: 8px; }
+    .support-thread-form textarea { width: 100%; min-height: 86px; padding: 10px; border: 1px solid #d1d5db; border-radius: 10px; resize: vertical; }
+    .support-form-row { display: flex; gap: 8px; }
+    .support-form-row input { flex: 1; }
+    .support-thread-form button { margin-top: 0; }
+    #supportInboxDrawer {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 320px;
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(0,0,0,.18);
+      z-index: 2300;
+      display: none;
+    }
+    #supportInboxDrawer.show { display: block; }
+    #supportInboxDrawer .drawer-head { padding: 12px 14px; border-bottom: 1px solid #eef2f7; font-weight: 600; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .drawer-close-btn { border:none; background:#f3f4f6; color:#111827; border-radius:10px; width:30px; height:30px; cursor:pointer; font-size:1rem; }
+    .drawer-close-btn:hover { background:#e5e7eb; }
+    .payment-config-section { width: min(96vw, 760px); }
+    @media (max-width: 1024px) { .support-admin-grid { grid-template-columns: 1fr; } .support-chat-list { border-right: none; border-bottom: 1px solid #eef2f7; max-height: 260px; } }
+  </style>
+  <script src="JS/logout-confirm.js"></script>
+</head>
+<body>
+
+<div id="adminOverlayBackdrop" class="admin-overlay-backdrop"></div>
+
+<div id="loading">
+  <p>Cargando panel admin...</p>
+</div>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="admin-gear" id="adminGear">
+        <button class="header-btn">
+          <svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </button>
+        <div class="admin-dropdown" id="adminDropdown">
+          <a href="index.html" target="_blank">Ir a Tienda</a>
+          <a href="dashboardjr.html">Dashboard</a>
+          <a href="ventas.html">Ventas</a>
+          <a href="map-sell.html">Mapa de Ventas</a>
+          <a href="adminjrs.html">Adminsjr</a>
+          <button id="openSocialLinksModal">Redes sociales</button>
+          <div class="admin-dropdown-section">
+            <button class="admin-dropdown-toggle" id="associationsToggle">
+              Asociaciones
+              <span>▾</span>
+            </button>
+            <div class="admin-submenu" id="associationsList">
+              <div style="color:#9ca3af; font-size:0.9rem; padding:6px 4px;">Cargando asociaciones...</div>
+            </div>
+          </div>
+          <button id="openHeroBgModal">Cambiar fondo</button>
+          <button id="togglePaymentConfigMenuBtn">Formas de pago</button>
+          <button id="logoutBtn">Cerrar Sesión</button>
+        </div>
+      </div>
+      <div class="logo" id="userLogo">Cargando...</div>
+    </div>
+    <div class="header-right">
+      <div class="header-search">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"></circle>
+          <path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input type="text" id="productSearch" placeholder="Buscar productos...">
+      </div>
+
+      <button class="header-btn messages-btn" id="supportMessagesBtn" title="Mensajes de ayuda">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H8l-4 3v-3H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span class="messages-badge" id="supportMessagesBadge">0</span>
+      </button>
+      <button class="header-btn" id="toggleTextEdit" title="Editar textos">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/pencil.png" alt="Editar" width="22" height="22">
+      </button>
+      <button class="header-btn" id="addPostBtn">+</button>
+    </div>
+  </div>
+</header>
+
+<div id="addActionMenu">
+  <button id="btnAddProduct">Añadir producto</button>
+  <button id="btnAddCompany">Agregar empresa</button>
+  <button id="btnAddPaymentIcons">Agregar icono a formas de pago</button>
+  <button id="btnCreateAdminJr">Crear admin jr</button>
+  <button id="btnAddCategory">Agregar categoría</button>
+  <button id="btnAddDiscountCoupon">Agregar cupón de descuento</button>
+</div>
+
+
+<div id="supportInboxDrawer">
+  <div class="drawer-head">Chats de clientes <button id="closeSupportDrawerBtn" class="drawer-close-btn" aria-label="Cerrar chats de ayuda">✕</button></div>
+  <div id="supportChatsDrawerList"></div>
+</div>
+
+<section class="support-admin-section floating-panel" id="supportAdminSection">
+  <div class="support-admin-grid">
+    <aside class="support-chat-list" id="supportChatsList">
+      <div class="social-admin-empty" style="margin:12px;">Cargando chats de ayuda...</div>
+    </aside>
+    <div class="support-thread">
+      <div class="support-thread-header">
+        <div>
+          <strong id="supportThreadTitle">Selecciona un chat</strong>
+          <div style="font-size:0.82rem;color:#6b7280;" id="supportThreadSub">Aquí podrás responder dudas de los clientes.</div>
+        </div>
+        <div class="support-thread-header-actions">
+          <button id="deleteSupportChatBtn" class="cancel" style="width:auto; padding:10px 14px; margin:0;">Borrar conversación</button>
+          <button id="closeSupportPanelBtn" class="drawer-close-btn" aria-label="Cerrar panel de chats">✕</button>
+        </div>
+      </div>
+      <div class="support-thread-messages" id="supportThreadMessages">
+        <div class="social-admin-empty" style="max-width:360px; margin:auto;">Elige un chat para ver el historial.</div>
+      </div>
+      <form class="support-thread-form" id="supportReplyForm">
+        <textarea id="supportReplyText" placeholder="Escribe una respuesta para el cliente..."></textarea>
+        <div class="support-form-row">
+          <input type="file" id="supportReplyFile">
+          <button type="submit">Responder</button>
+        </div>
+        <div style="font-size:0.76rem;color:#6b7280;">Adjuntos permitidos: 10 MB máximo por archivo.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="hero-banner" id="heroBanner">
+  <h1 id="heroTitleDisplay" contenteditable="true" data-collection="textos" data-doc="hero" data-field="titulo">Asegura tu Mystery Box</h1>
+  <p class="tag" id="heroTagDisplay" contenteditable="true" data-collection="textos" data-doc="hero" data-field="subtitulo">Envío Gratis en compras +$1,500</p>
+</section>
+
+<section class="infinite-carousel-section" id="newCarouselSection">
+  <h2 id="titleNewDisplay" contenteditable="true" data-collection="textos" data-doc="secciones" data-field="nuevos_lanzamientos">
+    Nuevos Lanzamientos
+  </h2>
+  <div class="infinite-carousel">
+    <div class="carousel-track" id="newCarousel"></div>
+  </div>
+</section>
+
+<section class="payment-config-section floating-panel" id="paymentConfigSection">
+  <div class="payment-config-card">
+    <h3>Formas de pago para pago.html</h3>
+    <p>Configura la cuenta interbancaria, concepto, nombre del beneficiario, PayPal y pago en efectivo.</p>
+    <div class="form-group">
+      <label>Link PayPal (opcional)</label>
+      <input type="url" id="mainPaypalLink" placeholder="https://paypal.me/...">
+    </div>
+    <div class="form-group">
+      <label>Cuenta interbancaria (CLABE)</label>
+      <input type="text" id="mainBankClabe" placeholder="CLABE (18 dígitos)">
+      <input type="text" id="mainBankTitular" placeholder="Nombre del beneficiario" style="margin-top:8px;">
+      <input type="text" id="mainBankConcepto" placeholder="Concepto" style="margin-top:8px;">
+    </div>
+    <div class="form-group">
+      <label>Ubicación para pago en efectivo</label>
+      <input type="text" id="mainLocationCiudad" placeholder="Ciudad (ej: Hermosillo)">
+      <select id="mainLocationEstado" style="margin-top:8px;">
+        <option value="">Estado</option>
+        <option value="Aguascalientes">Aguascalientes</option>
+        <option value="Baja California">Baja California</option>
+        <option value="Baja California Sur">Baja California Sur</option>
+        <option value="Campeche">Campeche</option>
+        <option value="Chiapas">Chiapas</option>
+        <option value="Chihuahua">Chihuahua</option>
+        <option value="CDMX">CDMX</option>
+        <option value="Coahuila">Coahuila</option>
+        <option value="Colima">Colima</option>
+        <option value="Durango">Durango</option>
+        <option value="Guanajuato">Guanajuato</option>
+        <option value="Guerrero">Guerrero</option>
+        <option value="Hidalgo">Hidalgo</option>
+        <option value="Jalisco">Jalisco</option>
+        <option value="México">México</option>
+        <option value="Michoacán">Michoacán</option>
+        <option value="Morelos">Morelos</option>
+        <option value="Nayarit">Nayarit</option>
+        <option value="Nuevo León">Nuevo León</option>
+        <option value="Oaxaca">Oaxaca</option>
+        <option value="Puebla">Puebla</option>
+        <option value="Querétaro">Querétaro</option>
+        <option value="Quintana Roo">Quintana Roo</option>
+        <option value="San Luis Potosí">San Luis Potosí</option>
+        <option value="Sinaloa">Sinaloa</option>
+        <option value="Sonora">Sonora</option>
+        <option value="Tabasco">Tabasco</option>
+        <option value="Tamaulipas">Tamaulipas</option>
+        <option value="Tlaxcala">Tlaxcala</option>
+        <option value="Veracruz">Veracruz</option>
+        <option value="Yucatán">Yucatán</option>
+        <option value="Zacatecas">Zacatecas</option>
+      </select>
+    </div>
+    <div class="toggle-switch">
+      <label for="mainEnableCashOnDelivery">Habilitar pago en efectivo</label>
+      <input type="checkbox" id="mainEnableCashOnDelivery">
+    </div>
+    <button id="saveMainPaymentConfig" class="btn-primary">Guardar configuración</button>
+  </div>
+</section>
+
+<section>
+  <div class="company-icons-section">
+    <div class="company-icons-row" id="companyIconsPreview">
+      <p style="color:#999; font-weight:600;">Cargando empresas...</p>
+    </div>
+    <h2 style="text-align:center; margin:30px 0 20px; font-size:1.8rem;" class="company-title" id="titleAllDisplay" contenteditable="true" data-collection="textos" data-doc="secciones" data-field="todos_productos">Todos los Productos</h2>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<div class="text-edit-controls" id="textEditControls">
+  <button id="saveTextChanges">Guardar Cambios</button>
+  <button id="cancelTextChanges" class="cancel">No Guardar</button>
+</div>
+
+<!-- MODAL AGREGAR PRODUCTO -->
+<div class="modal" id="addProductModal">
+  <div class="modal-content">
+    <h3>Agregar Nuevo Producto</h3>
+    <div class="form-group"><label>Nombre</label><input type="text" id="addName"></div>
+    <div class="form-group"><label>Precio ($)</label><input type="number" id="addPrice" min="1"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="addDesc"></textarea></div>
+    <div class="form-group">
+      <label>Asociación proveedora</label>
+      <select id="addPartnerSelect">
+        <option value="">Cargando asociaciones...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="addCategory">
+        <option value="">Cargando categorías...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Stock por talla/variante</label>
+      <div id="addStockContainer" style="margin-top:12px;"></div>
+    </div>
+    <div class="form-group">
+      <label>Ubicación en la tienda</label>
+      <select id="addType">
+        <option value="normal">Productos normales</option>
+        <option value="carrusel">Carrusel - Nuevos Lanzamientos</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Imágenes</label>
+      <div class="upload-section">
+        <label for="addImageFiles">
+          <span>Subir imágenes (múltiples)</span>
+        </label>
+        <input type="file" id="addImageFiles" accept="image/*" multiple>
+        <div id="addImagesPreview"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>O pegar URLs de imágenes (separadas por coma, opcional)</label>
+      <input type="text" id="addImage" placeholder="https://..., https://...">
+    </div>
+    <button id="saveNewProduct">Guardar Producto</button>
+    <button class="cancel" id="cancelAdd">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR EMPRESA -->
+<div class="modal" id="addCompanyModal">
+  <div class="modal-content">
+    <h3>Agregar Empresa</h3>
+    <div class="form-group"><label>Nombre</label><input type="text" id="addCompanyName" placeholder="Nombre de la empresa"></div>
+    <div class="form-group"><label>Nombre del socio responsable</label><input type="text" id="addCompanyPartnerName" placeholder="Ej. Juan Pérez"></div>
+    <div class="form-group"><label>Contacto del socio</label><input type="text" id="addCompanyPartnerContact" placeholder="Teléfono o WhatsApp"></div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="addCompanyCategory">
+        <option value="">Cargando categorías...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Icono (imagen)</label>
+      <div class="upload-section">
+        <label for="addCompanyImage">
+          <span>Subir icono</span>
+        </label>
+        <input type="file" id="addCompanyImage" accept="image/*">
+        <div id="addCompanyPreview"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>O pegar URL de imagen (opcional)</label>
+      <input type="text" id="addCompanyImageUrl" placeholder="https://...">
+    </div>
+    <button id="saveCompany">Guardar Empresa</button>
+    <button class="cancel" id="cancelAddCompany">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL ICONOS FORMAS DE PAGO -->
+<div class="modal" id="paymentIconsModal">
+  <div class="modal-content" style="max-width:700px;">
+    <h3>Iconos de formas de pago</h3>
+    <p style="margin-top:-8px; color:#6b7280;">Se muestran solo las formas de pago habilitadas en la configuración principal.</p>
+    <div id="paymentIconsContainer" class="payment-icon-grid">
+      <p style="color:#6b7280;">Cargando métodos habilitados...</p>
+    </div>
+    <button id="savePaymentIcons" class="btn-primary">Guardar iconos</button>
+    <button class="cancel" id="cancelPaymentIcons">Cancelar</button>
+  </div>
+</div>
+
+
+
+<!-- MODAL EDITAR ASOCIACIÓN -->
+<div class="modal" id="editAssociationModal">
+  <div class="modal-content" style="max-width:460px;">
+    <h3>Editar asociación</h3>
+    <div class="form-group"><label>Nombre</label><input type="text" id="editAssociationName" placeholder="Nombre de la empresa"></div>
+    <div class="form-group"><label>Nombre del socio responsable</label><input type="text" id="editAssociationPartnerName" placeholder="Ej. Juan Pérez"></div>
+    <div class="form-group"><label>Contacto del socio</label><input type="text" id="editAssociationPartnerContact" placeholder="Teléfono o WhatsApp"></div>
+    <div class="form-group"><label>Categoría</label><input type="text" id="editAssociationCategory" placeholder="Categoría"></div>
+    <div class="form-group"><label>URL del icono</label><input type="text" id="editAssociationImage" placeholder="https://..."></div>
+    <button id="saveAssociationChanges">Guardar cambios</button>
+    <button class="cancel" id="cancelEditAssociation">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PRODUCTO -->
+<div class="modal" id="editProductModal">
+  <div class="modal-content">
+    <h3>Editar Producto</h3>
+    <div class="form-group"><label>Nombre</label><input type="text" id="editName"></div>
+    <div class="form-group"><label>Precio ($)</label><input type="number" id="editPrice"></div>
+    <div class="form-group">
+      <label>Bajar precio (oferta)</label>
+      <input type="number" id="editSalePrice" placeholder="Nuevo precio en oferta">
+    </div>
+    <div class="form-group">
+      <label>Duración de la oferta</label>
+      <select id="editSaleDuration">
+        <option value="8">8 hrs</option>
+        <option value="24" selected>24 hrs</option>
+        <option value="48">48 hrs</option>
+      </select>
+      <small style="display:block;color:#777;margin-top:6px;">Deja el precio vacío para quitar la oferta.</small>
+    </div>
+    <div class="form-group"><label>Descripción</label><textarea id="editDesc"></textarea></div>
+    <div class="form-group">
+      <label>Asociación proveedora</label>
+      <select id="editPartnerSelect">
+        <option value="">Cargando asociaciones...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="editCategory">
+        <option value="">Cargando categorías...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Stock por talla/variante</label>
+      <div id="editStockContainer" style="margin-top:12px;"></div>
+    </div>
+    <div class="form-group">
+      <label>Ubicación en la tienda</label>
+      <select id="editType">
+        <option value="normal">Productos normales</option>
+        <option value="carrusel">Carrusel - Nuevos Lanzamientos</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Imágenes actuales</label>
+      <div id="editImagesGallery"></div>
+    </div>
+    <div class="form-group">
+      <label>Añadir más imágenes</label>
+      <input type="file" id="editImageFiles" accept="image/*" multiple>
+      <div id="editNewPreview"></div>
+    </div>
+    <div class="form-group">
+      <label>O pegar URLs adicionales</label>
+      <input type="text" id="editImageUrls" placeholder="https://..., https://...">
+    </div>
+    <button id="saveProduct">Guardar Cambios</button>
+    <button class="cancel" id="cancelEdit">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR FONDO HERO -->
+<div class="modal" id="heroBgModal">
+  <div class="modal-content">
+    <h3>Cambiar Fondo del Hero</h3>
+    <div class="form-group">
+      <label>Imágenes actuales de fondo (se usa la primera como principal)</label>
+      <div id="heroBgGallery"></div>
+    </div>
+    <div class="form-group">
+      <label>Añadir más imágenes de fondo</label>
+      <div class="upload-section">
+        <label for="heroBgFiles">
+          <span>Subir imágenes (múltiples)</span>
+        </label>
+        <input type="file" id="heroBgFiles" accept="image/*" multiple>
+        <div id="heroBgNewPreview"></div>
+      </div>
+    </div>
+    <button id="saveHeroBg">Guardar Cambios</button>
+    <button class="cancel" id="cancelHeroBg">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL CREAR ADMIN JR -->
+<div class="modal" id="createAdminJrModal">
+  <div class="modal-content">
+    <h3>Crear Admin Jr</h3>
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="adminJrEmail" placeholder="ejemplo@dominio.com">
+    </div>
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input type="text" id="adminJrName" placeholder="Nombre Apellido">
+    </div>
+    <div class="form-group">
+      <label>Número de teléfono</label>
+      <input type="tel" id="adminJrPhone" placeholder="644 123 4567">
+    </div>
+    <div class="form-group">
+      <label>Categorías permitidas</label>
+      <div id="adminjrCategories"></div>
+    </div>
+    <div class="form-group">
+      <label>Plan de renta / comisión</label>
+      <div id="planOptions">
+        <div class="plan-option" data-plan="500-mensual-sin-comision">500 mensuales – sin comisión</div>
+        <div class="plan-option" data-plan="299-mensual-5porc">299 mensuales + 5%</div>
+        <div class="plan-option" data-plan="10porc">10% comisión</div>
+        <div class="plan-option" data-plan="15porc">15% comisión</div>
+      </div>
+    </div>
+    <button id="saveAdminJr">Agregar Admin Jr</button>
+    <button class="cancel" id="cancelCreateAdminJr">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR CATEGORÍA -->
+<div class="modal" id="addCategoryModal">
+  <div class="modal-content" style="max-width:420px;">
+    <h3>Agregar nueva categoría</h3>
+    <div class="form-group">
+      <label>Nombre de la categoría</label>
+      <input type="text" id="newCategoryName" placeholder="Ej: Accesorios personalizados">
+    </div>
+    <button id="saveNewCategory">Guardar categoría</button>
+    <button class="cancel" id="cancelAddCategory">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR CUPÓN -->
+<div class="modal" id="addCouponModal">
+  <div class="modal-content" style="max-width:420px;">
+    <h3>Agregar cupón de descuento</h3>
+    <div class="form-group">
+      <label>Código del cupón</label>
+      <input type="text" id="couponCode" placeholder="EJEMPLO10">
+    </div>
+    <div class="form-group">
+      <label>Porcentaje de descuento (%)</label>
+      <input type="number" id="couponPercent" min="1" max="100" placeholder="10">
+    </div>
+    <div class="form-group">
+      <label>Compra mínima para aplicar ($)</label>
+      <input type="number" id="couponMinPurchase" min="0" placeholder="1500">
+    </div>
+    <button id="saveDiscountCoupon">Guardar cupón</button>
+    <button class="cancel" id="cancelAddCoupon">Cancelar</button>
+  </div>
+</div>
+
+<div class="modal" id="socialLinksModal">
+  <div class="modal-content" style="max-width:560px;">
+    <h3>Redes sociales</h3>
+    <p style="margin-top:-6px; color:#6b7280; font-size:0.92rem;">Agrega una red social y se mostrará en el menú de usuarios en index.</p>
+    <div class="form-group">
+      <label>Nombre de red social</label>
+      <input type="text" id="socialNetworkName" placeholder="Instagram, Facebook, TikTok...">
+    </div>
+    <div class="form-group">
+      <label>Nombre de la cuenta</label>
+      <input type="text" id="socialAccountName" placeholder="@tumerchmx">
+    </div>
+    <div class="form-group">
+      <label>Enlace</label>
+      <input type="url" id="socialNetworkUrl" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>URL de icono</label>
+      <input type="url" id="socialNetworkIcon" placeholder="https://.../icono.png">
+    </div>
+    <button id="saveSocialNetwork">Guardar red social</button>
+    <button class="cancel">Cerrar</button>
+    <h4 style="margin:22px 0 8px;">Redes agregadas</h4>
+    <div class="social-admin-grid" id="socialAdminList">
+      <div class="social-admin-empty">Cargando redes...</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>© 2026 Tumerchmo. Admin Mode.</p>
+</footer>
+
+<script type="module">
+  // ──────────────────────────────────────────────
+  // Firebase y seguridad (solo super admins)
+  // ──────────────────────────────────────────────
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, setDoc, getDoc, getDocs, deleteField, orderBy, limit, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBRCq0FuAY5NYBcQFv03WmdmUSehi1L_B4",
+    authDomain: "merchct-d059a.firebaseapp.com",
+    projectId: "merchct-d059a",
+    storageBucket: "merchct-d059a.firebasestorage.app",
+    messagingSenderId: "290525612160",
+    appId: "1:290525612160:web:1aca5527196597c3eebe65",
+    measurementId: "G-5VE65DCLCW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Solo estos pueden entrar a este panel
+  const superAdminEmails = [
+    "fernando8aparra@gmail.com",
+    "luisatondo28@gmail.com",
+    "rafaalejandrovm@gmail.com",
+    "fpprem184@gmail.com"
+  ];
+
+  // Ocultamos todo hasta validar
+  document.body.style.display = "none";
+
+  onAuthStateChanged(auth, async (user) => {
+    const loading = document.getElementById('loading');
+
+    if (!user) {
+      console.log("[AUTH] No autenticado → redirigiendo a login");
+      location.href = "login.html";
+      return;
+    }
+
+    const email = user.email.toLowerCase();
+    console.log("[AUTH] Usuario autenticado:", email);
+
+    let hasAccess = false;
+
+    // Solo super admins pueden entrar a este panel
+    if (superAdminEmails.includes(email)) {
+      console.log("[AUTH] Acceso SUPER ADMIN confirmado");
+      hasAccess = true;
+    }
+
+    if (hasAccess) {
+      loading.style.display = 'none';
+      document.body.style.display = "block";
+      document.getElementById('userLogo').textContent = user.displayName || email.split('@')[0];
+
+      // Cargar contenido
+      loadEditableTexts();
+      loadHeroBgGallery();
+      updateHeroBackground();
+      loadCategories();
+      loadPartners();
+      loadMainPaymentConfig();
+      loadProductsByType('carrusel', 'newCarousel');
+      loadProductsByType('normal', 'productsGrid');
+      listenSupportChats();
+    } else {
+      console.log("[AUTH] Acceso denegado - no es super admin");
+      alert("Acceso denegado.\nEsta sección es exclusiva para super administradores.");
+      await signOut(auth);
+      location.href = "index.html";
+    }
+  });
+
+  // ──────────────────────────────────────────────
+  // Variables globales
+  // ──────────────────────────────────────────────
+  let currentEditId = null;
+  let currentEditProductData = null;
+  let isSavingProduct = false;
+  let isUpdatingProduct = false;
+  let addVariants = {};
+  let editVariants = {};
+  let textEditMode = false;
+  let textChanges = {};
+  let categoriesCache = [];
+  let companiesCache = [];
+  let partnersCache = [];
+  let searchTerm = '';
+  let socialLinksUnsubscribe = null;
+  const productCache = {};
+  const SOCIAL_ICONS_PRESET = {
+    instagram: 'https://img.icons8.com/color/96/instagram-new--v1.png',
+    facebook: 'https://img.icons8.com/color/96/facebook-new.png',
+    tiktok: 'https://img.icons8.com/color/96/tiktok--v1.png',
+    whatsapp: 'https://img.icons8.com/color/96/whatsapp--v1.png',
+    youtube: 'https://img.icons8.com/color/96/youtube-play.png',
+    x: 'https://img.icons8.com/color/96/twitterx--v2.png'
+  };
+  const mainPaymentConfigRef = doc(db, 'configuracion_pagos', 'tienda_principal');
+  const paymentMethodDefs = {
+    transfer: {
+      label: 'Transferencia bancaria',
+      enabled: (data) => Boolean(data.bankData && data.bankData.clabe && data.bankData.titular && data.bankData.concepto),
+      defaultIcon: 'https://firebasestorage.googleapis.com/v0/b/merchct-d059a.firebasestorage.app/o/payment-icons%2Ftransfer-default.png?alt=media'
+    },
+    cash: {
+      label: 'Pago contra entrega',
+      enabled: (data) => Boolean(data.enableCashOnDelivery),
+      defaultIcon: 'https://firebasestorage.googleapis.com/v0/b/merchct-d059a.firebasestorage.app/o/payment-icons%2Fcash-default.png?alt=media'
+    }
+  };
+  let mainPaymentConfigData = {
+    paypalLink: null,
+    bankData: null,
+    location: null,
+    enableCashOnDelivery: false,
+    paymentMethodIcons: {}
+  };
+
+  const variantsByCategory = {
+    gorra: ['S/M', 'L/XL'],
+    camiseta: ['CH', 'M', 'L', 'XL', 'XXL'],
+    pantalon: ['28', '30', '32', '34', '36'],
+    cinto: ['30', '32', '34', '36', '38'],
+    tenis: ['24', '25', '26', '27', '28'],
+    perfume: ['50ml', '100ml'],
+    sudadera: ['CH', 'M', 'L', 'XL', 'XXL'],
+    cuadro: []
+  };
+
+  // ──────────────────────────────────────────────
+  // Funciones auxiliares
+  // ──────────────────────────────────────────────
+  async function loadMainPaymentConfig() {
+    try {
+      const snap = await getDoc(mainPaymentConfigRef);
+      const data = snap.exists() ? snap.data() : {};
+      mainPaymentConfigData = {
+        paypalLink: data.paypalLink || null,
+        bankData: data.bankData || null,
+        location: data.location || null,
+        enableCashOnDelivery: data.enableCashOnDelivery || false,
+        paymentMethodIcons: data.paymentMethodIcons || {}
+      };
+      document.getElementById('mainPaypalLink').value = mainPaymentConfigData.paypalLink || '';
+      document.getElementById('mainBankClabe').value = mainPaymentConfigData.bankData?.clabe || '';
+      document.getElementById('mainBankTitular').value = mainPaymentConfigData.bankData?.titular || '';
+      document.getElementById('mainBankConcepto').value = mainPaymentConfigData.bankData?.concepto || '';
+      document.getElementById('mainLocationCiudad').value = mainPaymentConfigData.location?.ciudad || '';
+      document.getElementById('mainLocationEstado').value = mainPaymentConfigData.location?.estado || '';
+      document.getElementById('mainEnableCashOnDelivery').checked = mainPaymentConfigData.enableCashOnDelivery || false;
+    } catch (error) {
+      console.error(error);
+      showToast('No se pudo cargar la configuración de pagos');
+    }
+  }
+
+  async function saveMainPaymentConfig() {
+    const paypalLink = document.getElementById('mainPaypalLink').value.trim() || null;
+    const clabe = document.getElementById('mainBankClabe').value.trim();
+    const titular = document.getElementById('mainBankTitular').value.trim();
+    const concepto = document.getElementById('mainBankConcepto').value.trim();
+    const ciudad = document.getElementById('mainLocationCiudad').value.trim();
+    const estado = document.getElementById('mainLocationEstado').value;
+    const enableCashOnDelivery = document.getElementById('mainEnableCashOnDelivery').checked;
+    let bankData = null;
+    if (clabe || titular || concepto) {
+      bankData = {
+        clabe: clabe || null,
+        titular: titular || null,
+        concepto: concepto || null
+      };
+    }
+    let location = null;
+    if (ciudad || estado) {
+      location = {
+        ciudad: ciudad || null,
+        estado: estado || null
+      };
+    }
+    try {
+      await setDoc(mainPaymentConfigRef, {
+        paypalLink,
+        bankData,
+        location,
+        enableCashOnDelivery
+      }, { merge: true });
+      mainPaymentConfigData = {
+        ...mainPaymentConfigData,
+        paypalLink,
+        bankData,
+        location,
+        enableCashOnDelivery
+      };
+      showToast('Formas de pago guardadas');
+    } catch (error) {
+      console.error(error);
+      showToast('Error al guardar formas de pago');
+    }
+  }
+
+
+  function getEnabledPaymentMethods(configData = mainPaymentConfigData) {
+    return Object.entries(paymentMethodDefs)
+      .filter(([, def]) => def.enabled(configData))
+      .map(([key, def]) => ({ key, ...def }));
+  }
+
+  function renderPaymentIconsManager() {
+    const container = document.getElementById('paymentIconsContainer');
+    if (!container) return;
+    const enabledMethods = getEnabledPaymentMethods();
+    if (!enabledMethods.length) {
+      container.innerHTML = '<p style="color:#6b7280;">No hay formas de pago habilitadas para configurar iconos.</p>';
+      return;
+    }
+    container.innerHTML = enabledMethods.map(({ key, label, defaultIcon }) => {
+      const configuredIcon = mainPaymentConfigData.paymentMethodIcons?.[key] || '';
+      const currentIcon = configuredIcon || defaultIcon;
+      return `
+        <div class="payment-icon-card" data-method="${key}">
+          <h4>${label}</h4>
+          ${currentIcon ? `<img class="payment-icon-preview" src="${currentIcon}" alt="Icono de ${label}">` : '<div class="payment-icon-placeholder">Sin icono configurado</div>'}
+          <div class="form-group">
+            <label>Subir icono</label>
+            <input type="file" id="paymentIconFile_${key}" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label>O URL del icono</label>
+            <input type="url" id="paymentIconUrl_${key}" placeholder="https://..." value="${configuredIcon}">
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function savePaymentMethodIcons() {
+    const enabledMethods = getEnabledPaymentMethods();
+    if (!enabledMethods.length) {
+      showToast('No hay métodos habilitados');
+      return;
+    }
+    const nextIcons = { ...(mainPaymentConfigData.paymentMethodIcons || {}) };
+    try {
+      for (const { key } of enabledMethods) {
+        const fileInput = document.getElementById(`paymentIconFile_${key}`);
+        const urlInput = document.getElementById(`paymentIconUrl_${key}`);
+        const file = fileInput?.files?.[0];
+        const typedUrl = urlInput?.value?.trim() || '';
+        if (file) {
+          nextIcons[key] = await uploadImage(file, 'payment-icons');
+        } else if (typedUrl) {
+          nextIcons[key] = typedUrl;
+        }
+      }
+      await setDoc(mainPaymentConfigRef, { paymentMethodIcons: nextIcons }, { merge: true });
+      mainPaymentConfigData.paymentMethodIcons = nextIcons;
+      showToast('Iconos de pago guardados');
+      closeModal('paymentIconsModal');
+    } catch (error) {
+      console.error(error);
+      showToast('Error al guardar iconos');
+    }
+  }
+
+  function populateStock(containerId, mode, category, currentVariants = {}, currentTotal = 0) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    const vars = variantsByCategory[category] || [];
+    if (vars.length === 0) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = `
+        <p style="font-size:0.95rem; margin-bottom:8px;">Este producto no tiene variantes/tallas.</p>
+        <label style="display:block; margin-bottom:8px;">Cantidad total disponible</label>
+        <input type="number" min="0" value="${mode === 'add' ? '0' : currentTotal}" id="${mode}TotalQty" style="width:100%; padding:14px 16px; border:1px solid #d0d5dd; border-radius:12px;">
+      `;
+      container.appendChild(wrapper);
+    } else {
+      const intro = document.createElement('p');
+      intro.textContent = 'Ingresa la cantidad disponible para cada talla (deja en 0 si no está disponible):';
+      intro.style.margin = '0 0 16px 0';
+      intro.style.fontSize = '0.95rem';
+      container.appendChild(intro);
+      vars.forEach(v => {
+        const row = document.createElement('div');
+        row.className = 'stock-row';
+        const label = document.createElement('label');
+        label.textContent = v + ':';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.value = currentVariants[v] || 0;
+        input.oninput = function() {
+          const obj = mode === 'add' ? addVariants : editVariants;
+          const val = parseInt(this.value) || 0;
+          if (val > 0) obj[v] = val;
+          else delete obj[v];
+        };
+        row.appendChild(label);
+        row.appendChild(input);
+        container.appendChild(row);
+      });
+    }
+  }
+
+  async function loadHeroBgGallery() {
+    const snap = await getDoc(doc(db, 'textos', 'hero'));
+    let urls = [];
+    if (snap.exists()) {
+      const data = snap.data();
+      urls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
+    }
+    const gallery = document.getElementById('heroBgGallery');
+    gallery.innerHTML = '';
+    urls.forEach((url, index) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'img-wrap';
+      const img = document.createElement('img');
+      img.src = url;
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-img';
+      removeBtn.textContent = '✕';
+      removeBtn.onclick = async () => {
+        urls.splice(index, 1);
+        await setDoc(doc(db, 'textos', 'hero'), { fondo_urls: urls }, { merge: true });
+        loadHeroBgGallery();
+        updateHeroBackground(urls);
+        showToast('Imagen eliminada');
+      };
+      wrap.appendChild(img);
+      wrap.appendChild(removeBtn);
+      gallery.appendChild(wrap);
+    });
+  }
+
+  function updateHeroBackground(urls) {
+    if (urls && urls.length > 0) {
+      document.getElementById('heroBanner').style.backgroundImage = `url(${urls[0]})`;
+    } else {
+      document.getElementById('heroBanner').style.backgroundImage = '';
+    }
+  }
+
+  async function uploadImage(file, path = 'productos') {
+    const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,10)}_${file.name}`;
+    const storageRef = ref(storage, `${path}/${fileName}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function escapeHtml(value = '') {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function loadSocialLinksAdmin() {
+    const list = document.getElementById('socialAdminList');
+    if (!list) return;
+    if (socialLinksUnsubscribe) socialLinksUnsubscribe();
+    socialLinksUnsubscribe = onSnapshot(collection(db, 'social_links'), (snap) => {
+      list.innerHTML = '';
+      if (snap.empty) {
+        list.innerHTML = '<div class="social-admin-empty">No hay redes sociales agregadas.</div>';
+        return;
+      }
+      const docs = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (a.nombreRed || '').localeCompare((b.nombreRed || ''), 'es', { sensitivity: 'base' }));
+      docs.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'social-admin-item';
+        row.innerHTML = `
+          <div class="social-admin-left">
+            <img src="${escapeHtml(item.icono || '')}" alt="${escapeHtml(item.nombreRed || 'Red social')}" onerror="this.src='https://img.icons8.com/fluency-systems-filled/96/share-2.png'">
+            <div class="social-admin-text">
+              <strong>${escapeHtml(item.nombreRed || 'Red social')}</strong>
+              <span>${escapeHtml(item.cuenta || 'Sin cuenta')}</span>
+            </div>
+          </div>
+          <button data-id="${escapeHtml(item.id)}" class="delete-social-btn">Eliminar</button>
+        `;
+        list.appendChild(row);
+      });
+      list.querySelectorAll('.delete-social-btn').forEach((btn) => {
+        btn.onclick = async () => {
+          try {
+            await deleteDoc(doc(db, 'social_links', btn.dataset.id));
+            showToast('Red social eliminada');
+          } catch (err) {
+            console.error(err);
+            showToast('Error al eliminar red social');
+          }
+        };
+      });
+    }, (err) => {
+      console.error(err);
+      list.innerHTML = '<div class="social-admin-empty">No se pudieron cargar las redes.</div>';
+    });
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  function normalizeString(value) {
+    return (value || '').toString().toLowerCase();
+  }
+
+  function setCategoryOptions(selectEl, categories, selectedValue = '') {
+    selectEl.innerHTML = '';
+    if (!categories.length) {
+      selectEl.innerHTML = '<option value="">Sin categorías disponibles</option>';
+      return;
+    }
+    categories.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.id;
+      option.textContent = cat.nombre;
+      selectEl.appendChild(option);
+    });
+    if (selectedValue) {
+      selectEl.value = selectedValue;
+    }
+  }
+
+  function ensureCategoryOption(selectEl, value) {
+    if (!value) return;
+    const exists = Array.from(selectEl.options).some(opt => opt.value === value);
+    if (!exists) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      selectEl.appendChild(option);
+    }
+  }
+
+  async function loadCategories(selectedValue = '') {
+    const addSelect = document.getElementById('addCategory');
+    const editSelect = document.getElementById('editCategory');
+    const companySelect = document.getElementById('addCompanyCategory');
+    addSelect.innerHTML = '<option value="">Cargando categorías...</option>';
+    editSelect.innerHTML = '<option value="">Cargando categorías...</option>';
+    if (companySelect) {
+      companySelect.innerHTML = '<option value="">Cargando categorías...</option>';
+    }
+    try {
+      const snapshot = await getDocs(collection(db, 'categorias_disponibles'));
+      const list = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        list.push({ id: docSnap.id, nombre: data.nombre || docSnap.id });
+      });
+      categoriesCache = list.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      setCategoryOptions(addSelect, categoriesCache, selectedValue);
+      setCategoryOptions(editSelect, categoriesCache, selectedValue);
+      if (companySelect) {
+        setCategoryOptions(companySelect, categoriesCache, selectedValue);
+      }
+      if (!addSelect.value && categoriesCache.length) {
+        addSelect.value = categoriesCache[0].id;
+      }
+      populateStock('addStockContainer', 'add', addSelect.value || '');
+    } catch (err) {
+      const fallback = Object.keys(variantsByCategory).map(key => ({ id: key, nombre: key }));
+      categoriesCache = fallback;
+      setCategoryOptions(addSelect, categoriesCache, selectedValue);
+      setCategoryOptions(editSelect, categoriesCache, selectedValue);
+      if (companySelect) {
+        setCategoryOptions(companySelect, categoriesCache, selectedValue);
+      }
+      if (!addSelect.value && categoriesCache.length) {
+        addSelect.value = categoriesCache[0].id;
+      }
+      populateStock('addStockContainer', 'add', addSelect.value || '');
+      showToast('No se pudieron cargar categorías');
+    }
+  }
+
+
+  function setPartnerOptions(selectEl, selectedPartnerId = '') {
+    if (!selectEl) return;
+    selectEl.innerHTML = '';
+    if (!partnersCache.length) {
+      selectEl.innerHTML = '<option value="">Sin asociaciones disponibles</option>';
+      return;
+    }
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Selecciona una asociación';
+    selectEl.appendChild(defaultOption);
+    partnersCache.forEach(partner => {
+      const option = document.createElement('option');
+      option.value = partner.id;
+      option.textContent = partner.nombre;
+      option.dataset.nombre = partner.nombre;
+      option.dataset.contacto = partner.contacto;
+      option.dataset.socioNombre = partner.socioNombre || '';
+      option.dataset.socioContacto = partner.socioContacto || '';
+      selectEl.appendChild(option);
+    });
+    if (selectedPartnerId) {
+      selectEl.value = selectedPartnerId;
+    }
+  }
+
+  async function loadPartners(selectedAddId = '', selectedEditId = '') {
+    const addSelect = document.getElementById('addPartnerSelect');
+    const editSelect = document.getElementById('editPartnerSelect');
+    if (addSelect) addSelect.innerHTML = '<option value="">Cargando asociaciones...</option>';
+    if (editSelect) editSelect.innerHTML = '<option value="">Cargando asociaciones...</option>';
+    try {
+      const snapshot = await getDocs(collection(db, 'empresas'));
+      const list = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const nombre = (data.nombre || docSnap.id || '').trim();
+        const socioNombre = (data.socioNombre || '').toString().trim();
+        const socioContacto = (data.socioContacto || '').toString().trim();
+        const contactoCompuesto = socioNombre && socioContacto
+          ? `${socioNombre} - ${socioContacto}`
+          : (socioNombre || socioContacto);
+        list.push({
+          id: docSnap.id,
+          nombre: nombre || docSnap.id,
+          contacto: contactoCompuesto,
+          socioNombre,
+          socioContacto
+        });
+      });
+      partnersCache = list.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      setPartnerOptions(addSelect, selectedAddId);
+      setPartnerOptions(editSelect, selectedEditId);
+    } catch (err) {
+      partnersCache = [];
+      setPartnerOptions(addSelect, selectedAddId);
+      setPartnerOptions(editSelect, selectedEditId);
+      showToast('No se pudieron cargar las asociaciones');
+    }
+  }
+
+  function resolvePartnerSelection(selectId, fallbackName = '', fallbackContact = '') {
+    const selectEl = document.getElementById(selectId);
+    if (!selectEl) {
+      return { proveedorNombre: fallbackName, proveedorContacto: fallbackContact, proveedorSocioNombre: '', proveedorSocioContacto: '' };
+    }
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    if (!selectedOption || !selectedOption.value) {
+      return { proveedorNombre: fallbackName, proveedorContacto: fallbackContact, proveedorSocioNombre: '', proveedorSocioContacto: '' };
+    }
+    return {
+      proveedorNombre: selectedOption.dataset.nombre || selectedOption.textContent || fallbackName,
+      proveedorContacto: selectedOption.dataset.contacto || fallbackContact,
+      proveedorSocioNombre: selectedOption.dataset.socioNombre || '',
+      proveedorSocioContacto: selectedOption.dataset.socioContacto || ''
+    };
+  }
+
+  function renderProducts(containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    const products = productCache[containerId] || [];
+    const term = normalizeString(searchTerm);
+    const filtered = term
+      ? products.filter(p => {
+          const name = normalizeString(p.nombre);
+          const tipo = normalizeString(p.tipo);
+          const id = normalizeString(p.id);
+          return name.includes(term) || tipo.includes(term) || id.includes(term);
+        })
+      : products;
+    if (filtered.length === 0) {
+      const empty = document.createElement('p');
+      empty.style.color = '#6b7280';
+      empty.style.textAlign = 'center';
+      empty.style.padding = '16px 0';
+      empty.textContent = term ? 'No se encontraron productos.' : 'No hay productos disponibles.';
+      container.appendChild(empty);
+      return;
+    }
+    filtered.forEach(product => container.appendChild(createProductCard(product)));
+  }
+
+  function renderCompanyIcons(list) {
+    const container = document.getElementById('companyIconsPreview');
+    if (!container) return;
+    if (!list.length) {
+      container.innerHTML = '<p style="color:#999; font-weight:600;">Sin empresas</p>';
+      return;
+    }
+    const sorted = [...list].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+    container.innerHTML = sorted.map(icon => `
+      <button class="company-icon-btn" title="${icon.nombre || ''}">
+        <img src="${icon.imagen || ''}" alt="${icon.nombre || 'Empresa'}" loading="lazy">
+      </button>
+    `).join('');
+  }
+
+  function renderAssociationsMenu(list) {
+    const container = document.getElementById('associationsList');
+    if (!container) return;
+    if (!list.length) {
+      container.innerHTML = '<div style="color:#9ca3af; font-size:0.9rem; padding:6px 4px;">Sin asociaciones</div>';
+      return;
+    }
+    const sorted = [...list].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+    container.innerHTML = sorted.map(item => `
+      <div class="admin-association-item">
+        <div class="admin-association-icon">
+          <img src="${item.imagen || ''}" alt="${item.nombre || 'Empresa'}" loading="lazy">
+        </div>
+        <div class="admin-association-details">
+          <strong>${item.nombre || 'Empresa'}</strong>
+          <span>${item.categoria || 'Sin categoría'}</span>
+          <span>${item.socioNombre || 'Sin socio'}${item.socioContacto ? ' · ' + item.socioContacto : ''}</span>
+        </div>
+        <div class="admin-association-actions">
+          <button onclick="event.stopPropagation(); editAssociation('${item.id}')">Editar</button>
+          <button onclick="event.stopPropagation(); deleteAssociation('${item.id}')">Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  let editingAssociationId = null;
+
+  window.editAssociation = (id) => {
+    const target = companiesCache.find(item => item.id === id);
+    if (!target) return;
+    editingAssociationId = id;
+    document.getElementById('editAssociationName').value = target.nombre || '';
+    document.getElementById('editAssociationPartnerName').value = target.socioNombre || '';
+    document.getElementById('editAssociationPartnerContact').value = target.socioContacto || '';
+    document.getElementById('editAssociationCategory').value = target.categoria || '';
+    document.getElementById('editAssociationImage').value = target.imagen || '';
+    document.getElementById('editAssociationModal').classList.add('active');
+  };
+
+  document.getElementById('saveAssociationChanges').onclick = async () => {
+    if (!editingAssociationId) return;
+    const nombre = document.getElementById('editAssociationName').value.trim();
+    const socioNombre = document.getElementById('editAssociationPartnerName').value.trim();
+    const socioContacto = document.getElementById('editAssociationPartnerContact').value.trim();
+    const categoria = document.getElementById('editAssociationCategory').value.trim();
+    const imagen = document.getElementById('editAssociationImage').value.trim();
+    if (!nombre || !imagen) return showToast('Nombre e imagen son obligatorios');
+
+    try {
+      await updateDoc(doc(db, 'empresas', editingAssociationId), { nombre, socioNombre, socioContacto, categoria, imagen });
+      showToast('Asociación actualizada');
+      closeModal('editAssociationModal');
+      editingAssociationId = null;
+    } catch (error) {
+      console.error('Error al editar asociación:', error);
+      showToast('No se pudo editar la asociación');
+    }
+  };
+
+  window.deleteAssociation = async (id) => {
+    if (!confirm('¿Seguro que deseas eliminar esta empresa?')) return;
+    try {
+      await deleteDoc(doc(db, 'empresas', id));
+      showToast('Empresa eliminada');
+    } catch (error) {
+      console.error('Error al eliminar asociación:', error);
+      showToast('No se pudo eliminar la empresa');
+    }
+  };
+
+  // ──────────────────────────────────────────────
+  // Carga inicial de hero
+  // ──────────────────────────────────────────────
+  onSnapshot(doc(db, 'textos', 'hero'), snap => {
+    if (snap.exists()) {
+      const data = snap.data();
+      const urls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
+      updateHeroBackground(urls);
+    }
+  });
+
+  onSnapshot(collection(db, 'empresas'), snap => {
+    const icons = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    companiesCache = icons;
+    renderCompanyIcons(icons);
+    renderAssociationsMenu(icons);
+  });
+
+  // ──────────────────────────────────────────────
+  // Productos
+  // ──────────────────────────────────────────────
+  const productListeners = {};
+
+  function loadProductsByType(typeKey, containerId) {
+    if (productListeners[containerId]) {
+      productListeners[containerId]();
+    }
+    const q = query(collection(db, "productos"), where(`type.${typeKey}`, "==", true));
+    productListeners[containerId] = onSnapshot(q, snapshot => {
+      const items = [];
+      snapshot.forEach(docSnap => {
+        items.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      productCache[containerId] = items;
+      renderProducts(containerId);
+    });
+  }
+
+  function getProductAvailableTotal(product) {
+    if (!product) return 0;
+    if (product.variantesDisponibles && typeof product.variantesDisponibles === 'object' && Object.keys(product.variantesDisponibles).length > 0) {
+      return Object.values(product.variantesDisponibles).reduce((total, qty) => total + Number(qty || 0), 0);
+    }
+    if (typeof product.disponibles === 'number') return product.disponibles;
+    return 0;
+  }
+
+  function createProductCard(p) {
+    const div = document.createElement('div');
+    div.className = 'product-card';
+    div.dataset.id = p.id;
+    const mainImg = (p.imagenes && p.imagenes.length) ? p.imagenes[0] : (p.imagen || 'https://via.placeholder.com/300');
+    const totalDisp = getProductAvailableTotal(p);
+    const stockClass = totalDisp > 0 ? 'stock-positive' : 'stock-negative';
+    const stockText = totalDisp > 0 ? `${totalDisp} disponibles` : 'Agotado';
+    const isEnabled = p.habilitado !== false;
+    const statusBadge = isEnabled ? '' : '<div class="product-status-badge">Deshabilitado</div>';
+    const toggleLabel = isEnabled ? '🚫' : '✅';
+    const toggleTitle = isEnabled ? 'Deshabilitar producto' : 'Habilitar producto';
+    const actions = `
+      <div class="card-actions">
+        <button title="${toggleTitle}" onclick="event.stopPropagation(); toggleProductEnabled('${p.id}', ${isEnabled})">${toggleLabel}</button>
+        <button onclick="editProduct('${p.id}')">✏️</button>
+        <button onclick="deleteProduct('${p.id}')">🗑️</button>
+      </div>
+    `;
+    div.innerHTML = `${statusBadge}${actions}<img src="${mainImg}" alt="${p.nombre}"><div class="product-info"><h3>${p.nombre}</h3><div class="stock-info ${stockClass}">${stockText}</div></div>`;
+    return div;
+  }
+
+  window.editProduct = async id => {
+    currentEditId = id;
+    const snap = await getDoc(doc(db, 'productos', id));
+    if (!snap.exists()) return showToast('Producto no encontrado');
+    const data = snap.data();
+    currentEditProductData = data;
+    ensureCategoryOption(document.getElementById('editCategory'), data.tipo);
+    document.getElementById('editName').value = data.nombre || '';
+    document.getElementById('editPrice').value = data.precio || '';
+    document.getElementById('editSalePrice').value = data.precioOferta || '';
+    document.getElementById('editDesc').value = data.descripcion || '';
+    await loadPartners();
+    const matchingPartner = partnersCache.find(partner =>
+      (data.proveedorNombre && partner.nombre === data.proveedorNombre) ||
+      (data.proveedorContacto && partner.contacto === data.proveedorContacto) ||
+      (data.proveedorSocioNombre && partner.socioNombre === data.proveedorSocioNombre)
+    );
+    setPartnerOptions(document.getElementById('editPartnerSelect'), matchingPartner?.id || '');
+    document.getElementById('editCategory').value = data.tipo || document.getElementById('editCategory').value || '';
+    document.getElementById('editType').value = (data.type && data.type.carrusel) ? 'carrusel' : 'normal';
+    const offerEndMs = data.ofertaHasta?.toMillis ? data.ofertaHasta.toMillis() : data.ofertaHasta;
+    if (offerEndMs && offerEndMs > Date.now()) {
+      const remainingHours = Math.max(1, Math.ceil((offerEndMs - Date.now()) / 3600000));
+      const durationSelect = document.getElementById('editSaleDuration');
+      durationSelect.value = remainingHours >= 48 ? '48' : remainingHours >= 24 ? '24' : '8';
+    } else {
+      document.getElementById('editSaleDuration').value = '24';
+    }
+    editVariants = { ...(data.variantesDisponibles || {}) };
+    const cat = data.tipo || 'camiseta';
+    const currentTotal = Object.keys(editVariants).length === 0 ? getProductAvailableTotal(data) : 0;
+    populateStock('editStockContainer', 'edit', cat, editVariants, currentTotal);
+    const gallery = document.getElementById('editImagesGallery');
+    gallery.innerHTML = '';
+    const imgs = (data.imagenes && data.imagenes.length) ? data.imagenes : (data.imagen ? [data.imagen] : []);
+    imgs.forEach((url, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'img-wrap';
+      const img = document.createElement('img');
+      img.src = url;
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-img';
+      removeBtn.textContent = '✕';
+      removeBtn.onclick = () => wrap.remove();
+      wrap.appendChild(img);
+      wrap.appendChild(removeBtn);
+      gallery.appendChild(wrap);
+    });
+    document.getElementById('editNewPreview').innerHTML = '';
+    document.getElementById('editImageUrls').value = '';
+    document.getElementById('editProductModal').classList.add('active');
+  };
+
+  window.toggleProductEnabled = async (id, isCurrentlyEnabled) => {
+    const nextEnabled = !isCurrentlyEnabled;
+    await updateDoc(doc(db, 'productos', id), { habilitado: nextEnabled });
+    showToast(nextEnabled ? 'Producto habilitado' : 'Producto deshabilitado');
+  };
+
+  window.deleteProduct = async id => {
+    if (!confirm('¿Eliminar producto?')) return;
+    await deleteDoc(doc(db, 'productos', id));
+    showToast('Producto eliminado');
+  };
+
+  // ──────────────────────────────────────────────
+  // Event listeners
+  // ──────────────────────────────────────────────
+  document.getElementById('addCategory').onchange = function() {
+    addVariants = {};
+    populateStock('addStockContainer', 'add', this.value);
+  };
+
+  document.getElementById('editCategory').onchange = function() {
+    editVariants = {};
+    populateStock('editStockContainer', 'edit', this.value);
+  };
+
+  document.getElementById('productSearch').addEventListener('input', e => {
+    searchTerm = e.target.value;
+    renderProducts('newCarousel');
+    renderProducts('productsGrid');
+  });
+
+  document.getElementById('addImageFiles').addEventListener('change', e => {
+    const files = Array.from(e.target.files || []);
+    const preview = document.getElementById('addImagesPreview');
+    preview.innerHTML = '';
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const wrap = document.createElement('div');
+        wrap.className = 'img-wrap';
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        wrap.appendChild(img);
+        preview.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  document.getElementById('editImageFiles').addEventListener('change', e => {
+    const files = Array.from(e.target.files || []);
+    const preview = document.getElementById('editNewPreview');
+    preview.innerHTML = '';
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const wrap = document.createElement('div');
+        wrap.className = 'img-wrap';
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        wrap.appendChild(img);
+        preview.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  document.getElementById('saveNewProduct').onclick = async () => {
+    if (isSavingProduct) return;
+    isSavingProduct = true;
+    const saveBtn = document.getElementById('saveNewProduct');
+    saveBtn.disabled = true;
+    try {
+    const name = document.getElementById('addName').value.trim();
+    const price = parseFloat(document.getElementById('addPrice').value);
+    const typeValue = document.getElementById('addType').value;
+    const partnerData = resolvePartnerSelection('addPartnerSelect');
+    if (!name || isNaN(price)) return showToast('Nombre y precio obligatorios');
+    const files = [...document.getElementById('addImageFiles').files];
+    const urlInput = document.getElementById('addImage').value.trim();
+    const urlList = urlInput ? urlInput.split(',').map(u => u.trim()).filter(Boolean) : [];
+    const uploadedUrls = await Promise.all(files.map(f => uploadImage(f).catch(() => null)));
+    const images = [...uploadedUrls.filter(Boolean), ...urlList];
+    if (images.length === 0) return showToast('Agrega al menos una imagen');
+    const cat = document.getElementById('addCategory').value;
+    const vars = variantsByCategory[cat] || [];
+    let variantesDisponibles = addVariants;
+    let disponibles = 0;
+    if (vars.length === 0) {
+      disponibles = parseInt(document.getElementById('addTotalQty').value) || 0;
+      variantesDisponibles = {};
+    } else {
+      disponibles = Object.values(addVariants).reduce((a,b) => a + b, 0);
+    }
+    const typeObj = { normal: typeValue === 'normal', carrusel: typeValue === 'carrusel' };
+    const producto = {
+      nombre: name,
+      precio: price,
+      descripcion: document.getElementById('addDesc').value.trim(),
+      proveedorNombre: partnerData.proveedorNombre,
+      proveedorContacto: partnerData.proveedorContacto,
+      proveedorSocioNombre: partnerData.proveedorSocioNombre || '',
+      proveedorSocioContacto: partnerData.proveedorSocioContacto || '',
+      tipo: cat,
+      imagenes: images,
+      imagen: images[0],
+      variantesDisponibles,
+      disponibles,
+      type: typeObj,
+      habilitado: true,
+      creado: new Date()
+    };
+    await addDoc(collection(db, 'productos'), producto);
+    showToast('Producto agregado');
+    closeModal('addProductModal');
+    addVariants = {};
+    } finally {
+      isSavingProduct = false;
+      saveBtn.disabled = false;
+    }
+  };
+
+  document.getElementById('saveProduct').onclick = async () => {
+    if (!currentEditId) return;
+    if (isUpdatingProduct) return;
+    isUpdatingProduct = true;
+    const updateBtn = document.getElementById('saveProduct');
+    updateBtn.disabled = true;
+    try {
+    const cat = document.getElementById('editCategory').value;
+    const vars = variantsByCategory[cat] || [];
+    let variantesDisponibles = editVariants;
+    let disponibles = 0;
+    if (vars.length === 0) {
+      disponibles = parseInt(document.getElementById('editTotalQty')?.value || 0);
+      variantesDisponibles = {};
+    } else {
+      disponibles = Object.values(editVariants).reduce((a,b) => a + b, 0);
+    }
+    const salePriceValue = parseFloat(document.getElementById('editSalePrice').value);
+    const saleDurationHours = parseInt(document.getElementById('editSaleDuration').value, 10);
+    const partnerData = resolvePartnerSelection('editPartnerSelect', currentEditProductData?.proveedorNombre || '', currentEditProductData?.proveedorContacto || '');
+    const updated = {
+      nombre: document.getElementById('editName').value.trim(),
+      precio: parseFloat(document.getElementById('editPrice').value) || 0,
+      descripcion: document.getElementById('editDesc').value.trim(),
+      proveedorNombre: partnerData.proveedorNombre,
+      proveedorContacto: partnerData.proveedorContacto,
+      proveedorSocioNombre: partnerData.proveedorSocioNombre || '',
+      proveedorSocioContacto: partnerData.proveedorSocioContacto || '',
+      tipo: cat,
+      variantesDisponibles,
+      disponibles,
+      type: { normal: document.getElementById('editType').value === 'normal', carrusel: document.getElementById('editType').value === 'carrusel' },
+      habilitado: currentEditProductData?.habilitado !== false
+    };
+    if (!isNaN(salePriceValue) && salePriceValue > 0 && saleDurationHours) {
+      updated.precioOferta = salePriceValue;
+      updated.ofertaHasta = Date.now() + saleDurationHours * 3600000;
+    } else {
+      updated.precioOferta = deleteField();
+      updated.ofertaHasta = deleteField();
+    }
+    const remaining = [];
+    document.querySelectorAll('#editImagesGallery .img-wrap img').forEach(img => remaining.push(img.src));
+    const newFiles = [...document.getElementById('editImageFiles').files];
+    const newUrls = await Promise.all(newFiles.map(f => uploadImage(f).catch(() => null)));
+    const extraUrls = document.getElementById('editImageUrls').value.split(',').map(u => u.trim()).filter(Boolean);
+    const allImages = [...remaining, ...newUrls.filter(Boolean), ...extraUrls];
+    if (allImages.length > 0) {
+      updated.imagenes = allImages;
+      updated.imagen = allImages[0];
+    }
+    await updateDoc(doc(db, 'productos', currentEditId), updated);
+    showToast('Producto actualizado');
+    closeModal('editProductModal');
+    } finally {
+      isUpdatingProduct = false;
+      updateBtn.disabled = false;
+    }
+  };
+
+  // ──────────────────────────────────────────────
+  // Menú + acciones
+  // ──────────────────────────────────────────────
+  document.getElementById('addPostBtn').onclick = (e) => {
+    e.stopPropagation();
+    document.getElementById('addActionMenu').style.display = document.getElementById('addActionMenu').style.display === 'block' ? 'none' : 'block';
+  };
+
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('addActionMenu').contains(e.target) && e.target.id !== 'addPostBtn') {
+      document.getElementById('addActionMenu').style.display = 'none';
+    }
+  });
+
+  document.getElementById('btnAddProduct').onclick = async () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    document.getElementById('addProductModal').classList.add('active');
+    document.querySelectorAll('#addProductModal input:not([type="file"]), #addProductModal textarea, #addProductModal select').forEach(el => el.value = '');
+    document.getElementById('addImageFiles').value = '';
+    document.getElementById('addImagesPreview').innerHTML = '';
+    await loadPartners();
+    addVariants = {};
+    setPartnerOptions(document.getElementById('addPartnerSelect'));
+    populateStock('addStockContainer', 'add', document.getElementById('addCategory').value);
+  };
+
+  document.getElementById('btnAddCompany').onclick = () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    document.getElementById('addCompanyModal').classList.add('active');
+    document.getElementById('addCompanyName').value = '';
+    document.getElementById('addCompanyImage').value = '';
+    document.getElementById('addCompanyImageUrl').value = '';
+    document.getElementById('addCompanyPreview').innerHTML = '';
+    if (categoriesCache.length) {
+      setCategoryOptions(document.getElementById('addCompanyCategory'), categoriesCache);
+    } else {
+      loadCategories();
+    }
+  };
+
+  document.getElementById('btnAddPaymentIcons').onclick = async () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    await loadMainPaymentConfig();
+    renderPaymentIconsManager();
+    document.getElementById('paymentIconsModal').classList.add('active');
+  };
+
+  document.getElementById('savePaymentIcons').onclick = () => {
+    savePaymentMethodIcons();
+  };
+
+  document.getElementById('saveMainPaymentConfig').onclick = () => {
+    saveMainPaymentConfig();
+  };
+
+  document.getElementById('addCompanyImage').addEventListener('change', (e) => {
+    const preview = document.getElementById('addCompanyPreview');
+    preview.innerHTML = '';
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.onload = () => URL.revokeObjectURL(img.src);
+    preview.appendChild(img);
+  });
+
+  document.getElementById('btnCreateAdminJr').onclick = async () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    const modal = document.getElementById('createAdminJrModal');
+    modal.classList.add('active');
+    document.getElementById('adminJrEmail').value = '';
+    document.getElementById('adminJrName').value = '';
+    document.getElementById('adminJrPhone').value = '';
+    const catContainer = document.getElementById('adminjrCategories');
+    catContainer.innerHTML = '<p style="color:#666; text-align:center;">Cargando categorías...</p>';
+    try {
+      const snapshot = await getDocs(collection(db, 'categorias_disponibles'));
+      catContainer.innerHTML = '';
+      if (snapshot.empty) {
+        catContainer.innerHTML = '<p style="color:#666; text-align:center;">No hay categorías disponibles</p>';
+      } else {
+        const categories = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          categories.push({ id: docSnap.id, nombre: data.nombre || docSnap.id });
+        });
+        categories
+          .sort((a, b) => a.nombre.localeCompare(b.nombre))
+          .forEach(cat => {
+            const chip = document.createElement('div');
+            chip.className = 'category-chip';
+            chip.innerHTML = `<span>${cat.nombre}</span><span class="check">✓</span>`;
+            chip.dataset.value = cat.id;
+            chip.onclick = () => chip.classList.toggle('selected');
+            catContainer.appendChild(chip);
+          });
+      }
+    } catch (err) {
+      catContainer.innerHTML = '<p style="color:#ef4444;">Error al cargar</p>';
+    }
+    document.querySelectorAll('#planOptions .plan-option').forEach(opt => {
+      opt.classList.remove('selected');
+      opt.onclick = () => {
+        document.querySelectorAll('#planOptions .plan-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      };
+    });
+  };
+
+  document.getElementById('saveAdminJr').onclick = async () => {
+    const email = document.getElementById('adminJrEmail').value.trim().toLowerCase();
+    const nombre = document.getElementById('adminJrName').value.trim();
+    const telefono = document.getElementById('adminJrPhone').value.trim();
+    if (!email || !nombre) return showToast('Correo y nombre son obligatorios');
+    const categorias = Array.from(document.querySelectorAll('#adminjrCategories .category-chip.selected'))
+                           .map(chip => chip.dataset.value);
+    if (categorias.length === 0) return showToast('Selecciona al menos una categoría');
+    const planElem = document.querySelector('#planOptions .plan-option.selected');
+    if (!planElem) return showToast('Selecciona un plan de renta/comisión');
+    const plan = planElem.dataset.plan;
+    try {
+      await setDoc(doc(db, 'adminjr_permisos', email), {
+        email,
+        nombre,
+        telefono: telefono || null,
+        allowed_categories: categorias,
+        plan: plan,
+        activo: true,
+        creado: new Date(),
+        creadoPor: auth.currentUser?.email || 'sistema'
+      });
+      showToast('Admin jr creado correctamente');
+      closeModal('createAdminJrModal');
+    } catch (err) {
+      showToast('Error al guardar');
+      console.error(err);
+    }
+  };
+
+  document.getElementById('btnAddCategory').onclick = () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    document.getElementById('addCategoryModal').classList.add('active');
+    document.getElementById('newCategoryName').value = '';
+  };
+
+  document.getElementById('btnAddDiscountCoupon').onclick = () => {
+    document.getElementById('addActionMenu').style.display = 'none';
+    document.getElementById('addCouponModal').classList.add('active');
+    document.getElementById('couponCode').value = '';
+    document.getElementById('couponPercent').value = '';
+    document.getElementById('couponMinPurchase').value = '';
+  };
+
+  document.getElementById('saveNewCategory').onclick = async () => {
+    let name = document.getElementById('newCategoryName').value.trim();
+    if (!name) return showToast('Escribe un nombre');
+    const id = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    try {
+      await setDoc(doc(db, 'categorias_disponibles', id), {
+        nombre: name,
+        creado: new Date(),
+        creadoPor: auth.currentUser?.email || 'sistema'
+      });
+      showToast('Categoría agregada');
+      closeModal('addCategoryModal');
+      loadCategories(id);
+    } catch (err) {
+      showToast('Error al agregar');
+      console.error(err);
+    }
+  };
+
+  document.getElementById('saveCompany').onclick = async () => {
+    const name = document.getElementById('addCompanyName').value.trim();
+    const partnerName = document.getElementById('addCompanyPartnerName').value.trim();
+    const partnerContact = document.getElementById('addCompanyPartnerContact').value.trim();
+    const category = document.getElementById('addCompanyCategory').value;
+    const file = document.getElementById('addCompanyImage').files[0];
+    const url = document.getElementById('addCompanyImageUrl').value.trim();
+    if (!name) return showToast('Escribe un nombre');
+    if (!category) return showToast('Selecciona una categoría');
+    if (!file && !url) return showToast('Sube un icono o pega una URL');
+    try {
+      const imageUrl = file ? await uploadImage(file, 'empresas') : url;
+      await addDoc(collection(db, 'empresas'), {
+        nombre: name,
+        socioNombre: partnerName,
+        socioContacto: partnerContact,
+        categoria: category,
+        imagen: imageUrl,
+        creado: new Date(),
+        creadoPor: auth.currentUser?.email || 'sistema'
+      });
+      showToast('Empresa agregada');
+      closeModal('addCompanyModal');
+    } catch (err) {
+      console.error(err);
+      showToast('Error al guardar empresa');
+    }
+  };
+
+  document.getElementById('saveDiscountCoupon').onclick = async () => {
+    const rawCode = document.getElementById('couponCode').value.trim();
+    const percentValue = parseFloat(document.getElementById('couponPercent').value);
+    const minPurchaseValue = parseFloat(document.getElementById('couponMinPurchase').value);
+    if (!rawCode) return showToast('Escribe un código');
+    if (isNaN(percentValue) || percentValue <= 0 || percentValue > 100) {
+      return showToast('El porcentaje debe ser entre 1 y 100');
+    }
+    if (isNaN(minPurchaseValue) || minPurchaseValue < 0) {
+      return showToast('La compra mínima no es válida');
+    }
+    const code = rawCode.toUpperCase().replace(/\s+/g, '');
+    try {
+      await setDoc(doc(db, 'cupones_descuento', code), {
+        code,
+        porcentaje: percentValue,
+        minimoCompra: minPurchaseValue,
+        activo: true,
+        creado: new Date(),
+        creadoPor: auth.currentUser?.email || 'sistema'
+      });
+      showToast('Cupón guardado');
+      closeModal('addCouponModal');
+    } catch (err) {
+      showToast('Error al guardar el cupón');
+      console.error(err);
+    }
+  };
+
+  document.getElementById('openSocialLinksModal').onclick = () => {
+    document.getElementById('socialLinksModal').classList.add('active');
+    loadSocialLinksAdmin();
+  };
+
+  document.getElementById('saveSocialNetwork').onclick = async () => {
+    const nombreRed = document.getElementById('socialNetworkName').value.trim();
+    const cuenta = document.getElementById('socialAccountName').value.trim();
+    const enlace = document.getElementById('socialNetworkUrl').value.trim();
+    const iconoInput = document.getElementById('socialNetworkIcon').value.trim();
+    if (!nombreRed || !cuenta || !enlace) {
+      return showToast('Completa nombre de red, cuenta y enlace');
+    }
+    const normalized = nombreRed.toLowerCase().trim();
+    const icono = iconoInput || SOCIAL_ICONS_PRESET[normalized] || 'https://img.icons8.com/fluency-systems-filled/96/share-2.png';
+    try {
+      await addDoc(collection(db, 'social_links'), {
+        nombreRed,
+        cuenta,
+        enlace,
+        icono,
+        creado: new Date(),
+        creadoPor: auth.currentUser?.email || 'sistema'
+      });
+      showToast('Red social guardada');
+      document.getElementById('socialNetworkName').value = '';
+      document.getElementById('socialAccountName').value = '';
+      document.getElementById('socialNetworkUrl').value = '';
+      document.getElementById('socialNetworkIcon').value = '';
+    } catch (err) {
+      console.error(err);
+      showToast('Error al guardar red social');
+    }
+  };
+
+  document.getElementById('cancelAddCategory').onclick = () => closeModal('addCategoryModal');
+
+  // Cancelar modales
+  document.querySelectorAll('.cancel').forEach(btn => {
+    btn.onclick = () => closeModal(btn.closest('.modal').id);
+  });
+
+  // Dropdown
+  document.getElementById('adminGear').onclick = e => {
+    e.stopPropagation();
+    document.getElementById('adminDropdown').classList.toggle('show');
+  };
+
+  document.getElementById('adminDropdown').addEventListener('click', e => {
+    e.stopPropagation();
+  });
+
+  const associationsToggle = document.getElementById('associationsToggle');
+  if (associationsToggle) {
+    associationsToggle.onclick = e => {
+      e.stopPropagation();
+      const submenu = document.getElementById('associationsList');
+      submenu.classList.toggle('show');
+      associationsToggle.classList.toggle('active');
+    };
+  }
+
+  document.addEventListener('click', () => document.getElementById('adminDropdown').classList.remove('show'));
+
+  document.getElementById('logoutBtn').onclick = async () => {
+    const confirmed = await window.showLogoutConfirm();
+    if (!confirmed) return;
+    await signOut(auth);
+  };
+
+
+  // ──────────────────────────────────────────────
+  // Centro de ayuda (mensajes clientes)
+  // ──────────────────────────────────────────────
+  let supportChatsCache = [];
+  let supportSelectedChatId = null;
+  let supportMessagesUnsubscribe = null;
+
+  const supportMessagesBtn = document.getElementById('supportMessagesBtn');
+  const supportMessagesBadge = document.getElementById('supportMessagesBadge');
+  const supportInboxDrawer = document.getElementById('supportInboxDrawer');
+  const closeSupportDrawerBtn = document.getElementById('closeSupportDrawerBtn');
+  const paymentConfigSection = document.getElementById('paymentConfigSection');
+  const supportAdminSection = document.getElementById('supportAdminSection');
+  const adminOverlayBackdrop = document.getElementById('adminOverlayBackdrop');
+  const togglePaymentConfigMenuBtn = document.getElementById('togglePaymentConfigMenuBtn');
+  const closeSupportPanelBtn = document.getElementById('closeSupportPanelBtn');
+  const supportChatsList = document.getElementById('supportChatsList');
+  const supportChatsDrawerList = document.getElementById('supportChatsDrawerList');
+  const supportThreadMessages = document.getElementById('supportThreadMessages');
+  const supportThreadTitle = document.getElementById('supportThreadTitle');
+  const supportThreadSub = document.getElementById('supportThreadSub');
+  const supportReplyForm = document.getElementById('supportReplyForm');
+  const supportReplyText = document.getElementById('supportReplyText');
+  const supportReplyFile = document.getElementById('supportReplyFile');
+  const deleteSupportChatBtn = document.getElementById('deleteSupportChatBtn');
+
+  function supportEscapeHtml(text = '') {
+    return text.replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  }
+
+  function formatSupportDate(ts) {
+    if (!ts?.toDate) return 'Ahora';
+    return ts.toDate().toLocaleString('es-MX', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+  }
+
+  function renderSupportChatCollections() {
+    const makeItem = (chat) => {
+      const div = document.createElement('div');
+      div.className = `support-chat-item ${chat.id === supportSelectedChatId ? 'active' : ''}`;
+      div.innerHTML = `
+        <strong>${supportEscapeHtml(chat.userName || chat.userEmail || 'Cliente')}</strong>
+        <p>${supportEscapeHtml(chat.topicLabel || 'Sin categoría')}</p>
+        <p>${supportEscapeHtml(chat.lastMessage || 'Sin mensajes')}</p>
+        <div class="meta">
+          <span>${formatSupportDate(chat.updatedAt)}</span>
+          ${chat.unreadForAdmin ? `<span class="support-unread-dot">${chat.unreadForAdmin}</span>` : '<span></span>'}
+        </div>
+      `;
+      div.onclick = () => selectSupportChat(chat.id);
+      return div;
+    };
+
+    supportChatsList.innerHTML = '';
+    supportChatsDrawerList.innerHTML = '';
+
+    if (!supportChatsCache.length) {
+      const empty = '<div class="social-admin-empty" style="margin:12px;">No hay chats de clientes por ahora.</div>';
+      supportChatsList.innerHTML = empty;
+      supportChatsDrawerList.innerHTML = empty;
+      supportMessagesBadge.style.display = 'none';
+      return;
+    }
+
+    let unreadTotal = 0;
+    supportChatsCache.forEach(chat => {
+      unreadTotal += Number(chat.unreadForAdmin || 0);
+      supportChatsList.appendChild(makeItem(chat));
+      supportChatsDrawerList.appendChild(makeItem(chat));
+    });
+
+    if (unreadTotal > 0) {
+      supportMessagesBadge.textContent = unreadTotal > 99 ? '99+' : String(unreadTotal);
+      supportMessagesBadge.style.display = 'inline-flex';
+    } else {
+      supportMessagesBadge.style.display = 'none';
+    }
+  }
+
+  function listenSupportChats() {
+    const chatsQuery = query(collection(db, 'support_chats'), orderBy('updatedAt', 'desc'), limit(120));
+    onSnapshot(chatsQuery, (snap) => {
+      supportChatsCache = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !c.deletedByAdmin);
+      renderSupportChatCollections();
+      if (!supportSelectedChatId && supportChatsCache.length) {
+        selectSupportChat(supportChatsCache[0].id);
+      }
+    });
+  }
+
+  function selectSupportChat(chatId) {
+    supportSelectedChatId = chatId;
+    const chat = supportChatsCache.find(c => c.id === chatId);
+    renderSupportChatCollections();
+    if (!chat) return;
+
+    supportThreadTitle.textContent = chat.userName || chat.userEmail || 'Cliente';
+    supportThreadSub.textContent = `${chat.topicLabel || 'Consulta'}${chat.questionnaire?.orderNumber ? ` • Pedido: ${chat.questionnaire.orderNumber}` : ''}`;
+
+    if (supportMessagesUnsubscribe) supportMessagesUnsubscribe();
+    supportMessagesUnsubscribe = onSnapshot(query(collection(db, 'support_chats', chatId, 'messages'), orderBy('createdAt', 'asc')), async (snap) => {
+      supportThreadMessages.innerHTML = '';
+      if (snap.empty) {
+        supportThreadMessages.innerHTML = '<div class="social-admin-empty" style="max-width:340px;margin:auto;">Sin mensajes aún.</div>';
+      } else {
+        snap.forEach(d => {
+          const m = d.data();
+          const node = document.createElement('div');
+          node.className = `support-msg ${m.senderRole === 'admin' ? 'admin' : 'user'}`;
+          const txt = m.text ? `<div>${supportEscapeHtml(m.text)}</div>` : '<div>Archivo adjunto</div>';
+          const file = m.fileUrl ? `<a href="${m.fileUrl}" target="_blank" rel="noopener" style="color:inherit;display:inline-flex;margin-top:7px;">📎 ${supportEscapeHtml(m.fileName || 'archivo')}</a>` : '';
+          node.innerHTML = `${txt}${file}<div class="meta">${m.senderRole === 'admin' ? 'Admin' : 'Cliente'} • ${formatSupportDate(m.createdAt)}</div>`;
+          supportThreadMessages.appendChild(node);
+        });
+        supportThreadMessages.scrollTop = supportThreadMessages.scrollHeight;
+      }
+      try { await updateDoc(doc(db, 'support_chats', chatId), { unreadForAdmin: 0 }); } catch (err) {}
+    });
+  }
+
+  supportReplyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!supportSelectedChatId) return showToast('Selecciona un chat primero');
+    const text = supportReplyText.value.trim();
+    const file = supportReplyFile.files[0];
+    if (!text && !file) return;
+
+    let fileUrl = '';
+    let fileName = '';
+    let fileType = '';
+    let fileSize = 0;
+
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) return showToast('Archivo demasiado grande (máx 10 MB)');
+      const fileRef = ref(storage, `support_chats/${supportSelectedChatId}/admin_${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
+      fileUrl = await getDownloadURL(fileRef);
+      fileName = file.name;
+      fileType = file.type || 'application/octet-stream';
+      fileSize = file.size;
+    }
+
+    await addDoc(collection(db, 'support_chats', supportSelectedChatId, 'messages'), {
+      senderRole: 'admin',
+      senderId: auth.currentUser?.uid || 'admin',
+      senderName: auth.currentUser?.email || 'Admin',
+      text,
+      fileUrl,
+      fileName,
+      fileType,
+      fileSize,
+      createdAt: serverTimestamp()
+    });
+
+    await updateDoc(doc(db, 'support_chats', supportSelectedChatId), {
+      updatedAt: serverTimestamp(),
+      lastMessage: text || `Archivo: ${fileName}`,
+      lastMessageType: file ? 'file' : 'text',
+      unreadForUser: increment(1),
+      status: 'abierto'
+    });
+
+    supportReplyText.value = '';
+    supportReplyFile.value = '';
+    showToast('Respuesta enviada');
+  });
+
+  deleteSupportChatBtn.addEventListener('click', async () => {
+    if (!supportSelectedChatId) return showToast('Selecciona un chat');
+    if (!confirm('¿Seguro que deseas borrar esta conversación completa?')) return;
+    try {
+      const msgs = await getDocs(collection(db, 'support_chats', supportSelectedChatId, 'messages'));
+      for (const msg of msgs.docs) {
+        await deleteDoc(doc(db, 'support_chats', supportSelectedChatId, 'messages', msg.id));
+      }
+      await deleteDoc(doc(db, 'support_chats', supportSelectedChatId));
+      supportSelectedChatId = null;
+      supportThreadTitle.textContent = 'Selecciona un chat';
+      supportThreadSub.textContent = 'Aquí podrás responder dudas de los clientes.';
+      supportThreadMessages.innerHTML = '<div class="social-admin-empty" style="max-width:360px;margin:auto;">Elige un chat para ver el historial.</div>';
+      showToast('Conversación eliminada');
+    } catch (err) {
+      console.error(err);
+      showToast('No se pudo borrar la conversación');
+    }
+  });
+
+  function closeSupportDrawer() {
+    supportInboxDrawer.classList.remove('show');
+  }
+
+  function closeAdminPanels() {
+    supportAdminSection.classList.remove('show');
+    paymentConfigSection.classList.remove('show');
+    adminOverlayBackdrop.classList.remove('show');
+    togglePaymentConfigMenuBtn.textContent = 'Formas de pago';
+  }
+
+  function openPanel(panel) {
+    closeSupportDrawer();
+    supportAdminSection.classList.remove('show');
+    paymentConfigSection.classList.remove('show');
+    panel.classList.add('show');
+    adminOverlayBackdrop.classList.add('show');
+    togglePaymentConfigMenuBtn.textContent = panel === paymentConfigSection ? 'Ocultar formas de pago' : 'Formas de pago';
+    document.getElementById('adminDropdown').classList.remove('show');
+  }
+
+  supportMessagesBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (supportAdminSection.classList.contains('show')) {
+      closeAdminPanels();
+      return;
+    }
+    openPanel(supportAdminSection);
+  });
+
+  closeSupportPanelBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeAdminPanels();
+  });
+
+  closeSupportDrawerBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeSupportDrawer();
+  });
+
+  togglePaymentConfigMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (paymentConfigSection.classList.contains('show')) {
+      closeAdminPanels();
+      return;
+    }
+    openPanel(paymentConfigSection);
+  });
+
+  adminOverlayBackdrop?.addEventListener('click', closeAdminPanels);
+
+  document.addEventListener('click', (e) => {
+    if (!supportInboxDrawer.contains(e.target) && e.target !== supportMessagesBtn && !supportMessagesBtn.contains(e.target)) {
+      closeSupportDrawer();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeSupportDrawer();
+      closeAdminPanels();
+    }
+  });
+
+  // ──────────────────────────────────────────────
+  // Edición de textos
+  // ──────────────────────────────────────────────
+  function loadEditableTexts() {
+    document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+      const coll = el.dataset.collection;
+      const docu = el.dataset.doc;
+      const field = el.dataset.field;
+      onSnapshot(doc(db, coll, docu), snap => {
+        if (snap.exists() && snap.data()[field] !== undefined) {
+          const value = snap.data()[field];
+          if (el.textContent.trim() !== value) el.textContent = value;
+        }
+      });
+      el.addEventListener('input', () => {
+        const key = `${coll}|${docu}|${field}`;
+        textChanges[key] = el.textContent.trim();
+      });
+    });
+  }
+
+  document.getElementById('toggleTextEdit').onclick = () => {
+    textEditMode = !textEditMode;
+    document.getElementById('textEditControls').classList.toggle('active');
+    document.querySelectorAll('[contenteditable="true"]').forEach(el => el.classList.toggle('editing'));
+  };
+
+  document.getElementById('saveTextChanges').onclick = async () => {
+    for (const [key, value] of Object.entries(textChanges)) {
+      const [c, d, f] = key.split('|');
+      await setDoc(doc(db, c, d), { [f]: value }, { merge: true });
+    }
+    showToast('Cambios guardados');
+    textChanges = {};
+  };
+
+  document.getElementById('cancelTextChanges').onclick = () => location.reload();
+
+  document.getElementById('openHeroBgModal').onclick = async () => {
+    document.getElementById('heroBgModal').classList.add('active');
+    await loadHeroBgGallery();
+    document.getElementById('heroBgNewPreview').innerHTML = '';
+  };
+
+  document.getElementById('heroBgFiles').addEventListener('change', e => {
+    const files = Array.from(e.target.files || []);
+    const preview = document.getElementById('heroBgNewPreview');
+    preview.innerHTML = '';
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const wrap = document.createElement('div');
+        wrap.className = 'img-wrap';
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        wrap.appendChild(img);
+        preview.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  document.getElementById('saveHeroBg').onclick = async () => {
+    const files = document.getElementById('heroBgFiles').files;
+    if (files.length === 0) return showToast('Selecciona al menos una imagen');
+    const newUrls = await Promise.all(Array.from(files).map(f => uploadImage(f, 'hero')));
+    const snap = await getDoc(doc(db, 'textos', 'hero'));
+    let currentUrls = [];
+    if (snap.exists()) {
+      currentUrls = snap.data().fondo_urls || (snap.data().fondo_url ? [snap.data().fondo_url] : []);
+    }
+    const updatedUrls = [...currentUrls, ...newUrls];
+    await setDoc(doc(db, 'textos', 'hero'), { fondo_urls: updatedUrls }, { merge: true });
+    updateHeroBackground(updatedUrls);
+    showToast('Fondos actualizados');
+    closeModal('heroBgModal');
+  };
+
+  // Carga inicial de productos y textos (se llama cuando se confirma acceso)
+  // Ya está dentro del onAuthStateChanged para super admins
+</script>
+
+</body>
+</html>
