@@ -23,9 +23,18 @@
     .header-btn { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; border: none; padding: 0; background: transparent; color: #fff; }
     .header-btn:hover { background: #111; }
     #addPostBtn { font-size: 32px; font-weight: 300; color: #fff; }
-    .hero-banner { text-align: center; padding: 100px 20px 80px; background: #f0f2f5 url('') center/cover no-repeat; position: relative; min-height: 300px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.7); border-radius: 0 0 24px 24px; }
+    .hero-banner { text-align: center; padding: 100px 20px 80px; background: #f0f2f5 url('') center/cover no-repeat; position: relative; min-height: 300px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.7); border-radius: 0 0 24px 24px; overflow: hidden; }
     .hero-banner h1 { font-size: 2.8rem; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
     .hero-banner .tag { font-size: 1.2rem; opacity: 0.95; font-weight: 400; }
+    .hero-slide-admin-list { display: flex; flex-direction: column; gap: 12px; }
+    .hero-slide-admin-item { display: grid; grid-template-columns: 76px 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid #e5e7eb; border-radius: 14px; background: #f8fafc; }
+    .hero-slide-admin-item img, .hero-slide-admin-thumb { width: 76px; height: 58px; object-fit: cover; border-radius: 10px; background: linear-gradient(135deg,#111,#555); }
+    .hero-slide-admin-text strong { display: block; color: #111827; }
+    .hero-slide-admin-text span { display: block; color: #6b7280; font-size: 0.86rem; }
+    .hero-slide-admin-actions { display: flex; gap: 8px; }
+    .hero-slide-admin-actions button { width: auto; margin: 0; padding: 9px 11px; font-size: 0.82rem; border-radius: 10px; }
+    .hero-slide-admin-actions .delete { background: #fee2e2; color: #b91c1c; }
+    .position-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
     .modal.active { display: flex; }
     .modal-content { background: #ffffff; padding: 32px; border-radius: 24px; width: 90%; max-width: 600px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
@@ -169,12 +178,12 @@
     .stock-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .stock-row label { font-weight: 600; min-width: 120px; }
     .stock-row input { width: 140px; padding: 10px; border: 1px solid #d0d5dd; border-radius: 8px; }
-    #editImagesGallery, #addImagesPreview, #editNewPreview, #heroBgGallery, #heroBgNewPreview, #addCompanyPreview {
+    #editImagesGallery, #addImagesPreview, #editNewPreview, #heroBgGallery, #heroBgNewPreview, #heroSlideImagePreview, #addCompanyPreview {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
     }
-    #editImagesGallery img, #addImagesPreview img, #editNewPreview img, #heroBgGallery img, #heroBgNewPreview img, #addCompanyPreview img {
+    #editImagesGallery img, #addImagesPreview img, #editNewPreview img, #heroBgGallery img, #heroBgNewPreview img, #heroSlideImagePreview img, #addCompanyPreview img {
       width: 120px;
       height: 120px;
       object-fit: cover;
@@ -520,7 +529,7 @@
               <div style="color:#9ca3af; font-size:0.9rem; padding:6px 4px;">Cargando asociaciones...</div>
             </div>
           </div>
-          <button id="openHeroBgModal">Cambiar fondo</button>
+          <button id="openHeroBgModal">Administrar sliders</button>
           <button id="togglePaymentConfigMenuBtn">Formas de pago</button>
           <button id="logoutBtn">Cerrar Sesión</button>
         </div>
@@ -552,6 +561,7 @@
   <button id="btnAddProduct">Añadir producto</button>
   <button id="btnAddCompany">Agregar empresa</button>
   <button id="btnAddPaymentIcons">Agregar icono a formas de pago</button>
+  <button id="btnAddHeroSlider">Agregar imagen de slider</button>
   <button id="btnCreateAdminJr">Crear admin jr</button>
   <button id="btnAddCategory">Agregar categoría</button>
   <button id="btnAddDiscountCoupon">Agregar cupón de descuento</button>
@@ -857,26 +867,34 @@
   </div>
 </div>
 
-<!-- MODAL CAMBIAR FONDO HERO -->
+<!-- MODAL ADMINISTRAR SLIDERS HERO -->
 <div class="modal" id="heroBgModal">
   <div class="modal-content">
-    <h3>Cambiar Fondo del Hero</h3>
+    <h3>Administrar sliders del Hero</h3>
+    <p style="margin-top:-10px;color:#6b7280;">Cada slider puede tener título, subtítulo, imagen de fondo y posición del texto. Se verá en el index.</p>
     <div class="form-group">
-      <label>Imágenes actuales de fondo (se usa la primera como principal)</label>
-      <div id="heroBgGallery"></div>
+      <label>Sliders actuales</label>
+      <div id="heroBgGallery" class="hero-slide-admin-list"></div>
     </div>
+    <input type="hidden" id="heroSlideEditIndex" value="">
+    <div class="form-group"><label>Título del slider</label><input type="text" id="heroSlideTitle" placeholder="Ej. Asegura tu Mystery Box"></div>
+    <div class="form-group"><label>Subtítulo del slider</label><input type="text" id="heroSlideSubtitle" placeholder="Ej. Envío Gratis en compras +$1,500"></div>
     <div class="form-group">
-      <label>Añadir más imágenes de fondo</label>
+      <label>Imagen de fondo del slider</label>
       <div class="upload-section">
-        <label for="heroBgFiles">
-          <span>Subir imágenes (múltiples)</span>
-        </label>
-        <input type="file" id="heroBgFiles" accept="image/*" multiple>
-        <div id="heroBgNewPreview"></div>
+        <label for="heroBgFiles"><span>Subir imagen</span></label>
+        <input type="file" id="heroBgFiles" accept="image/*">
+        <div id="heroSlideImagePreview"></div>
       </div>
+      <small style="display:block;color:#777;margin-top:8px;">Si editas un slider y no subes imagen, se conserva la imagen actual.</small>
     </div>
-    <button id="saveHeroBg">Guardar Cambios</button>
-    <button class="cancel" id="cancelHeroBg">Cancelar</button>
+    <div class="position-row">
+      <div class="form-group"><label>Posición horizontal del texto (%)</label><input type="number" id="heroTextX" min="0" max="100" value="50"></div>
+      <div class="form-group"><label>Posición vertical del texto (%)</label><input type="number" id="heroTextY" min="0" max="100" value="86"></div>
+    </div>
+    <button id="saveHeroBg">Guardar Slider</button>
+    <button id="resetHeroSlideForm" class="cancel">Limpiar formulario</button>
+    <button class="cancel" id="cancelHeroBg">Cerrar</button>
   </div>
 </div>
 
@@ -1259,42 +1277,121 @@
     }
   }
 
-  async function loadHeroBgGallery() {
-    const snap = await getDoc(doc(db, 'textos', 'hero'));
-    let urls = [];
-    if (snap.exists()) {
-      const data = snap.data();
-      urls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
-    }
-    const gallery = document.getElementById('heroBgGallery');
-    gallery.innerHTML = '';
-    urls.forEach((url, index) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'img-wrap';
-      const img = document.createElement('img');
-      img.src = url;
-      const removeBtn = document.createElement('button');
-      removeBtn.className = 'remove-img';
-      removeBtn.textContent = '✕';
-      removeBtn.onclick = async () => {
-        urls.splice(index, 1);
-        await setDoc(doc(db, 'textos', 'hero'), { fondo_urls: urls }, { merge: true });
-        loadHeroBgGallery();
-        updateHeroBackground(urls);
-        showToast('Imagen eliminada');
-      };
-      wrap.appendChild(img);
-      wrap.appendChild(removeBtn);
-      gallery.appendChild(wrap);
-    });
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   }
 
-  function updateHeroBackground(urls) {
-    if (urls && urls.length > 0) {
-      document.getElementById('heroBanner').style.backgroundImage = `url(${urls[0]})`;
-    } else {
-      document.getElementById('heroBanner').style.backgroundImage = '';
+  function normalizeHeroSlides(data = {}) {
+    const slides = Array.isArray(data.slides) ? data.slides.map((slide, index) => ({
+      titulo: slide.titulo || (index === 0 ? data.titulo : '') || 'Tu Merch',
+      subtitulo: slide.subtitulo || (index === 0 ? data.subtitulo : '') || 'Explora ahora',
+      fondo_url: slide.fondo_url || slide.imageUrl || '',
+      textX: Number.isFinite(Number(slide.textX)) ? Number(slide.textX) : 50,
+      textY: Number.isFinite(Number(slide.textY)) ? Number(slide.textY) : 86
+    })).filter(slide => slide.titulo || slide.subtitulo || slide.fondo_url) : [];
+    if (slides.length) return slides;
+    const legacyUrls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
+    if (legacyUrls.length) {
+      return legacyUrls.map(url => ({
+        titulo: data.titulo || 'Tu Merch',
+        subtitulo: data.subtitulo || 'Explora ahora',
+        fondo_url: url,
+        textX: 50,
+        textY: 86
+      }));
     }
+    return [{
+      titulo: data.titulo || 'Tu Merch',
+      subtitulo: data.subtitulo || 'Explora ahora',
+      fondo_url: '',
+      textX: 50,
+      textY: 86
+    }];
+  }
+
+  async function getHeroSlides() {
+    const snap = await getDoc(doc(db, 'textos', 'hero'));
+    return normalizeHeroSlides(snap.exists() ? snap.data() : {});
+  }
+
+  function resetHeroSlideForm() {
+    document.getElementById('heroSlideEditIndex').value = '';
+    document.getElementById('heroSlideTitle').value = '';
+    document.getElementById('heroSlideSubtitle').value = '';
+    document.getElementById('heroTextX').value = 50;
+    document.getElementById('heroTextY').value = 86;
+    document.getElementById('heroBgFiles').value = '';
+    document.getElementById('heroSlideImagePreview').innerHTML = '';
+    document.getElementById('saveHeroBg').textContent = 'Guardar Slider';
+  }
+
+  async function loadHeroBgGallery() {
+    const slides = await getHeroSlides();
+    const gallery = document.getElementById('heroBgGallery');
+    gallery.innerHTML = '';
+    if (!slides.length) {
+      gallery.innerHTML = '<div class="social-admin-empty">No hay sliders agregados.</div>';
+      return;
+    }
+    slides.forEach((slide, index) => {
+      const row = document.createElement('div');
+      row.className = 'hero-slide-admin-item';
+      row.innerHTML = `
+        ${slide.fondo_url ? `<img src="${slide.fondo_url}" alt="Slider ${index + 1}">` : '<div class="hero-slide-admin-thumb"></div>'}
+        <div class="hero-slide-admin-text">
+          <strong>${escapeHtml(slide.titulo || 'Sin título')}</strong>
+          <span>${escapeHtml(slide.subtitulo || 'Sin subtítulo')}</span>
+          <span>Texto: ${slide.textX ?? 50}% horizontal / ${slide.textY ?? 86}% vertical</span>
+        </div>
+        <div class="hero-slide-admin-actions">
+          <button type="button" data-edit-slide="${index}">Editar</button>
+          <button type="button" class="delete" data-delete-slide="${index}">Eliminar</button>
+        </div>`;
+      gallery.appendChild(row);
+    });
+    gallery.querySelectorAll('[data-edit-slide]').forEach(btn => btn.addEventListener('click', () => editHeroSlide(Number(btn.dataset.editSlide), slides)));
+    gallery.querySelectorAll('[data-delete-slide]').forEach(btn => btn.addEventListener('click', () => deleteHeroSlide(Number(btn.dataset.deleteSlide), slides)));
+  }
+
+  function editHeroSlide(index, slides) {
+    const slide = slides[index];
+    if (!slide) return;
+    document.getElementById('heroSlideEditIndex').value = String(index);
+    document.getElementById('heroSlideTitle').value = slide.titulo || '';
+    document.getElementById('heroSlideSubtitle').value = slide.subtitulo || '';
+    document.getElementById('heroTextX').value = slide.textX ?? 50;
+    document.getElementById('heroTextY').value = slide.textY ?? 86;
+    document.getElementById('heroBgFiles').value = '';
+    document.getElementById('heroSlideImagePreview').innerHTML = slide.fondo_url ? `<div class="img-wrap"><img src="${slide.fondo_url}" alt="Imagen actual"></div>` : '';
+    document.getElementById('saveHeroBg').textContent = 'Actualizar Slider';
+  }
+
+  async function deleteHeroSlide(index, slides) {
+    slides.splice(index, 1);
+    await saveHeroSlides(slides);
+    resetHeroSlideForm();
+    await loadHeroBgGallery();
+    updateHeroBackground(slides);
+    showToast('Slider eliminado');
+  }
+
+  async function saveHeroSlides(slides) {
+    const first = slides[0] || { titulo: 'Tu Merch', subtitulo: 'Explora ahora', fondo_url: '' };
+    await setDoc(doc(db, 'textos', 'hero'), {
+      slides,
+      titulo: first.titulo || 'Tu Merch',
+      subtitulo: first.subtitulo || 'Explora ahora',
+      fondo_url: first.fondo_url || '',
+      fondo_urls: slides.map(slide => slide.fondo_url).filter(Boolean)
+    }, { merge: true });
+  }
+
+  function updateHeroBackground(slides) {
+    const normalized = Array.isArray(slides) ? slides : [];
+    const first = normalized[0] || {};
+    document.getElementById('heroBanner').style.backgroundImage = first.fondo_url ? `url(${first.fondo_url})` : '';
+    document.getElementById('heroTitleDisplay').textContent = first.titulo || 'Tu Merch';
+    document.getElementById('heroTagDisplay').textContent = first.subtitulo || 'Explora ahora';
   }
 
   async function uploadImage(file, path = 'productos') {
@@ -1637,11 +1734,8 @@
   // Carga inicial de hero
   // ──────────────────────────────────────────────
   onSnapshot(doc(db, 'textos', 'hero'), snap => {
-    if (snap.exists()) {
-      const data = snap.data();
-      const urls = data.fondo_urls || (data.fondo_url ? [data.fondo_url] : []);
-      updateHeroBackground(urls);
-    }
+    const data = snap.exists() ? snap.data() : {};
+    updateHeroBackground(normalizeHeroSlides(data));
   });
 
   onSnapshot(collection(db, 'empresas'), snap => {
@@ -2521,50 +2615,71 @@
       const [c, d, f] = key.split('|');
       await setDoc(doc(db, c, d), { [f]: value }, { merge: true });
     }
+    if (textChanges['textos|hero|titulo'] !== undefined || textChanges['textos|hero|subtitulo'] !== undefined) {
+      const slides = await getHeroSlides();
+      if (slides[0]) {
+        slides[0].titulo = textChanges['textos|hero|titulo'] ?? slides[0].titulo;
+        slides[0].subtitulo = textChanges['textos|hero|subtitulo'] ?? slides[0].subtitulo;
+        await saveHeroSlides(slides);
+      }
+    }
     showToast('Cambios guardados');
     textChanges = {};
   };
 
   document.getElementById('cancelTextChanges').onclick = () => location.reload();
 
-  document.getElementById('openHeroBgModal').onclick = async () => {
+  async function openHeroSliderModal() {
     document.getElementById('heroBgModal').classList.add('active');
+    resetHeroSlideForm();
     await loadHeroBgGallery();
-    document.getElementById('heroBgNewPreview').innerHTML = '';
-  };
+  }
+
+  document.getElementById('openHeroBgModal').onclick = openHeroSliderModal;
+  document.getElementById('btnAddHeroSlider').onclick = openHeroSliderModal;
+  document.getElementById('resetHeroSlideForm').onclick = resetHeroSlideForm;
 
   document.getElementById('heroBgFiles').addEventListener('change', e => {
-    const files = Array.from(e.target.files || []);
-    const preview = document.getElementById('heroBgNewPreview');
+    const file = e.target.files?.[0];
+    const preview = document.getElementById('heroSlideImagePreview');
     preview.innerHTML = '';
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const wrap = document.createElement('div');
-        wrap.className = 'img-wrap';
-        const img = document.createElement('img');
-        img.src = ev.target.result;
-        wrap.appendChild(img);
-        preview.appendChild(wrap);
-      };
-      reader.readAsDataURL(file);
-    });
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const wrap = document.createElement('div');
+      wrap.className = 'img-wrap';
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      wrap.appendChild(img);
+      preview.appendChild(wrap);
+    };
+    reader.readAsDataURL(file);
   });
 
   document.getElementById('saveHeroBg').onclick = async () => {
+    const title = document.getElementById('heroSlideTitle').value.trim();
+    const subtitle = document.getElementById('heroSlideSubtitle').value.trim();
+    const editIndexValue = document.getElementById('heroSlideEditIndex').value;
+    const editIndex = editIndexValue === '' ? -1 : Number(editIndexValue);
     const files = document.getElementById('heroBgFiles').files;
-    if (files.length === 0) return showToast('Selecciona al menos una imagen');
-    const newUrls = await Promise.all(Array.from(files).map(f => uploadImage(f, 'hero')));
-    const snap = await getDoc(doc(db, 'textos', 'hero'));
-    let currentUrls = [];
-    if (snap.exists()) {
-      currentUrls = snap.data().fondo_urls || (snap.data().fondo_url ? [snap.data().fondo_url] : []);
-    }
-    const updatedUrls = [...currentUrls, ...newUrls];
-    await setDoc(doc(db, 'textos', 'hero'), { fondo_urls: updatedUrls }, { merge: true });
-    updateHeroBackground(updatedUrls);
-    showToast('Fondos actualizados');
-    closeModal('heroBgModal');
+    const slides = await getHeroSlides();
+    let imageUrl = editIndex >= 0 ? (slides[editIndex]?.fondo_url || '') : '';
+    if (files.length > 0) imageUrl = await uploadImage(files[0], 'hero');
+    if (!title && !subtitle && !imageUrl) return showToast('Agrega título, subtítulo o imagen');
+    const nextSlide = {
+      titulo: title || 'Tu Merch',
+      subtitulo: subtitle || 'Explora ahora',
+      fondo_url: imageUrl,
+      textX: Math.max(0, Math.min(100, Number(document.getElementById('heroTextX').value) || 50)),
+      textY: Math.max(0, Math.min(100, Number(document.getElementById('heroTextY').value) || 86))
+    };
+    if (editIndex >= 0 && slides[editIndex]) slides[editIndex] = nextSlide;
+    else slides.push(nextSlide);
+    await saveHeroSlides(slides);
+    updateHeroBackground(slides);
+    resetHeroSlideForm();
+    await loadHeroBgGallery();
+    showToast(editIndex >= 0 ? 'Slider actualizado' : 'Slider agregado');
   };
 
   // Carga inicial de productos y textos: se ejecuta al abrir el panel admin.
