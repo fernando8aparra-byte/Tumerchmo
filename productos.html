@@ -1,1 +1,2101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto - Tumerchmo</title>
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/merchct-d059a.firebasestorage.app/o/logo%2Flogo.jpg?alt=media">
 
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html,body {
+      font-family:'Poppins',sans-serif;
+      background:#fff; color:#000; overflow-x:hidden;
+      -webkit-tap-highlight-color:transparent;
+      min-height:100vh;
+      position:relative;
+    }
+    button, input, a { -webkit-tap-highlight-color:transparent; outline:none; }
+    /* HEADER - Negro sólido */
+    .header {
+      position:fixed; top:0; left:0; right:0; background:#000 !important;
+      border-bottom:1px solid #111; z-index:1000; padding:16px 20px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.35);
+      color:#fff;
+    }
+    .header-inner {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      max-width:1400px; margin:0 auto;
+      position:relative;
+    }
+    .header-left {
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo {
+      font-weight:900; font-size:1.5rem; text-transform:uppercase;
+      letter-spacing:1.5px; color:#fff; cursor:pointer;
+    }
+    .icon-btn {
+      background:none; border:none; cursor:pointer; padding:10px;
+      border-radius:8px; width:44px; height:44px;
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+      color:#fff;
+    }
+    .icon-btn svg { width:26px; height:26px; stroke:currentColor; stroke-width:2.7; fill:none; }
+    #cartBadge {
+      position:absolute; top:-8px; right:-10px;
+      background:#e63946; color:#fff; font-size:12px; font-weight:900;
+      min-width:18px; height:18px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+    }
+    @keyframes shake { 0%,100% { transform:translateX(0); } 20%,60% { transform:translateX(-4px); } 40%,80% { transform:translateX(4px); } }
+    body { padding-top:76px; }
+    /* BÚSQUEDA */
+    .search-bar-container {
+      position:fixed; top:76px; left:0; right:0; background:#fff;
+      border-bottom:2px solid #ccc; padding:16px 20px;
+      display:none; align-items:center; gap:12px; z-index:998;
+    }
+    .search-bar-container.active { display:flex; }
+    .search-bar-input {
+      flex:1; border:none; font-size:1.1rem; font-weight:500; padding:8px 0; color:#000;
+    }
+    .close-search-x {
+      background:none; border:none; font-size:36px; cursor:pointer; color:#000;
+    }
+    .search-results-overlay {
+      position:fixed; top:140px; left:0; right:0; bottom:0; background:#fff;
+      overflow-y:auto; padding:20px; display:none; z-index:997;
+    }
+    .search-results-overlay.active { display:block; }
+    .search-results-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:14px;
+    }
+    .result-item { text-align:center; cursor:pointer; }
+    .result-item img {
+      width:100%; height:130px; object-fit:contain; background:#fafafa; border-radius:10px;
+    }
+    .result-name { font-weight:600; font-size:0.82rem; margin:6px 0 3px; color:#000; }
+    .result-price { font-weight:700; font-size:0.95rem; color:#e63946; }
+    .result-launch { font-weight:800; font-size:0.82rem; color:#dc2626; text-transform:uppercase; letter-spacing:1px; }
+    .category-provider-icon,
+    .all-category-icon {
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      min-height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      overflow: hidden;
+      border: 1px solid #eee;
+      background: #fff;
+      display: block;
+      padding: 1px;
+    }
+    @media (max-width:900px) {
+      .category-provider-icon,
+      .all-category-icon {
+        width: 72px;
+        height: 72px;
+        min-width: 72px;
+        min-height: 72px;
+      }
+    }
+    @media (max-width:480px) {
+      .category-provider-icon,
+      .all-category-icon {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
+        min-height: 64px;
+      }
+    }
+    /* GALERÍA DE PRODUCTO */
+    .product-gallery {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      margin-bottom: 80px;
+      position: relative;
+    }
+    .thumbnails {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100px;
+      max-height: 600px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .thumbnails::-webkit-scrollbar { display: none; }
+    .thumbnail {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      transition: border 0.3s;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+    .thumbnail.active, .thumbnail:hover {
+      border-color: #000;
+    }
+    .thumbnail img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #fafafa;
+    }
+    .main-image {
+      flex: 1;
+      min-width: 0;
+      touch-action: pan-y pinch-zoom;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin: 0 auto;
+      max-width: 600px;
+    }
+    .main-image img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      background: #fafafa;
+      transition: transform 0.8s ease;
+      display: block;
+    }
+    .product-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .size-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .size-label {
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #000;
+    }
+    .size-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .size-option {
+      position: relative;
+      border: 2px solid #000;
+      background: #fff;
+      color: #000;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 58px;
+      text-align: center;
+    }
+    .size-option.active {
+      background: #000;
+      color: #fff;
+    }
+    .size-option.unavailable {
+      border-color: #c4c4c4;
+      color: #b0b0b0;
+      cursor: not-allowed;
+    }
+    .size-option.unavailable::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-top: 2px solid #e63946;
+      transform: rotate(-28deg);
+      pointer-events: none;
+    }
+    /* ZOOM EN ESCRITORIO */
+    @media (min-width: 901px) {
+      .main-image {
+        cursor: zoom-in;
+      }
+      .main-image:hover img {
+        transform: scale(1.4);
+      }
+    }
+    /* VISOR FULLSCREEN */
+    .image-viewer {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .image-viewer.active {
+      display: flex;
+    }
+    .viewer-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 44px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .viewer-prev, .viewer-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 36px;
+      cursor: pointer;
+      opacity: 0.8;
+      z-index: 10;
+    }
+    .viewer-prev { left: 16px; }
+    .viewer-next { right: 16px; }
+    .viewer-prev:hover, .viewer-next:hover {
+      opacity: 1;
+      background: rgba(0,0,0,0.7);
+    }
+    #viewerImg {
+      max-width: 95vw;
+      max-height: 85vh;
+      object-fit: contain;
+    }
+    .related-title-wrap {
+      display: flex;
+      padding: 0 15px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    /* MÓVIL */
+    @media (max-width: 900px) {
+      .product-detail {
+        padding: 0 15px;
+      }
+      .product-gallery {
+        display: grid;
+        grid-template-columns: 90px 1fr;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+      .thumbnails {
+        grid-row: 1;
+        grid-column: 1;
+        width: auto;
+        max-height: 70vh;
+        gap: 10px;
+      }
+      .thumbnail {
+        min-width: 80px;
+        height: 80px;
+      }
+      .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .main-image {
+        grid-row: 1;
+        grid-column: 2;
+        border-radius: 12px;
+        height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
+      }
+      .main-image img {
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+      }
+      .product-info {
+        grid-column: 1 / -1;
+        margin-top: 30px;
+        padding: 0;
+      }
+      .product-title {
+        font-size: 1.6rem;
+        text-align: left;
+        margin-top: 8px;
+      }
+      .product-desc {
+        margin-bottom: 30px;
+        text-align: left;
+      }
+      .product-price-wrapper {
+        text-align: left;
+      }
+      .current-price {
+        font-size: 2rem;
+      }
+      .product-actions {
+        flex-direction: row;
+        gap: 12px;
+      }
+      .add-to-cart-btn, .buy-now-btn {
+        flex: 1;
+        padding: 16px;
+        font-size: 1rem;
+      }
+      .main-container {
+        padding-bottom: 140px;
+      }
+      /* PRODUCTOS RELACIONADOS - CARRUSEL HORIZONTAL EN MÓVIL */
+      .related-products h2 {
+        padding: 0;
+        margin: 0;
+      }
+    .products-grid.grouped-all {
+      display:flex !important;
+      flex-direction:column;
+      overflow:visible;
+      gap:24px;
+      padding:0 15px 40px;
+      scroll-snap-type:none;
+    }
+    .all-category-section {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .all-category-header {
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:6px;
+    }
+    .all-category-title {
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:0.8px;
+    }
+    .all-category-products {
+      display:flex;
+      overflow-x:auto;
+      gap:12px;
+      padding-bottom:6px;
+      scrollbar-width:none;
+    }
+    .all-category-products::-webkit-scrollbar { display:none; }
+    .all-category-products .product-card {
+      flex-shrink:0;
+      width:48vw;
+      min-width:150px;
+      max-width:190px;
+    }
+
+      .products-grid {
+        display: flex !important;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 12px;
+        padding: 0 15px 40px 15px;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+      }
+      .products-grid::-webkit-scrollbar { display: none; }
+      .related-products .product-card {
+        flex-shrink: 0;
+        width: 48vw;
+        min-width: 150px;
+        max-width: 190px;
+        border-radius: 12px;
+        scroll-snap-align: center;
+      }
+      .related-products .product-card img {
+        height: auto;
+        aspect-ratio: 1 / 1;
+      }
+      .related-products .product-info { padding: 10px; }
+      .related-products .product-title {
+        font-size: 0.9rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .related-products .product-desc {
+        font-size: 0.75rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .related-products .product-price-wrapper { font-size: 0.95rem; }
+      .related-products .add-btn { padding: 10px; font-size: 0.8rem; }
+    }
+    @media (max-width: 480px) {
+      .product-gallery {
+        grid-template-columns: 70px 1fr;
+        gap: 10px;
+      }
+      .thumbnail {
+        min-width: 60px;
+        height: 60px;
+      }
+      .main-image {
+        height: 60vh;
+      }
+      .product-actions {
+        flex-direction: column;
+      }
+      .related-products .product-card {
+        width: 52vw;
+        min-width: 140px;
+        max-width: 180px;
+      }
+      .related-products .product-card img {
+        height: auto;
+      }
+    }
+    .main-container { max-width:1400px; margin:0 auto; padding:40px 20px 100px; }
+    .promo-strip {
+      background:#000;
+      color:#fff;
+      overflow:hidden;
+      margin:18px 0 8px;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      margin-right:calc(50% - 50vw);
+    }
+    .promo-marquee { white-space:nowrap; overflow:hidden; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; font-size:0.85rem; padding:8px 0; }
+    .promo-track { display:inline-flex; align-items:center; gap:36px; min-width:max-content; animation:promoScroll 18s linear infinite; }
+    .promo-track span { flex-shrink:0; }
+    @keyframes promoScroll { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+
+    .menu-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.4); opacity:0; visibility:hidden;
+      transition:all .3s; z-index:1090;
+    }
+    .menu-overlay.show { opacity:1; visibility:visible; }
+    .menu-sidebar {
+      position:fixed; top:0; left:-300px; width:280px; height:100%;
+      background:#fff; padding:80px 24px 24px; transition:left .3s;
+      z-index:1100; border-right:1px solid #eee; overflow-y:auto; -webkit-overflow-scrolling: touch;
+    }
+    .menu-sidebar.open { left:0; }
+    .menu-close {
+      position:absolute; top:20px; right:20px; background:none; border:none;
+      font-size:32px; cursor:pointer; color:#000;
+    }
+    .menu-item {
+      padding:16px 0; border-bottom:1px solid #eee; font-weight:600;
+      text-transform:uppercase; cursor:pointer; font-size:0.95rem; color:#000;
+    }
+    .dropdown-toggle {
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .dropdown-arrow { transition:transform .3s; width:16px; height:16px; }
+    .dropdown-toggle.active .dropdown-arrow { transform:rotate(180deg); }
+    .submenu { display:none; padding-left:20px; margin-top:8px; }
+    .submenu.show { display:block; }
+    .submenu-item {
+      padding:12px 0; font-size:0.95rem; color:#000; cursor:pointer;
+      display:flex; align-items:center; gap:14px;
+    }
+    .help-option { padding:10px 12px; border-radius:8px; background:#f7f7f7; cursor:pointer; font-weight:600; color:#000; border:1px solid #eee; margin:6px 0; }
+    .cart-sidebar {
+      position:fixed; top:0; right:-340px; width:320px; max-width:100vw; height:100vh;
+      background:#fff; transition:right .3s; z-index:1200; display:flex; flex-direction:column;
+    }
+    .cart-sidebar.open { right:0; }
+    .cart-header { padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; color:#000; }
+    .cart-close { background:none; border:none; color:#000; font-size:32px; cursor:pointer; }
+    .cart-items { flex:1; overflow-y:auto; padding:20px; -webkit-overflow-scrolling: touch; }
+    .cart-item {
+      display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid #eee;
+      position:relative; color:#000;
+    }
+    .cart-item img.thumb { width:60px; height:60px; object-fit:contain; background:#fafafa; border-radius:8px; flex-shrink:0; }
+    .cart-item-info { flex:1; }
+    .cart-item-info div { font-weight:600; }
+    .cart-item-info small { color:#555; font-size:0.9rem; }
+    .cart-item-remove {
+      position:absolute; right:0; top:50%; transform:translateY(-50%);
+      background:none; border:none; font-size:28px; color:#999; cursor:pointer;
+    }
+    .cart-footer { padding:20px; border-top:1px solid #eee; background:#fff; position:sticky; bottom:0; }
+    .cart-summary { display:flex; flex-direction:column; gap:10px; }
+    .cart-row { display:flex; justify-content:space-between; font-size:0.95rem; color:#111; }
+    .cart-row span:last-child { font-weight:600; }
+    .cart-discount { color:#16a34a; }
+    .cart-total { text-align:right; font-weight:800; font-size:1.4rem; margin-bottom:16px; color:#000; }
+    .cart-coupon { display:flex; flex-direction:column; gap:8px; }
+    .cart-coupon input { padding:10px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:0.95rem; }
+    .cart-coupon button { background:#111; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .cart-coupon-note { font-size:0.85rem; color:#6b7280; }
+    .cart-coupon-note.error { color:#dc2626; }
+    #goToPay { background:#000; color:#fff; padding:16px; border-radius:8px; font-weight:700;
+      text-transform:uppercase; cursor:pointer; width:100%; display:none; }
+    .product-desc { font-size:1rem; line-height:1.6; color:#333; margin-bottom:30px; flex-grow:1; }
+    .product-desc-truncated { display:block; }
+    .product-desc-full { display:none; }
+    .ver-mas { color:#000; font-weight:700; cursor:pointer; margin-top:8px; display:inline-block; }
+    .product-price-wrapper { text-align:right; margin:30px 0 40px; align-self:flex-end; }
+    .launch-badge {
+      font-weight:800;
+      color:#dc2626;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-top:6px;
+      align-self:flex-end;
+    }
+    .old-price { font-size:1.3rem; color:#999; text-decoration:line-through; margin-right:12px; }
+    .current-price { font-size:2.4rem; font-weight:300; color:#000; text-decoration:underline; text-underline-offset:6px; }
+    .offer-price { color:#e63946; }
+    .offer-timer {
+      font-size:0.9rem;
+      font-weight:600;
+      color:#e63946;
+      margin-top:6px;
+    }
+    .offer-timer.expired { color:#999; }
+    .product-actions { display:flex; gap:16px; margin-top:auto; }
+    .add-to-cart-btn, .buy-now-btn {
+      flex:1; background:#000; color:#fff; border:none; padding:18px; border-radius:12px;
+      font-weight:700; text-transform:uppercase; font-size:1.1rem; cursor:pointer; transition:background .2s;
+    }
+    .add-to-cart-btn:hover, .buy-now-btn:hover { background:#222; }
+    .related-products { margin-top:60px; }
+    .category-buttons { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .category-btn { border:1px solid #d1d5db; background:#fff; color:#111; border-radius:999px; padding:8px 14px; font-weight:600; cursor:pointer; }
+    .category-btn.active { background:#111; color:#fff; border-color:#111; }
+    .products-grid { display:grid; gap:18px; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); }
+    .related-products .product-card {
+      position:relative;
+      background:#fff;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,0.15);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .related-products .product-card img {
+      width:100%;
+      height:auto;
+      aspect-ratio:1 / 1;
+      object-fit:contain;
+      background:#fafafa;
+    }
+    .related-products .product-info {
+      padding:12px 14px;
+      flex-grow:1;
+      display:flex;
+      flex-direction:column;
+    }
+    .related-products .product-title {
+      font-weight:700;
+      font-size:1.05rem;
+      margin-bottom:6px;
+    }
+    .related-products .product-desc {
+      font-weight:300;
+      font-size:0.9rem;
+      line-height:1.35;
+      color:#000;
+      margin-bottom:8px;
+      flex-grow:1;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+    .launch-tag-inline {
+      font-weight:800;
+      color:#dc2626;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-size:0.8rem;
+      margin-top:6px;
+    }
+    .related-products .product-desc .ver-mas {
+      color:#000;
+      font-weight:400;
+    }
+    .related-products .product-price-wrapper {
+      font-weight:300;
+      font-size:1.05rem;
+      margin-bottom:10px;
+      text-align:left;
+    }
+    .related-products .old-price {
+      font-size:1rem;
+      color:#999;
+      text-decoration:line-through;
+      margin-right:8px;
+    }
+    .related-products .offer-price {
+      color:#e63946;
+    }
+    .related-products .offer-timer {
+      font-size:0.85rem;
+      font-weight:600;
+      color:#e63946;
+      margin-top:4px;
+    }
+    .related-products .offer-timer.expired { color:#999; }
+    .related-products .add-btn {
+      background:#000;
+      color:#fff;
+      border:none;
+      padding:14px;
+      border-radius:8px;
+      margin:0 16px 16px 16px;
+      width:calc(100% - 32px);
+      font-weight:700;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+    footer {
+      background:#000; color:#fff; padding:40px 20px 30px; text-align:center; margin-top:80px; font-size:0.95rem;
+    }
+    .footer-inner {
+      max-width:1300px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .payment-icons { display:flex; justify-content:center; gap:30px; align-items:center; flex-wrap:wrap; margin-top:24px; }
+    .payment-icons img { height:32px; }
+    .toast {
+      position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+      background:#000; color:#fff; padding:14px 28px; border-radius:8px;
+      font-weight:700; z-index:1300; opacity:0; transition:all .35s; text-transform:uppercase;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(-20px); }
+
+    .age-gate-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.75);
+      z-index: 1800;
+      padding: 20px;
+    }
+    .age-gate-overlay.show { display: flex; }
+    .age-gate-modal {
+      width: min(560px, 100%);
+      background: #fff;
+      color: #111;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    .age-gate-modal h3 { margin: 0 0 12px; font-size: 1.4rem; }
+    .age-gate-modal p { margin: 0; line-height: 1.6; color: #333; }
+    .age-gate-actions { margin-top: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .age-gate-actions button { border: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
+    .age-gate-accept { background: #111; color: #fff; }
+    .age-gate-decline { background: #e5e7eb; color: #111; }
+    .error-msg {
+      color: #e63946;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 1.3rem;
+    }
+    .social-popup-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:1300;
+    }
+    .social-popup-overlay.show { display:flex; }
+    .social-popup {
+      background:#fff; width:340px; max-width:90vw; border-radius:20px; padding:32px 24px 28px; position:relative;
+      box-shadow:0 20px 50px rgba(0,0,0,0.25); text-align:center;
+    }
+    .social-close {
+      position:absolute; top:12px; right:16px; background:none; border:none; font-size:36px; cursor:pointer; color:#000;
+    }
+    .social-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:20px;
+    }
+    .social-grid a:nth-child(4), .social-grid a:nth-child(5) { grid-column:2; }
+    .social-icon {
+      width:78px; height:78px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      transition:transform .25s; margin:0 auto;
+    }
+    .social-icon:hover { transform:scale(1.15); }
+    /* PRODUCTOS RELACIONADOS EN ESCRITORIO - CARRUSEL HORIZONTAL */
+    @media (min-width: 901px) {
+      .related-products h2 {
+        padding: 0;
+        margin: 0;
+      }
+      .related-title-wrap {
+        padding: 0 20px;
+      }
+      .products-grid.grouped-all {
+        padding:0 20px 40px;
+        gap:30px;
+      }
+      .all-category-products {
+        gap:16px;
+      }
+      .all-category-products .product-card {
+        width:240px;
+        max-width:none;
+      }
+      .products-grid {
+        display: flex !important;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 16px;
+        padding: 0 20px 40px;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .products-grid::-webkit-scrollbar {
+        display: none;
+      }
+      .related-products .product-card {
+        flex-shrink: 0;
+        width: 240px;
+        scroll-snap-align: start;
+      }
+      .related-products .product-card img {
+        height: 210px;
+      }
+    }
+  </style>
+  <script src="JS/logout-confirm.js"></script>
+</head>
+<body>
+  <!-- VISOR DE IMAGEN FULLSCREEN -->
+  <div id="imageViewer" class="image-viewer">
+    <button class="viewer-close" id="viewerClose">×</button>
+    <button class="viewer-prev" id="viewerPrev">&lt;</button>
+    <button class="viewer-next" id="viewerNext">&gt;</button>
+    <img id="viewerImg" alt="Producto ampliado">
+  </div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <header class="header">
+    <div class="header-inner" id="headerInner">
+      <div class="header-left">
+        <button id="menuBtn" class="icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="logo" id="siteLogo" onclick="location.href='index.html'">Tumerchmo</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button id="searchBtn" class="icon-btn">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2.5" fill="none"/>
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <button id="cartBtn" class="icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM20 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <span id="cartBadge" style="display:none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <!-- BÚSQUEDA -->
+  <div class="search-bar-container" id="searchBarContainer">
+    <input type="text" class="search-bar-input" id="searchInput" placeholder="Buscar productos..." autocomplete="off">
+    <button class="close-search-x" id="closeSearch">×</button>
+  </div>
+  <div class="search-results-overlay" id="searchResultsOverlay">
+    <div class="search-results-grid" id="searchResults"></div>
+  </div>
+  <aside class="menu-sidebar" id="menuSidebar">
+    <button class="menu-close" id="closeMenu">×</button>
+    <div class="menu-item welcome" id="welcomeMsg">¡Bienvenido!</div>
+    <div id="adminWelcomeBtn" style="display:none; padding:12px 0; font-weight:700; color:#e63946; cursor:pointer; border-bottom:1px solid #eee;" onclick="location.href='admin.html'">Volver a administración</div>
+    <div class="menu-item" onclick="location.href='index.html'">Inicio</div>
+    <div class="menu-item dropdown-toggle" id="categoriesToggle">
+      Productos
+      <svg class="dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+    </div>
+    <div class="submenu" id="categoriesList"></div>
+    <div class="menu-item dropdown-toggle" id="socialBtn">
+      Redes Sociales
+      <svg class="dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+    </div>
+    <div class="menu-item dropdown-toggle" id="helpBtn">
+      Necesitas ayuda?
+      <svg class="dropdown-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+    </div>
+    <div class="submenu" id="helpList" style="padding-left:20px;"></div>
+    <div class="menu-item" id="accountBtn" style="display:none;">Mi cuenta</div>
+    <div class="menu-item" id="logoutBtn" style="display:none; color:#e63946;">Cerrar sesión</div>
+    <div class="menu-item" id="adminBtn" style="display:none;">Ir a administrador</div>
+    <div class="menu-item" id="adminJrBtn" style="display:none;">Ir a administración JR</div>
+    <div class="menu-item" id="remoteAdminBtn" style="display:none; color:#e63946;">Acceso Remoto Admin</div>
+  </aside>
+  <!-- POPUP REDES SOCIALES -->
+  <div class="social-popup-overlay" id="socialPopupOverlay">
+    <div class="social-popup">
+      <button class="social-close" id="closeSocialPopup">×</button>
+      <h3 style="margin:0 0 20px; font-weight:800; font-size:1.4rem; color:#000;">¡Síguenos en nuestras redes!</h3>
+      <div class="social-grid" id="socialLinksGrid">
+        <p style="grid-column:1/-1; color:#999;">Cargando redes...</p>
+      </div>
+    </div>
+  </div>
+  <aside class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>Tu Carrito</h3>
+      <button class="cart-close" id="closeCart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p style="text-align:center;color:#999;padding:60px 20px;">Tu carrito está vacío</p>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-summary">
+        <div class="cart-row" id="cartSubtotalRow"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+        <div class="cart-row cart-discount" id="cartDiscountRow" style="display:none;">
+          <span>Descuento</span><span id="cartDiscountAmount">-$0</span>
+        </div>
+        <div class="cart-total" id="cartTotal">Total: $0</div>
+      </div>
+      <button id="goToPay">Ir a Pago</button>
+    </div>
+  </aside>
+  <section class="promo-strip" id="promoStrip">
+    <div class="promo-marquee" aria-label="Promoción para nuevos usuarios">
+      <div class="promo-track">
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+        <span>REGÍSTRATE Y OBTÉN 15% DE DESCUENTO EN TU PRIMERA COMPRA •</span>
+      </div>
+    </div>
+  </section>
+  <div class="main-container" id="mainContent">
+    <div id="productContent" style="display:none;">
+      <section class="product-detail" id="productDetailSection">
+        <div class="product-gallery">
+          <div class="thumbnails" id="thumbnails"></div>
+          <div class="main-image" id="mainImage">
+            <img id="productImg" src="" alt="">
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="size-selector" id="sizeSelector" style="display:none;">
+            <div class="size-label">Tallas</div>
+            <div class="size-options" id="sizeOptions"></div>
+          </div>
+          <h1 class="product-title" id="productTitle">Cargando...</h1>
+          <div class="product-desc">
+            <span class="product-desc-truncated" id="descTruncated"></span>
+            <span class="product-desc-full" id="descFull"></span>
+            <span class="ver-mas" id="verMas">ver más</span>
+          </div>
+          <div class="product-price-wrapper">
+            <span class="old-price" id="oldPrice" style="display:none;"></span>
+            <span class="current-price" id="currentPrice">$0 MXN</span>
+          </div>
+          <div class="launch-badge" id="launchBadge" style="display:none;">Próximamente</div>
+          <div class="offer-timer" id="offerTimer" style="display:none;"></div>
+          <div class="product-actions">
+            <button class="add-to-cart-btn" id="addToCartBtn">Agregar al carrito</button>
+            <button class="buy-now-btn" id="buyNowBtn">Comprar ahora</button>
+          </div>
+        </div>
+      </section>
+      <section class="related-products">
+        <div class="related-title-wrap">
+          <img id="categoryProviderIcon" class="category-provider-icon" src="" alt="Icono del proveedor" style="display:none;">
+          <h2 id="relatedTitle">Productos por Categoría</h2>
+        </div>
+        <div class="category-buttons" id="categoryButtons"></div>
+        <div class="products-grid" id="relatedGrid"></div>
+      </section>
+    </div>
+    <div id="loadingProduct" style="text-align:center; padding:100px; font-size:1.4rem; color:#666;">
+      Cargando...
+    </div>
+    <div id="notFound" style="display:none; text-align:center; padding:100px; font-size:1.4rem; color:#999;">
+      No se encontró contenido
+    </div>
+    <div id="errorLoading" class="error-msg" style="display:none;">
+      Error al cargar. Verifica tu conexión o intenta más tarde.
+    </div>
+  </div>
+
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        © 2026 Tumerchmo - Todos los derechos reservados<br>
+        <a href="acerca_de_nosotros.html" style="color:#fff; text-decoration:none; border-bottom:1px solid #fff; padding-bottom:2px;">Acerca de nosotros</a> ·
+        <a href="politicas_privacidad.html" style="color:#fff; text-decoration:none; border-bottom:1px solid #fff; padding-bottom:2px;">Privacidad</a> ·
+        <a href="politicas_privacidad.html#reembolsos" style="color:#fff; text-decoration:none; border-bottom:1px solid #fff; padding-bottom:2px;">Reembolsos</a>
+      </div>
+      <div class="footer-right">
+        Contacto: +52 6624672947 · Desarrollador web
+      </div>
+      <div style="width:100%; text-align:center; margin-top:24px;">
+        <p style="opacity:0.8; margin-bottom:12px;">Métodos de pago aceptados</p>
+        <div class="payment-icons">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard">
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="toast" id="toast"></div>
+
+  <div class="age-gate-overlay" id="ageGateOverlay" aria-hidden="true">
+    <div class="age-gate-modal" role="dialog" aria-modal="true" aria-labelledby="ageGateTitle">
+      <h3 id="ageGateTitle">Venta exclusiva para mayores de 18 años</h3>
+      <p>
+        Esta categoría contiene cigarros electrónicos y productos relacionados con nicotina.
+        Su venta está prohibida a menores de edad. Al ingresar, confirmas que tienes 18 años o más.
+      </p>
+      <div class="age-gate-actions">
+        <button class="age-gate-accept" id="ageGateAcceptBtn">Sí, tengo 18 años o más</button>
+        <button class="age-gate-decline" id="ageGateDeclineBtn">No acepto</button>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, onSnapshot, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRCq0FuAY5NYBcQFv03WmdmUSehi1L_B4",
+      authDomain: "merchct-d059a.firebaseapp.com",
+      projectId: "merchct-d059a",
+      storageBucket: "merchct-d059a.firebasestorage.app",
+      messagingSenderId: "290525612160",
+      appId: "1:290525612160:web:1aca5527196597c3eebe65",
+      measurementId: "G-5VE65DCLCW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    let cart = [];
+    let activeCartKey = 'cart_guest';
+    const CART_KEY_FALLBACK = 'cart_guest';
+    const AGE_GATE_ACCEPTED_KEY = 'ageGateAcceptedV1';
+    let ageGatePendingAction = null;
+    let ageGateCurrentContext = '';
+    let ageGateCurrentProduct = null;
+    function getCartStorageKey(user) {
+      const email = user?.email || localStorage.getItem('userEmail');
+      if (email) return `cart_${email.toLowerCase()}`;
+      return CART_KEY_FALLBACK;
+    }
+    function loadCartForUser(user) {
+      const nextKey = getCartStorageKey(user);
+      const guestCart = JSON.parse(localStorage.getItem(CART_KEY_FALLBACK) || '[]');
+      const stored = JSON.parse(localStorage.getItem(nextKey) || '[]');
+      if (nextKey !== CART_KEY_FALLBACK && stored.length === 0 && guestCart.length > 0) {
+        localStorage.setItem(nextKey, JSON.stringify(guestCart));
+        localStorage.removeItem(CART_KEY_FALLBACK);
+        cart = guestCart;
+      } else {
+        cart = stored;
+      }
+      activeCartKey = nextKey;
+      localStorage.setItem('activeCartKey', activeCartKey);
+      updateCart();
+    }
+    function saveCart() {
+      localStorage.setItem(activeCartKey, JSON.stringify(cart));
+    }
+    function recordClickEvent(payload) {
+      const key = 'userClickEvents';
+      const stored = JSON.parse(localStorage.getItem(key) || '[]');
+      stored.push({ ...payload, createdAt: Date.now() });
+      localStorage.setItem(key, JSON.stringify(stored.slice(-300)));
+    }
+    function normalizeText(value) {
+      return String(value || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+    const AGE_RESTRICTED_TERMS = ['vape', 'puff', 'iplay', 'vhill', 'vhill sol'];
+    function hasRestrictedTerm(value) {
+      const normalized = normalizeText(value);
+      return AGE_RESTRICTED_TERMS.some(term => normalized.includes(term));
+    }
+    function isRestrictedProduct(product) {
+      if (!product) return false;
+      return hasRestrictedTerm(product.tipo) || hasRestrictedTerm(product.nombre) || hasRestrictedTerm(product.descripcion);
+    }
+    function hasAcceptedAgeGate() {
+      return localStorage.getItem(AGE_GATE_ACCEPTED_KEY) === 'true';
+    }
+    function isRestrictedCategory(value) {
+      return hasRestrictedTerm(value);
+    }
+    async function logAgeGateEvent(action, product, context) {
+      await addDoc(collection(db, 'age_gate_events'), {
+        action,
+        context: context || '',
+        productId: product?.id || '',
+        productName: product?.nombre || '',
+        productType: product?.tipo || '',
+        userEmail: auth.currentUser?.email || localStorage.getItem('userEmail') || '',
+        createdAt: serverTimestamp()
+      }).catch(() => null);
+    }
+    function hideAgeGateModal() {
+      const overlay = document.getElementById('ageGateOverlay');
+      if (!overlay) return;
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    function showAgeGateModal(product, context, onAccept) {
+      const overlay = document.getElementById('ageGateOverlay');
+      if (!overlay) return;
+      ageGatePendingAction = typeof onAccept === 'function' ? onAccept : null;
+      ageGateCurrentContext = context || '';
+      ageGateCurrentProduct = product || null;
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      logAgeGateEvent('shown', ageGateCurrentProduct, ageGateCurrentContext);
+    }
+    function requireAdultConfirmation(product, context, onAccept) {
+      if (!isRestrictedProduct(product) || hasAcceptedAgeGate()) return false;
+      showAgeGateModal(product, context, onAccept);
+      return true;
+    }
+    window.handleProductClick = (id, section) => {
+      const product = allProducts.find(p => p.id === id);
+      const continueToProduct = () => {
+        recordClickEvent({
+          type: 'producto',
+          section,
+          id,
+          nombre: product?.nombre || ''
+        });
+        location.href = `product.html?id=${id}`;
+      };
+      if (requireAdultConfirmation(product, `seleccionar_${section}`, continueToProduct)) return;
+      continueToProduct();
+    };
+    let currentProduct = null;
+    let allProducts = [];
+    let galeria = [];
+    let currentIndex = 0;
+    let currentFilterType = '';
+    let selectedSize = null;
+    let companiesCache = [];
+
+    function getOfferPricing(item) {
+      const originalPrice = Number(item.precio) || 0;
+      const offerEndMs = getOfferEndMs(item.ofertaHasta);
+      const offerActive = item.precioOferta && offerEndMs && offerEndMs > Date.now();
+      const offerPrice = offerActive ? Number(item.precioOferta) || originalPrice : originalPrice;
+      const discount = offerActive ? Math.max(0, originalPrice - offerPrice) : 0;
+      return { originalPrice, offerPrice, discount };
+    }
+
+    function findProviderIconForType(typeValue = '') {
+      if (!typeValue || companiesCache.length === 0) return '';
+      const productsByType = allProducts.filter(p => p.tipo === typeValue);
+      for (const product of productsByType) {
+        const company = companiesCache.find(item =>
+          (product.proveedorNombre && item.nombre === product.proveedorNombre) ||
+          (product.proveedorContacto && item.contacto === product.proveedorContacto) ||
+          (product.proveedorSocioNombre && item.socioNombre === product.proveedorSocioNombre)
+        );
+        if (company?.imagen) return company.imagen;
+      }
+      const companyByCategory = companiesCache.find(item => item.categoria === typeValue && item.imagen);
+      return companyByCategory?.imagen || '';
+    }
+
+    function updateCategoryProviderIcon(typeValue = '') {
+      const iconEl = document.getElementById('categoryProviderIcon');
+      if (!iconEl) return;
+      const iconUrl = findProviderIconForType(typeValue);
+      if (iconUrl) {
+        iconEl.src = iconUrl;
+        iconEl.style.display = 'block';
+      } else {
+        iconEl.removeAttribute('src');
+        iconEl.style.display = 'none';
+      }
+    }
+
+    function getTypeLabel(typeValue = '') {
+      return typeValue ? typeValue.charAt(0).toUpperCase() + typeValue.slice(1) : 'Todos los Productos';
+    }
+
+    const variantsByCategory = {
+      gorra: ['S/M', 'L/XL'],
+      camiseta: ['CH', 'M', 'L', 'XL', 'XXL'],
+      pantalon: ['28', '30', '32', '34', '36', '38'],
+      cinto: ['30', '32', '34', '36', '38', '40'],
+      tenis: ['24', '25', '26', '27', '28', '29'],
+      perfume: ['50ml', '100ml'],
+      sudadera: ['CH', 'M', 'L', 'XL', 'XXL'],
+      cuadro: []
+    };
+    function getTotalStock(product) {
+      if (!product) return null;
+      if (product.variantesDisponibles && typeof product.variantesDisponibles === 'object' && Object.keys(product.variantesDisponibles).length > 0) {
+        return Object.values(product.variantesDisponibles).reduce((a, b) => a + Number(b || 0), 0);
+      }
+      if (typeof product.disponibles === 'number') return product.disponibles;
+      return null;
+    }
+    function getAvailableStock(product, sizeValue = null) {
+      if (!product) return null;
+      if (sizeValue && product.variantesDisponibles) {
+        return Number(product.variantesDisponibles[sizeValue] || 0);
+      }
+      return getTotalStock(product);
+    }
+
+    const sizeSelector = document.getElementById('sizeSelector');
+    const sizeOptions = document.getElementById('sizeOptions');
+
+    const toast = document.getElementById('toast');
+
+    function showToast(msg, time = 2500) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), time);
+    }
+
+    // VISOR DE IMAGEN
+    const imageViewer = document.getElementById('imageViewer');
+    const viewerImg = document.getElementById('viewerImg');
+    const viewerPrev = document.getElementById('viewerPrev');
+    const viewerNext = document.getElementById('viewerNext');
+
+    function updateViewerArrows() {
+      const visible = galeria.length > 1 ? 'block' : 'none';
+      viewerPrev.style.display = visible;
+      viewerNext.style.display = visible;
+    }
+
+    function openViewer(index) {
+      currentIndex = index;
+      viewerImg.src = galeria[currentIndex];
+      document.getElementById('productImg').src = galeria[currentIndex];
+      updateActiveThumbnail(currentIndex);
+      imageViewer.classList.add('active');
+      updateViewerArrows();
+    }
+
+    viewerPrev.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + galeria.length) % galeria.length;
+      viewerImg.src = galeria[currentIndex];
+      document.getElementById('productImg').src = galeria[currentIndex];
+      updateActiveThumbnail(currentIndex);
+    };
+
+    viewerNext.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % galeria.length;
+      viewerImg.src = galeria[currentIndex];
+      document.getElementById('productImg').src = galeria[currentIndex];
+      updateActiveThumbnail(currentIndex);
+    };
+
+    document.getElementById('viewerClose').onclick = () => imageViewer.classList.remove('active');
+    imageViewer.onclick = (e) => {
+      if (e.target === imageViewer) imageViewer.classList.remove('active');
+    };
+
+    function updateActiveThumbnail(index) {
+      document.querySelectorAll('.thumbnail').forEach((t, i) => {
+        t.classList.toggle('active', i === index);
+      });
+    }
+
+    function renderSizes(product) {
+      if (!sizeSelector || !sizeOptions) return;
+      const sizes = variantsByCategory[product.tipo] || [];
+      const variants = product.variantesDisponibles || {};
+      selectedSize = null;
+      if (sizes.length === 0) {
+        sizeSelector.style.display = 'none';
+        sizeOptions.innerHTML = '';
+        return;
+      }
+      sizeSelector.style.display = 'flex';
+      sizeOptions.innerHTML = '';
+      sizes.forEach(size => {
+        const btn = document.createElement('button');
+        const inStock = (variants[size] || 0) > 0;
+        btn.type = 'button';
+        btn.className = `size-option${inStock ? '' : ' unavailable'}`;
+        btn.textContent = size;
+        btn.dataset.size = size;
+        if (inStock) {
+          btn.addEventListener('click', () => {
+            selectedSize = size;
+            document.querySelectorAll('.size-option').forEach(option => {
+              option.classList.toggle('active', option.dataset.size === size);
+            });
+          });
+        }
+        sizeOptions.appendChild(btn);
+      });
+    }
+
+    // PARÁMETROS URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    const urlType = urlParams.get('tipo') || '';
+    if (!productId && isRestrictedCategory(urlType) && !hasAcceptedAgeGate()) {
+      showAgeGateModal({ tipo: urlType, nombre: urlType }, 'categoria_producto');
+    }
+
+    function getOfferEndMs(value) {
+      if (!value) return null;
+      if (typeof value === 'number') return value;
+      if (value.seconds) return value.seconds * 1000;
+      if (typeof value.toMillis === 'function') return value.toMillis();
+      return null;
+    }
+    function isLaunchProduct(product) {
+      return Boolean(product?.type?.carrusel || product?.type?.anuncio);
+    }
+
+    function formatRemaining(ms) {
+      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    let offerTimerInterval = null;
+
+    function updateOfferTimers() {
+      document.querySelectorAll('[data-offer-end]').forEach(el => {
+        const end = parseInt(el.dataset.offerEnd, 10);
+        if (!end) return;
+        const remaining = end - Date.now();
+        if (remaining <= 0) {
+          el.textContent = 'Oferta finalizada';
+          el.classList.add('expired');
+        } else {
+          el.textContent = `Termina en ${formatRemaining(remaining)}`;
+          el.classList.remove('expired');
+        }
+      });
+    }
+
+    function ensureOfferTimers() {
+      if (!offerTimerInterval) {
+        offerTimerInterval = setInterval(updateOfferTimers, 1000);
+      }
+      updateOfferTimers();
+    }
+
+    // CARGA DE TODOS LOS PRODUCTOS
+    onSnapshot(collection(db, "productos"), (snap) => {
+      allProducts = snap.docs
+        .map(d => ({id: d.id, ...d.data()}))
+        .filter(product => product.habilitado !== false);
+      loadCategoriesMenu();
+      populateTypeFilter();
+
+      if (!productId && urlType) {
+        // Modo lista pura por categoría (sin detalle)
+        document.getElementById('productDetailSection').style.display = 'none';
+        document.getElementById('relatedTitle').textContent = getTypeLabel(urlType);
+        updateCategoryProviderIcon(urlType);
+        document.title = `${urlType.charAt(0).toUpperCase() + urlType.slice(1)} - Tumerchmo`;
+        currentFilterType = urlType;
+        loadFilteredProducts(currentFilterType);
+        document.getElementById('productContent').style.display = 'block';
+        document.getElementById('loadingProduct').style.display = 'none';
+      }
+    });
+
+    onSnapshot(collection(db, "empresas"), (snap) => {
+      companiesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (!productId) {
+        updateCategoryProviderIcon(currentFilterType || urlType);
+      }
+    });
+
+    // TÍTULO DEL SITIO
+    onSnapshot(doc(db, "textos", "site"), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        document.getElementById('siteLogo').textContent = data.titulo || "Tumerchmo";
+        if (!productId && urlType) {
+          document.title = `${urlType.charAt(0).toUpperCase() + urlType.slice(1)} - ${data.titulo || "Tumerchmo"}`;
+        }
+      }
+    });
+
+    // PRODUCTO (solo si hay id)
+    if (productId) {
+      const productRef = doc(db, "productos", productId);
+      onSnapshot(productRef, (snap) => {
+        document.getElementById('loadingProduct').style.display = 'none';
+        if (!snap.exists()) {
+          document.getElementById('notFound').style.display = 'block';
+          return;
+        }
+        currentProduct = { id: snap.id, ...snap.data() };
+        if (currentProduct.habilitado === false) {
+          document.getElementById('productContent').style.display = 'none';
+          document.getElementById('notFound').style.display = 'block';
+          return;
+        }
+        requireAdultConfirmation(currentProduct, 'mostrar_producto');
+        document.getElementById('productContent').style.display = 'block';
+        document.getElementById('productDetailSection').style.display = 'block';
+
+        // En modo detalle, usar urlType si existe, sino tipo del producto
+        currentFilterType = urlType || currentProduct.tipo || '';
+        loadFilteredProducts(currentFilterType);
+
+        // GALERÍA y resto igual
+        galeria = currentProduct.imagenes || [];
+        if (galeria.length === 0 && currentProduct.imagen) {
+          galeria = [currentProduct.imagen];
+        }
+
+        const mainImg = document.getElementById('productImg');
+        mainImg.src = galeria[0] || 'https://via.placeholder.com/600x600?text=Sin+Imagen';
+        mainImg.alt = currentProduct.nombre || 'Producto';
+
+        const thumbnailsContainer = document.getElementById('thumbnails');
+        thumbnailsContainer.innerHTML = '';
+        galeria.forEach((url, index) => {
+          const thumbDiv = document.createElement('div');
+          thumbDiv.className = 'thumbnail' + (index === 0 ? ' active' : '');
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = `Vista ${index + 1}`;
+          img.loading = 'lazy';
+          thumbDiv.appendChild(img);
+          thumbnailsContainer.appendChild(thumbDiv);
+          thumbDiv.addEventListener('click', () => {
+            currentIndex = index;
+            mainImg.src = url;
+            updateActiveThumbnail(index);
+          });
+        });
+
+        // Swipe y tap
+        const mainImageDiv = document.getElementById('mainImage');
+        let touchStartX = 0;
+        mainImageDiv.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, { passive: true });
+        mainImageDiv.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+335
+        mainImageDiv.addEventListener('touchend', e => {
+          if (galeria.length <= 1) {
+            openViewer(currentIndex);
+            return;
+          }
+          const touchEndX = e.changedTouches[0].clientX;
+          const diff = touchStartX - touchEndX;
+          if (Math.abs(diff) > 50) {
+            currentIndex = diff > 0 ? (currentIndex + 1) % galeria.length : (currentIndex - 1 + galeria.length) % galeria.length;
+            mainImg.src = galeria[currentIndex];
+            updateActiveThumbnail(currentIndex);
+          } else {
+            openViewer(currentIndex);
+          }
+        });
+
+        mainImageDiv.addEventListener('click', () => {
+          if (window.innerWidth >= 901) openViewer(currentIndex);
+        });
+
+        // INFO PRODUCTO
+        renderSizes(currentProduct);
+        document.getElementById('productTitle').textContent = currentProduct.nombre || 'Sin título';
+
+        const full = currentProduct.descripcion || 'Sin descripción';
+        const descTruncated = document.getElementById('descTruncated');
+        const descFull = document.getElementById('descFull');
+        const verMas = document.getElementById('verMas');
+        const maxLength = 400;
+        if (full.length > maxLength) {
+          descTruncated.textContent = `${full.slice(0, maxLength)}...`;
+          descFull.textContent = full;
+          descTruncated.style.display = 'block';
+          descFull.style.display = 'none';
+          verMas.style.display = 'inline-block';
+          verMas.textContent = 'ver más';
+          verMas.dataset.expanded = 'false';
+          verMas.onclick = () => {
+            const isExpanded = verMas.dataset.expanded === 'true';
+            verMas.dataset.expanded = (!isExpanded).toString();
+            descTruncated.style.display = isExpanded ? 'block' : 'none';
+            descFull.style.display = isExpanded ? 'none' : 'block';
+            verMas.textContent = isExpanded ? 'ver más' : 'ver menos';
+          };
+        } else {
+          descTruncated.textContent = full;
+          descFull.textContent = full;
+          descTruncated.style.display = 'none';
+          descFull.style.display = 'block';
+          verMas.style.display = 'none';
+          verMas.onclick = null;
+        }
+
+        const oldEl = document.getElementById('oldPrice');
+        const curEl = document.getElementById('currentPrice');
+        const timerEl = document.getElementById('offerTimer');
+        const priceWrapper = document.querySelector('.product-price-wrapper');
+        const launchBadge = document.getElementById('launchBadge');
+        const addBtn = document.getElementById('addToCartBtn');
+        const buyBtn = document.getElementById('buyNowBtn');
+        const isLaunch = isLaunchProduct(currentProduct);
+        const totalStock = getTotalStock(currentProduct);
+        const isOutOfStock = totalStock !== null && totalStock <= 0;
+        if (isLaunch) {
+          if (priceWrapper) priceWrapper.style.display = 'none';
+          oldEl.style.display = 'none';
+          curEl.textContent = '';
+          timerEl.style.display = 'none';
+          timerEl.removeAttribute('data-offer-end');
+          launchBadge.style.display = 'block';
+          launchBadge.textContent = 'Próximamente';
+          addBtn.style.display = 'none';
+          buyBtn.style.display = 'none';
+        } else {
+          if (priceWrapper) priceWrapper.style.display = '';
+          launchBadge.style.display = isOutOfStock ? 'block' : 'none';
+          launchBadge.textContent = 'Agotado';
+          const offerEndMs = getOfferEndMs(currentProduct.ofertaHasta);
+          const offerActive = currentProduct.precioOferta && offerEndMs && offerEndMs > Date.now();
+          if (offerActive) {
+            oldEl.textContent = `$${currentProduct.precio.toLocaleString()} MXN`;
+            oldEl.style.display = 'inline';
+            curEl.textContent = `$${currentProduct.precioOferta.toLocaleString()} MXN`;
+            curEl.classList.add('offer-price');
+            timerEl.dataset.offerEnd = offerEndMs;
+            timerEl.style.display = 'block';
+            ensureOfferTimers();
+          } else if (currentProduct.precioAntiguo) {
+            oldEl.textContent = `$${currentProduct.precioAntiguo.toLocaleString()} MXN`;
+            oldEl.style.display = 'inline';
+            curEl.textContent = `$${currentProduct.precio.toLocaleString()} MXN`;
+            curEl.classList.add('offer-price');
+            timerEl.style.display = 'none';
+            timerEl.removeAttribute('data-offer-end');
+          } else {
+            oldEl.style.display = 'none';
+            curEl.classList.remove('offer-price');
+            curEl.textContent = `$${currentProduct.precio.toLocaleString()} MXN`;
+            timerEl.style.display = 'none';
+            timerEl.removeAttribute('data-offer-end');
+          }
+          addBtn.style.display = isOutOfStock ? 'none' : '';
+          buyBtn.style.display = isOutOfStock ? 'none' : '';
+        }
+      }, (error) => {
+        console.error("Error:", error);
+        document.getElementById('errorLoading').style.display = 'block';
+      });
+    } else if (!urlType) {
+      document.getElementById('loadingProduct').style.display = 'none';
+      document.getElementById('notFound').style.display = 'block';
+      document.getElementById('notFound').textContent = 'Selecciona una categoría desde el menú';
+    }
+
+    // FILTRO DE TIPOS
+    function populateTypeFilter() {
+      const tipos = [...new Set(allProducts.map(p => p.tipo).filter(Boolean))].sort();
+      const buttons = document.getElementById('categoryButtons');
+      buttons.innerHTML = '';
+      const addCategoryButton = (type, label) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `category-btn${currentFilterType === type ? ' active' : ''}`;
+        btn.dataset.type = type;
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          currentFilterType = type;
+          document.querySelectorAll('.category-btn').forEach(item => item.classList.remove('active'));
+          btn.classList.add('active');
+          loadFilteredProducts(currentFilterType);
+          if (!productId) {
+            document.getElementById('relatedTitle').textContent = getTypeLabel(currentFilterType);
+            updateCategoryProviderIcon(currentFilterType);
+          }
+        });
+        buttons.appendChild(btn);
+      };
+      addCategoryButton('', 'Todos');
+      tipos.forEach(t => {
+        addCategoryButton(t, t.charAt(0).toUpperCase() + t.slice(1));
+      });
+    }
+
+    const MAX_RELATED_ITEMS = 6;
+    async function loadFilteredProducts(filterType = '') {
+      const grid = document.getElementById('relatedGrid');
+      grid.classList.remove('grouped-all');
+      grid.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">Cargando...</p>';
+
+      if (!filterType) {
+        const grouped = {};
+        allProducts.forEach(p => {
+          const tipo = p.tipo || 'otros';
+          if (!grouped[tipo]) grouped[tipo] = [];
+          grouped[tipo].push(p);
+        });
+        const orderedTipos = Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+        if (orderedTipos.length === 0) {
+          grid.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">No hay productos disponibles</p>';
+          return;
+        }
+        grid.classList.add('grouped-all');
+        const html = orderedTipos.map(tipo => {
+          const iconUrl = findProviderIconForType(tipo);
+          const products = grouped[tipo].slice(0, MAX_RELATED_ITEMS).map(p => {
+            const launchProduct = isLaunchProduct(p);
+            const offerEndMs = getOfferEndMs(p.ofertaHasta);
+            const offerActive = p.precioOferta && offerEndMs && offerEndMs > Date.now();
+            const oldPrice = offerActive ? p.precio : p.precioAntiguo;
+            const currentPrice = offerActive ? p.precioOferta : p.precio;
+            const timerHtml = offerActive && !launchProduct ? `<div class="offer-timer" data-offer-end="${offerEndMs}"></div>` : '';
+            const totalStock = getTotalStock(p);
+            const isOutOfStock = !launchProduct && totalStock !== null && totalStock <= 0;
+            const relatedDesc = (p.descripcion || '').trim();
+            const descTruncada = relatedDesc.length > 40 ? `${relatedDesc.substring(0, 40)}...` : relatedDesc;
+            const verMas = relatedDesc.length > 40 ? '<span class="ver-mas"> ver más</span>' : '';
+            return `
+              <div class="product-card" onclick="handleProductClick('${p.id}', 'relacionados')">
+                <img src="${(p.imagenes && p.imagenes[0]) || p.imagen || 'https://via.placeholder.com/280x260?text=Sin+Img'}" loading="lazy" alt="${p.nombre||''}">
+                <div class="product-info">
+                  <div class="product-title">${p.nombre||'Sin nombre'}</div>
+                  <div class="product-desc">${descTruncada}${verMas}</div>
+                  ${launchProduct ? '<div class="launch-tag-inline">Próximamente</div>' : `
+                  <div class="product-price-wrapper">
+                    ${oldPrice ? `<span class="old-price">$${oldPrice.toLocaleString()} MXN</span>` : ''}
+                    <span class="price ${oldPrice ? 'offer-price' : ''}">$${currentPrice.toLocaleString()} MXN</span>
+                  </div>`}
+                  ${isOutOfStock ? '<div class="launch-tag-inline">Agotado</div>' : timerHtml}
+                </div>
+                ${launchProduct || isOutOfStock ? '' : `<button class="add-btn" onclick="event.stopPropagation(); addToCartById('${p.id}')">Agregar</button>`}
+              </div>
+            `;
+          }).join('');
+          return `
+            <section class="all-category-section">
+              <div class="all-category-header">
+                ${iconUrl ? `<img class="all-category-icon" src="${iconUrl}" alt="Icono proveedor ${tipo}">` : ''}
+                <h3 class="all-category-title">${getTypeLabel(tipo)}</h3>
+              </div>
+              <div class="all-category-products">${products}</div>
+            </section>
+          `;
+        }).join('');
+        grid.innerHTML = html;
+        ensureOfferTimers();
+        return;
+      }
+
+      let filtered = allProducts.filter(p => p.tipo === filterType);
+      if (productId) filtered = filtered.filter(p => p.id !== productId);
+      filtered = filtered.slice(0, MAX_RELATED_ITEMS);
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">No hay productos en esta categoría</p>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const launchProduct = isLaunchProduct(p);
+        const offerEndMs = getOfferEndMs(p.ofertaHasta);
+        const offerActive = p.precioOferta && offerEndMs && offerEndMs > Date.now();
+        const oldPrice = offerActive ? p.precio : p.precioAntiguo;
+        const currentPrice = offerActive ? p.precioOferta : p.precio;
+        const timerHtml = offerActive && !launchProduct ? `<div class="offer-timer" data-offer-end="${offerEndMs}"></div>` : '';
+        const totalStock = getTotalStock(p);
+        const isOutOfStock = !launchProduct && totalStock !== null && totalStock <= 0;
+        const relatedDesc = (p.descripcion || '').trim();
+        const descTruncada = relatedDesc.length > 40 ? `${relatedDesc.substring(0, 40)}...` : relatedDesc;
+        const verMas = relatedDesc.length > 40 ? '<span class="ver-mas"> ver más</span>' : '';
+        return `
+        <div class="product-card" onclick="handleProductClick('${p.id}', 'relacionados')">
+          <img src="${(p.imagenes && p.imagenes[0]) || p.imagen || 'https://via.placeholder.com/280x260?text=Sin+Img'}" loading="lazy" alt="${p.nombre||''}">
+          <div class="product-info">
+            <div class="product-title">${p.nombre||'Sin nombre'}</div>
+            <div class="product-desc">${descTruncada}${verMas}</div>
+            ${launchProduct ? '<div class="launch-tag-inline">Próximamente</div>' : `
+            <div class="product-price-wrapper">
+              ${oldPrice ? `<span class="old-price">$${oldPrice.toLocaleString()} MXN</span>` : ''}
+              <span class="price ${oldPrice ? 'offer-price' : ''}">$${currentPrice.toLocaleString()} MXN</span>
+            </div>`}
+            ${isOutOfStock ? '<div class="launch-tag-inline">Agotado</div>' : timerHtml}
+          </div>
+          ${launchProduct || isOutOfStock ? '' : `<button class="add-btn" onclick="event.stopPropagation(); addToCartById('${p.id}')">Agregar</button>`}
+        </div>
+      `;
+      }).join('');
+      ensureOfferTimers();
+    }
+
+
+    // CATEGORÍAS EN MENÚ - Van a product.html?tipo=...
+    function goToCategoryFromMenu(tipo) {
+      const encodedType = encodeURIComponent(tipo);
+      recordClickEvent({ type: 'seccion', section: 'categoria', value: tipo });
+      document.getElementById('menuSidebar').classList.remove('open');
+      document.getElementById('menuOverlay').classList.remove('show');
+      location.href = `product.html?tipo=${encodedType}`;
+    }
+
+    function loadCategoriesMenu() {
+      const tipos = [...new Set(allProducts.map(p => p.tipo).filter(Boolean))].sort();
+      document.getElementById('categoriesList').innerHTML = tipos.map(t => `
+        <div class="submenu-item" onclick="goToCategoryFromMenu('${t.replace(/'/g, "\\'")}')">${t.charAt(0).toUpperCase() + t.slice(1)}</div>
+      `).join('');
+    }
+
+    // CARRITO
+    function updateCartBadgeAndTotal() {
+      const qty = cart.reduce((sum,i)=>sum+i.qty,0);
+      let subtotalOriginal = 0;
+      let discount = 0;
+      cart.forEach(item => {
+        const pricing = getOfferPricing(item);
+        subtotalOriginal += pricing.originalPrice * item.qty;
+        discount += pricing.discount * item.qty;
+      });
+      const total = Math.max(0, subtotalOriginal - discount);
+      const badge = document.getElementById('cartBadge');
+      badge.textContent = qty;
+      badge.style.display = qty > 0 ? 'flex' : 'none';
+      const subtotalRow = document.getElementById('cartSubtotalRow');
+      document.getElementById('cartSubtotal').textContent = `$${subtotalOriginal.toLocaleString('es-MX')}`;
+      document.getElementById('cartTotal').textContent = `Total: $${total.toLocaleString('es-MX')}`;
+      const discountRow = document.getElementById('cartDiscountRow');
+      const discountAmount = document.getElementById('cartDiscountAmount');
+      if (discount > 0) {
+        discountRow.style.display = 'flex';
+        discountAmount.textContent = `-$${discount.toLocaleString('es-MX')}`;
+        if (subtotalRow) subtotalRow.style.display = 'flex';
+      } else {
+        discountRow.style.display = 'none';
+        if (subtotalRow) subtotalRow.style.display = 'none';
+      }
+      document.getElementById('cartItems').innerHTML = cart.length === 0
+        ? '<p style="text-align:center;color:#999;padding:60px 20px;">Tu carrito está vacío</p>'
+        : cart.map((item, idx) => {
+          const pricing = getOfferPricing(item);
+          return `
+          <div class="cart-item">
+            <img src="${(item.imagenes && item.imagenes[0]) || item.imagen || 'https://via.placeholder.com/60?text=?'}"" class="thumb" alt="${item.nombre}">
+            <div class="cart-item-info">
+              <div>${item.nombre || 'Producto'}</div>
+              <small>x${item.qty}${item.talla ? ` • Talla ${item.talla}` : ''} • $${(pricing.offerPrice * item.qty).toLocaleString()}</small>
+            </div>
+            <button class="cart-item-remove" onclick="removeFromCart(${idx})">×</button>
+          </div>
+        `;
+        }).join('');
+      document.getElementById('goToPay').style.display = cart.length > 0 ? 'block' : 'none';
+    }
+
+    window.addToCart = function() {
+      if (!currentProduct) return false;
+      const performAddToCart = () => {
+        if (isLaunchProduct(currentProduct)) {
+          showToast('Producto próximamente');
+          return false;
+        }
+        const sizes = variantsByCategory[currentProduct.tipo] || [];
+        const requiresSize = sizes.length > 0;
+        if (requiresSize && !selectedSize) {
+          showToast('Selecciona una talla');
+          return false;
+        }
+        const sizeValue = requiresSize ? selectedSize : null;
+        const available = getAvailableStock(currentProduct, sizeValue);
+        const existe = cart.find(x => x.id === currentProduct.id && x.talla === sizeValue);
+        const currentQty = existe ? existe.qty : 0;
+        if (available !== null && currentQty >= available) {
+          showToast('Producto no disponible');
+          return false;
+        }
+        if (existe) existe.qty++;
+        else cart.push({ ...currentProduct, qty: 1, talla: sizeValue });
+        saveCart();
+        updateCartBadgeAndTotal();
+        showToast('¡Agregado al carrito!');
+        const badge = document.getElementById('cartBadge');
+        badge.style.animation = 'shake 0.5s ease-in-out';
+        return true;
+      };
+      if (requireAdultConfirmation(currentProduct, 'agregar_producto', performAddToCart)) return false;
+      return performAddToCart();
+    };
+
+    window.addToCartById = function(id) {
+      const product = allProducts.find(x => x.id === id);
+      if (!product) return;
+      const performAddToCart = () => {
+        if (isLaunchProduct(product)) {
+          showToast('Producto próximamente');
+          return;
+        }
+        const sizes = variantsByCategory[product.tipo] || [];
+        if (sizes.length > 0) {
+          showToast('Selecciona la talla primero');
+          location.href = `product.html?id=${id}`;
+          return;
+        }
+        const available = getAvailableStock(product);
+        const exists = cart.find(x => x.id === id);
+        const currentQty = exists ? exists.qty : 0;
+        if (available !== null && currentQty >= available) {
+          showToast('Producto no disponible');
+          return;
+        }
+        exists ? exists.qty++ : cart.push({ ...product, qty: 1 });
+        saveCart();
+        updateCartBadgeAndTotal();
+        const badge = document.getElementById('cartBadge');
+        badge.style.animation = 'none';
+        badge.offsetHeight;
+        badge.style.animation = 'shake 0.5s ease-in-out';
+        showToast('¡Agregado al carrito!');
+      };
+      if (requireAdultConfirmation(product, 'agregar_relacionado', performAddToCart)) return;
+      performAddToCart();
+    };
+
+    window.removeFromCart = function(idx) {
+      cart.splice(idx, 1);
+      saveCart();
+      updateCartBadgeAndTotal();
+    };
+
+    if (productId) {
+      document.getElementById('addToCartBtn').onclick = addToCart;
+      document.getElementById('buyNowBtn').onclick = () => {
+        const added = addToCart();
+        if (!added) return;
+        location.href = 'pago.html';
+      };
+    }
+
+    // BÚSQUEDA, REDES, AYUDA, MENÚ, AUTH (igual)
+    document.getElementById('searchBtn').onclick = () => {
+      document.getElementById('searchBarContainer').classList.add('active');
+      document.getElementById('searchResultsOverlay').classList.add('active');
+      document.getElementById('mainContent').style.display = 'none';
+      setTimeout(() => document.getElementById('searchInput').focus(), 300);
+    };
+
+    document.getElementById('closeSearch').onclick = () => {
+      document.getElementById('searchBarContainer').classList.remove('active');
+      document.getElementById('searchResultsOverlay').classList.remove('active');
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchResults').innerHTML = '';
+    };
+
+    document.getElementById('searchInput').oninput = () => {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (q.length < 2) {
+        document.getElementById('searchResults').innerHTML = '';
+        return;
+      }
+      const resultados = allProducts.filter(p =>
+        p.nombre?.toLowerCase().includes(q) ||
+        p.descripcion?.toLowerCase().includes(q) ||
+        p.tipo?.toLowerCase().includes(q)
+      );
+      document.getElementById('searchResults').innerHTML = resultados.length === 0
+        ? '<div style="text-align:center;padding:80px;color:#999;">No se encontraron productos</div>'
+        : resultados.map(p => `
+          <div class="result-item" onclick="handleProductClick('${p.id}', 'busqueda')">
+            <img src="${(p.imagenes && p.imagenes[0]) || p.imagen || 'https://via.placeholder.com/130'}" loading="lazy">
+            <div class="result-name">${p.nombre}</div>
+            ${isLaunchProduct(p) ? '<div class="result-launch">Próximamente</div>' : `<div class="result-price">$${p.precio.toLocaleString()} MXN</div>`}
+          </div>
+        `).join('');
+    };
+
+    document.getElementById('socialBtn').onclick = () => {
+      document.getElementById('socialPopupOverlay').classList.add('show');
+      document.getElementById('menuSidebar').classList.remove('open');
+      document.getElementById('menuOverlay').classList.remove('show');
+    };
+
+    document.getElementById('closeSocialPopup').onclick = () => {
+      document.getElementById('socialPopupOverlay').classList.remove('show');
+    };
+
+    document.getElementById('socialPopupOverlay').onclick = (e) => {
+      if (e.target === document.getElementById('socialPopupOverlay')) {
+        document.getElementById('socialPopupOverlay').classList.remove('show');
+      }
+    };
+
+    onSnapshot(doc(db, "links", "redes"), (snap) => {
+      const grid = document.getElementById('socialLinksGrid');
+      grid.innerHTML = '';
+      if (!snap.exists()) {
+        grid.innerHTML = '<p style="grid-column:1/-1;color:#999;">Redes no configuradas</p>';
+        return;
+      }
+      const data = snap.data();
+      const redes = [
+        {campo: "youtube", color: "#FF0000", icon: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M23 12s0-3.9-.4-5.7c-.2-1-.9-1.8-1.8-2-.9-.3-4.6-.3-4.6-.3h-.4s-3.7 0-4.6.3c-1 .2-1.7 1-1.8 2C7 8.1 7 12 7 12s0 3.9.4 5.7c-.2 1 .9 1.7 1.8 1.9 1 .3 4.6 .3 4.6 .3h-.4s3.7 0 4.6-.3c1-.2 1.7-.9 1.8-1.9C23 15.9 23 12 23 12zM10 15.5l5.8-3.5L10 8.5v7z"/></svg>'},
+        {campo: "instagram", color: "#E4405F", icon: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#fff" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4.8" stroke="#fff" stroke-width="2" fill="none"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg>'},
+        {campo: "facebook", color: "#1877F2", icon: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M17 2v4h-2c-1 0-1.7.8-1.7 1.7V10h3.7l-.5 3.8H13.3V22h-4V13.8H6V10h3.3V7.3C9.3 4.1 11.4 2 14.5 2H17z"/></svg>'},
+        {campo: "tiktok", color: "#000", icon: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M19 6h-3.4c0-2.5-2-4.5-4.5-4.5V5c1.3 0 2.4 1.1 2.4 2.4V12c0 2.2-1.8 4-4 4s-4-1.8-4-4c0-2 1.4-3.7 3.3-3.9V6c-3.3.3-6 3.1-6 6.5 0 3.6 2.9 6.5 6.5 6.5s6.5-2.9 6.5-6.5V8.8c.9.8 2 1.2 3.2 1.2V6z" fill="#FF0050"/></svg>'},
+        {campo: "x", color: "#000", icon: '<svg viewBox="0 0 24 24"><path fill="#fff" d="M18.9 2h-13.8C3.5 2 2 3.5 2 5.1v13.8c0 1.6 1.3 2.9 2.9 2.9h13.8c1.6 0 2.9-1.3 2.9-2.9V5.1c0-1.6-1.3-2.9-2.9-2.9zM17.3 9.1c0 5.3-4 9-9 9-1.8 0-3.5-.5-4.9-1.5.3 0 .5 0 .8 0 1.5 0 3-.5 4.1-1.4-1.4 0-2.6-1-3-2.3.2 0 .4 0 .6 0 .3 0 .5 0 .8-.1-1.5-.3-2.6-1.6-2.6-3.2v0c.4.2.9.4 1.4.4-.9-.6-1.5-1.6-1.5-2.7 0-.6.2-1.2.4-1.7 1.6 2 4 3.3 6.7 3.4-.1-.3-.1-.6-.1-1 0-2.4 1.9-4.3 4.3-4.3 1.2 0 2.3.5 3.1 1.4 1-.2 1.9-.6 2.7-1.1-.3 1-1 1.8-1.9 2.3 0 0 .9-.4 1.8-.8-.6.8-1.3 1.5-2 1.9 0 .1.2.3.3.4z"/></svg>'}
+      ];
+      redes.forEach(r => {
+        if (data[r.campo] && data[r.campo].trim() !== "") {
+          const a = document.createElement('a');
+          a.href = data[r.campo].trim();
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.className = "social-icon";
+          a.style.background = r.color;
+          a.innerHTML = r.icon;
+          grid.appendChild(a);
+        }
+      });
+      if (grid.children.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1;color:#999;">Sin redes configuradas</p>';
+      }
+    });
+
+    document.getElementById('helpBtn').onclick = () => {
+      const helpList = document.getElementById('helpList');
+      const btn = document.getElementById('helpBtn');
+      if (helpList.classList.contains('show')) {
+        helpList.classList.remove('show');
+        btn.classList.remove('active');
+        helpList.innerHTML = '';
+      } else {
+        helpList.innerHTML = '';
+        const opciones = [
+          {id: 'pago', label: 'Necesito ayuda con mi pago'},
+          {id: 'usuario', label: 'Necesito ayuda con mi usuario y correo'},
+          {id: 'pedido', label: 'Necesito ayuda con mi pedido'},
+          {id: 'otro', label: 'Otro problema'}
+        ];
+        opciones.forEach(op => {
+          const div = document.createElement('div');
+          div.className = 'help-option';
+          div.textContent = op.label;
+          div.onclick = () => {
+            localStorage.setItem('help_motivo', op.id);
+            location.href = 'ayuda.html';
+          };
+          helpList.appendChild(div);
+        });
+        helpList.classList.add('show');
+        btn.classList.add('active');
+      }
+    };
+
+    function isLocalAdminFlag() {
+      const keys = ['userHandle','user','username','userName','handle','user_tag','admin'];
+      return keys.some(k => localStorage.getItem(k) === '@addmin08213ddv');
+    }
+
+    function updatePromoStripVisibility(user) {
+      const promoStrip = document.getElementById('promoStrip');
+      if (!promoStrip) return;
+      const promoSeenKey = 'promoWelcomeSeen';
+      if (user) {
+        promoStrip.style.display = 'none';
+        localStorage.setItem(promoSeenKey, 'true');
+        return;
+      }
+      const alreadySeen = localStorage.getItem(promoSeenKey) === 'true';
+      if (alreadySeen) {
+        promoStrip.style.display = 'none';
+        return;
+      }
+      promoStrip.style.display = 'block';
+      localStorage.setItem(promoSeenKey, 'true');
+    }
+
+    function updateWelcomeAndMenu(user) {
+      const welcome = document.getElementById('welcomeMsg');
+      const adminWelcome = document.getElementById('adminWelcomeBtn');
+      const accountBtn = document.getElementById('accountBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const adminBtn = document.getElementById('adminBtn');
+      const adminJrBtn = document.getElementById('adminJrBtn');
+      const esAdmin = isLocalAdminFlag() || user?.displayName === '@addmin08213ddv' || user?.email === '@addmin08213ddv';
+      if (esAdmin) {
+        welcome.textContent = "¡Bienvenido, Administrador!";
+        adminWelcome.style.display = "block";
+      } else if (user) {
+        const nombre = user.displayName || (user.email ? user.email.split('@')[0] : 'Usuario');
+        welcome.textContent = `¡Bienvenido, ${nombre.charAt(0).toUpperCase() + nombre.slice(1)}!`;
+        adminWelcome.style.display = "none";
+      } else {
+        welcome.textContent = "¡Bienvenido!";
+        adminWelcome.style.display = "none";
+      }
+      accountBtn.style.display = (user || esAdmin) ? "block" : "none";
+      logoutBtn.style.display = (user || esAdmin) ? "block" : "none";
+      adminBtn.style.display = esAdmin ? "block" : "none";
+      if (!user) {
+        adminJrBtn.style.display = "none";
+        adminJrBtn.onclick = null;
+      }
+      localStorage.setItem('userName', welcome.textContent.replace(/¡Bienvenido, |!/g, '').replace(' Administrador', ''));
+      if (user?.email) localStorage.setItem('userEmail', user.email);
+    }
+
+    const ALLOWED_REMOTE_ADMIN = {
+      emails: ['fernando8aparra@gmail.com', 'luisatondo28@gmail.com'],
+      uids: ['J4Ks0CAxe3NzhF46kiuOVyDZ81i1']
+    };
+
+    function updateRemoteAdminAccess(user) {
+      const remoteBtn = document.getElementById('remoteAdminBtn');
+      let isAllowed = false;
+      if (user) {
+        const emailLower = user.email ? user.email.toLowerCase() : '';
+        if (ALLOWED_REMOTE_ADMIN.emails.includes(emailLower) || (user.uid && ALLOWED_REMOTE_ADMIN.uids.includes(user.uid))) {
+          isAllowed = true;
+        }
+      }
+      remoteBtn.style.display = isAllowed ? 'block' : 'none';
+      if (isAllowed) {
+        remoteBtn.onclick = () => location.href = 'admin.html';
+      }
+    }
+
+    async function updateAdminJrAccess(user) {
+      const adminJrBtn = document.getElementById('adminJrBtn');
+      adminJrBtn.style.display = 'none';
+      adminJrBtn.onclick = null;
+      if (!user?.email) return;
+      try {
+        const emailLower = user.email.toLowerCase();
+        const permisosSnap = await getDoc(doc(db, 'adminjr_permisos', emailLower));
+        const isAdminJr = permisosSnap.exists() && permisosSnap.data().activo === true;
+        adminJrBtn.style.display = isAdminJr ? 'block' : 'none';
+        if (isAdminJr) {
+          adminJrBtn.onclick = () => location.href = 'adminjr.html';
+        }
+      } catch (error) {
+        console.error('Error verificando admin jr:', error);
+      }
+    }
+
+    onAuthStateChanged(auth, user => {
+      updateWelcomeAndMenu(user);
+      updateRemoteAdminAccess(user);
+      updateAdminJrAccess(user);
+      updatePromoStripVisibility(user);
+      loadCartForUser(user);
+    });
+
+    if (isLocalAdminFlag()) updateWelcomeAndMenu(null);
+
+    document.getElementById('accountBtn').onclick = () => location.href = "perfil.html";
+    document.getElementById('adminBtn').onclick = () => location.href = "admin.html";
+    document.getElementById('adminJrBtn').onclick = () => location.href = "adminjr.html";
+    document.getElementById('logoutBtn').onclick = async () => {
+      const confirmed = await window.showLogoutConfirm();
+      if (!confirmed) return;
+      signOut(auth).then(() => {
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        location.reload();
+      }).catch(() => {
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        location.reload();
+      });
+    };
+
+    document.getElementById('menuBtn').onclick = () => {
+      document.getElementById('menuSidebar').classList.add('open');
+      document.getElementById('menuOverlay').classList.add('show');
+    };
+
+    [document.getElementById('menuOverlay'), document.getElementById('closeMenu')].forEach(el => {
+      el.onclick = () => {
+        document.getElementById('menuSidebar').classList.remove('open');
+        document.getElementById('menuOverlay').classList.remove('show');
+      };
+    });
+
+    document.getElementById('categoriesToggle').onclick = () => {
+      const sub = document.getElementById('categoriesList');
+      const tog = document.getElementById('categoriesToggle');
+      sub.classList.toggle('show');
+      tog.classList.toggle('active');
+    };
+
+    document.getElementById('cartBtn').onclick = () => {
+      document.getElementById('cartSidebar').classList.add('open');
+      updateCartBadgeAndTotal();
+    };
+
+    document.getElementById('closeCart').onclick = () => {
+      document.getElementById('cartSidebar').classList.remove('open');
+    };
+
+    document.getElementById('ageGateAcceptBtn').onclick = () => {
+      localStorage.setItem(AGE_GATE_ACCEPTED_KEY, 'true');
+      hideAgeGateModal();
+      logAgeGateEvent('accepted', ageGateCurrentProduct, ageGateCurrentContext);
+      const pending = ageGatePendingAction;
+      ageGatePendingAction = null;
+      if (pending) pending();
+    };
+    document.getElementById('ageGateDeclineBtn').onclick = () => {
+      hideAgeGateModal();
+      logAgeGateEvent('declined', ageGateCurrentProduct, ageGateCurrentContext);
+      ageGatePendingAction = null;
+      showToast('Debes confirmar que eres mayor de edad para continuar.');
+    };
+    document.getElementById('goToPay').onclick = () => {
+      if (cart.length === 0) return;
+      const isLogged = !!auth.currentUser || localStorage.getItem('userName');
+      location.href = isLogged ? 'pago.html' : 'login.html';
+    };
+
+    window.goToRegister = () => {
+      location.href = 'login.html?mode=register';
+    };
+    window.goToStoreList = () => {
+      document.getElementById('relatedGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    loadCartForUser(auth.currentUser);
+  </script>
+
+</body>
+</html>
