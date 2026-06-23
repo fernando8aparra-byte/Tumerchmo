@@ -388,32 +388,40 @@
     border:1px solid var(--crema-3);
   }
   @media(max-width:840px){
-    .oferta{padding:64px 18px;}
-    .oferta-inner{grid-template-columns:1fr;border-radius:10px;}
-    .oferta .oferta-visual{min-height:auto;padding:0;}
-    .oferta .oferta-info{padding:38px 24px;}
+    .oferta{padding:56px 12px;}
+    .oferta-inner{grid-template-columns:minmax(116px,.82fr) minmax(0,1.18fr);border-radius:14px;}
+    .oferta .oferta-info{padding:24px 16px;}
   }
   @media(max-width:480px){
-    .oferta{padding:48px 14px;}
-    .oferta .oferta-visual{min-height:auto;padding:0;}
-    .oferta .oferta-visual h2{font-size:28px;}
-    .oferta .oferta-visual p{font-size:14px;}
-    .oferta-visual .recetarios-list{max-height:150px;overflow-y:auto;}
+    .oferta{padding:42px 8px;}
+    .oferta-inner{grid-template-columns:42% 58%;border-radius:12px;}
+    .oferta .oferta-info{padding:16px 10px;}
+    .precio-row{gap:6px;flex-wrap:wrap;}
+    .precio-tachado{font-size:13px;}
+    .precio-actual{font-size:34px;}
+    .precio-moneda{font-size:11px;margin-bottom:4px;}
+    .precio-nota{font-size:10.5px;margin-bottom:12px;}
+    .lista-incluye{margin-bottom:14px;}
+    .lista-incluye li{font-size:10.5px;gap:7px;margin-bottom:7px;}
+    .lista-incluye li .check{width:14px;height:14px;}
+    .btn-comprar-grande{font-size:11.5px;padding:12px 8px;gap:6px;}
+    .btn-agregar-link{font-size:10.5px;padding-top:8px;}
+    .nota-pago{font-size:9.8px;}
   }
   .oferta-visual{
     background-image:var(--oferta-imagen-fondo);
     background-color:#111;
-    background-size:contain;
+    background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
     padding:0;
     color:var(--crema);
-    aspect-ratio:1 / 1;
-    min-height:auto;
+    min-height:520px;
     display:flex;align-items:center;justify-content:center;
     position:relative;
     overflow:hidden;
   }
+  .oferta-visual img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
   .oferta-visual.con-fondo-personalizado{
     background-color:#111;
     text-shadow:none;
@@ -471,6 +479,20 @@
     flex-shrink:0;
   }
   .oferta-info{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;}
+  .oferta-kicker{color:var(--fresa-oscuro);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+  .oferta-heading{font-size:38px;margin-bottom:12px;color:var(--choco);}
+  .oferta-copy{font-size:14px;line-height:1.65;color:var(--choco-suave);margin-bottom:18px;}
+  .oferta-termina{font-size:12px;font-weight:800;color:#B91C1C;text-transform:uppercase;letter-spacing:.8px;margin:8px 0;}
+  .oferta-countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 14px;}
+  .oferta-countdown div{background:#FFF1F2;border:1px solid #FECACA;border-radius:10px;text-align:center;padding:10px 6px;color:#991B1B;}
+  .oferta-countdown strong{display:block;font-size:20px;line-height:1;font-family:'Playfair Display',serif;}
+  .oferta-countdown span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+  .registro-descuento{background:linear-gradient(135deg,#991B1B,#EF4444);color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:0 10px 24px rgba(185,28,28,.22);}
+  .registro-descuento strong{display:block;font-size:15px;margin-bottom:2px;}
+  .registro-descuento span{font-size:12px;opacity:.92;}
+  .registro-descuento a{color:#fff;text-decoration:underline;font-weight:800;}
+  .precio-comparacion{font-size:12px;color:#B91C1C;font-weight:800;margin:-2px 0 14px;}
+  @media(max-width:480px){.oferta-heading{font-size:19px;margin-bottom:6px}.oferta-copy{font-size:10.5px;line-height:1.35;margin-bottom:8px}.oferta-kicker,.oferta-termina{font-size:9px;margin-bottom:5px}.oferta-countdown{gap:4px;margin:5px 0 8px}.oferta-countdown div{padding:6px 2px;border-radius:7px}.oferta-countdown strong{font-size:14px}.oferta-countdown span{font-size:7px}.registro-descuento{padding:8px;margin-bottom:8px;border-radius:8px}.registro-descuento strong{font-size:10.5px}.registro-descuento span{font-size:9px}.precio-comparacion{font-size:9.5px;margin:0 0 8px}}
   .precio-row{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;}
   .precio-tachado{font-size:20px;color:var(--crema-3);text-decoration:line-through;font-weight:500;}
   .precio-actual{
@@ -1267,28 +1289,30 @@
 <!-- ═══════════════ OFERTA ═══════════════ -->
 <section class="oferta" id="oferta">
   <div class="oferta-inner fade-up">
-    <div class="oferta-visual">
-      <button class="oferta-edit-btn" id="btnEditarOferta" onclick="window.abrirEditorOferta()" style="display:none;" aria-label="Editar imagen de fondo" title="Editar imagen de fondo">✎</button>
-      <div class="oferta-label" id="ofertaLabel">★ El más pedido</div>
-      <h2 id="ofertaTitulo">Recetario de Recetarios</h2>
-      <p id="ofertaDescripcion">Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.</p>
-      <div class="recetarios-list" id="ofertaLista">
-        <span>Recetario de Frappés</span>
-        <span>Recetario de Donas</span>
-        <span>Recetario de Galletas</span>
-        <span>Recetario de Pasteles</span>
-        <span>Recetario de Pay de Queso</span>
-      </div>
+    <div class="oferta-visual" aria-label="Imagen del Recetario de Recetarios">
+      <button class="oferta-edit-btn" id="btnEditarOferta" onclick="window.abrirEditorOferta()" style="display:none;" aria-label="Editar oferta" title="Editar oferta">✎</button>
     </div>
     <div class="oferta-info">
+      <div class="oferta-kicker" id="ofertaLabel">★ Oferta irresistible</div>
+      <h2 class="oferta-heading" id="ofertaTitulo">Recetario de Recetarios</h2>
+      <p class="oferta-copy" id="ofertaDescripcion">Llévate 7 recetarios completos para empezar a vender postres y bebidas con recetas claras, probadas y listas para usar.</p>
+      <div class="oferta-termina" id="ofertaTerminaTexto">Oferta termina en</div>
+      <div class="oferta-countdown" id="ofertaCountdown" aria-live="polite">
+        <div><strong id="cdDias">07</strong><span>Días</span></div>
+        <div><strong id="cdHoras">00</strong><span>Horas</span></div>
+        <div><strong id="cdMinutos">00</strong><span>Min</span></div>
+        <div><strong id="cdSegundos">00</strong><span>Seg</span></div>
+      </div>
+      <div class="registro-descuento" id="registroDescuento"><strong>Regístrate y obtén 70% de descuento en tu primera compra.</strong><span>Solo aplica en Recetario de Recetarios si aún no has comprado. <a href="login.html">Crear cuenta</a></span></div>
       <div class="precio-row">
         <span class="precio-tachado" id="ofertaPrecioTachado">$149.00</span>
         <span class="precio-actual" id="ofertaPrecioActual">$99.00</span>
         <span class="precio-moneda">MXN</span>
       </div>
       <div class="precio-nota">Pago único · sin suscripción · acceso de por vida</div>
-      <ul class="lista-incluye">
-        <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Los 5 recetarios completos (ahorras $41)</li>
+      <div class="precio-comparacion" id="ofertaComparacion">Después sube a $199.00 MXN</div>
+      <ul class="lista-incluye" id="ofertaListaIncluye">
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Los 7 recetarios completos (ahorras $100)</li>
         <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Cantidades exactas y tiempos de cocción</li>
         <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Tips para que salga bien desde la primera vez</li>
         <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Ideal para vender por encargo</li>
@@ -1487,8 +1511,11 @@
       <div><label>Título</label><input type="text" id="ofertaEditTitulo" required></div>
       <div><label>Precio anterior</label><input type="number" id="ofertaEditPrecioTachado" min="0.01" step="0.01" required></div>
       <div><label>Precio actual</label><input type="number" id="ofertaEditPrecioActual" min="0.01" step="0.01" required></div>
+      <div><label>Precio al que subirá</label><input type="number" id="ofertaEditPrecioSubira" min="0.01" step="0.01" required></div>
+      <div><label>Termina en</label><input type="datetime-local" id="ofertaEditTerminaEn" required></div>
+      <div class="full"><label>Texto “oferta termina en”</label><input type="text" id="ofertaEditTerminaTexto" required></div>
       <div class="full"><label>Descripción</label><textarea id="ofertaEditDescripcion" required></textarea></div>
-      <div class="full"><label>Lista de recetarios (uno por línea)</label><textarea id="ofertaEditLista" required></textarea></div>
+      <div class="full"><label>Lista de beneficios (uno por línea)</label><textarea id="ofertaEditLista" required></textarea></div>
       <div class="full"><label>Imagen de fondo opcional</label><input type="file" id="ofertaEditFondo" accept="image/*" onchange="previsualizarFondoOferta(event)"><img id="ofertaFondoPreview" class="preview-img" style="display:none;margin-top:10px;"></div>
       <div class="full" style="display:flex;gap:10px;justify-content:flex-end;"><button type="button" class="btn-cancelar-mini" onclick="cerrarEditorOferta()">Cancelar</button><button type="submit" class="btn-guardar">Guardar cambios</button></div>
     </form>
@@ -1686,21 +1713,59 @@
     return Number.isFinite(numero) ? numero.toFixed(2) : '0.00';
   }
 
+  const sieteDiasMs = 7 * 24 * 60 * 60 * 1000;
   const OFERTA_DEFAULT = {
-    label: '★ El más pedido',
+    label: '★ Oferta irresistible',
     titulo: 'Recetario de Recetarios',
-    descripcion: 'Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.',
-    precioTachado: 149.00,
+    descripcion: 'Llévate 7 recetarios completos para empezar a vender postres y bebidas con recetas claras, probadas y listas para usar.',
+    precioTachado: 199.00,
     precioActual: 99.00,
-    lista: ['Recetario de Frappés', 'Recetario de Donas', 'Recetario de Galletas', 'Recetario de Pasteles', 'Recetario de Pay de Queso'],
+    precioSubira: 199.00,
+    terminaTexto: 'Oferta termina en',
+    terminaEn: Date.now() + sieteDiasMs,
+    lista: ['7 recetarios completos por solo $99 MXN', 'Cantidades exactas y tiempos de cocción', 'Tips para que salga bien desde la primera vez', 'Ideal para vender por encargo'],
     fondoUrl: ''
   };
   let ofertaCache = { ...OFERTA_DEFAULT, lista: [...OFERTA_DEFAULT.lista] };
   let ofertaFondoPendiente = null;
+  let ofertaCountdownTimer = null;
+  let usuarioTieneCompras = false;
 
   function normalizarOferta(datos){
     const lista = Array.isArray(datos?.lista) && datos.lista.length ? datos.lista : OFERTA_DEFAULT.lista;
-    return { ...OFERTA_DEFAULT, ...(datos || {}), lista };
+    const normalizada = { ...OFERTA_DEFAULT, ...(datos || {}), lista };
+    const termina = normalizada.terminaEn?.toMillis ? normalizada.terminaEn.toMillis() : Number(normalizada.terminaEn);
+    normalizada.terminaEn = Number.isFinite(termina) && termina > Date.now() ? termina : Date.now() + sieteDiasMs;
+    return normalizada;
+  }
+
+  function precioComboParaUsuario(){
+    if(usuarioActual && !esAdmin(usuarioActual) && !usuarioTieneCompras) return Math.round((Number(ofertaCache.precioActual) || 99) * 0.30 * 100) / 100;
+    return Number(ofertaCache.precioActual) || 99;
+  }
+
+  function actualizarBotonOferta(){
+    const precio = precioComboParaUsuario();
+    COMBO.nombre = ofertaCache.titulo;
+    COMBO.precio = precio;
+    const btn = document.getElementById('btnComprarOferta');
+    if(btn) btn.lastChild.textContent = ` Comprar ${ofertaCache.titulo} — $${formatearPrecio(precio)} MXN`;
+  }
+
+  function pintarCountdownOferta(){
+    const restante = Math.max(0, Number(ofertaCache.terminaEn) - Date.now());
+    const dias = Math.floor(restante / 86400000);
+    const horas = Math.floor((restante % 86400000) / 3600000);
+    const minutos = Math.floor((restante % 3600000) / 60000);
+    const segundos = Math.floor((restante % 60000) / 1000);
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = String(val).padStart(2, '0'); };
+    set('cdDias', dias); set('cdHoras', horas); set('cdMinutos', minutos); set('cdSegundos', segundos);
+  }
+
+  function iniciarCountdownOferta(){
+    if(ofertaCountdownTimer) clearInterval(ofertaCountdownTimer);
+    pintarCountdownOferta();
+    ofertaCountdownTimer = setInterval(pintarCountdownOferta, 1000);
   }
 
   function pintarOfertaPrincipal(){
@@ -1709,22 +1774,31 @@
     document.getElementById('ofertaDescripcion').textContent = ofertaCache.descripcion;
     document.getElementById('ofertaPrecioTachado').textContent = `$${formatearPrecio(ofertaCache.precioTachado)}`;
     document.getElementById('ofertaPrecioActual').textContent = `$${formatearPrecio(ofertaCache.precioActual)}`;
-    document.getElementById('ofertaLista').innerHTML = ofertaCache.lista.map(item => `<span>${escapeHtml(item)}</span>`).join('');
+    const listaIncluye = document.getElementById('ofertaListaIncluye');
+    if(listaIncluye){
+      listaIncluye.innerHTML = ofertaCache.lista.map(item => `<li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> ${escapeHtml(item)}</li>`).join('');
+    }
+    document.getElementById('ofertaTerminaTexto').textContent = ofertaCache.terminaTexto || OFERTA_DEFAULT.terminaTexto;
+    document.getElementById('ofertaComparacion').textContent = `Después sube a $${formatearPrecio(ofertaCache.precioSubira || ofertaCache.precioTachado)} MXN`;
+    const registro = document.getElementById('registroDescuento');
+    if(registro){
+      if(usuarioActual && !esAdmin(usuarioActual) && !usuarioTieneCompras){ registro.innerHTML = `<strong>Descuento de primera compra activo: 70% OFF.</strong><span>Solo en Recetario de Recetarios. Precio especial: $${formatearPrecio(precioComboParaUsuario())} MXN.</span>`; }
+      else if(usuarioActual && (usuarioTieneCompras || esAdmin(usuarioActual))){ registro.innerHTML = '<strong>Precio normal para clientes con compras previas.</strong><span>La promoción de registro solo aplica antes de tu primera compra.</span>'; }
+      else { registro.innerHTML = '<strong>Regístrate y obtén 70% de descuento en tu primera compra.</strong><span>Solo aplica en Recetario de Recetarios. Si no te registras, verás el precio normal. <a href="login.html">Crear cuenta</a></span>'; }
+    }
     const visual = document.querySelector('.oferta-visual');
     visual.classList.toggle('con-fondo-personalizado', Boolean(ofertaCache.fondoUrl));
     if(ofertaCache.fondoUrl){
       visual.style.setProperty('background-image', `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`, 'important');
       visual.style.backgroundColor = '#111';
-      visual.style.backgroundSize = 'contain';
+      visual.style.backgroundSize = 'cover';
       visual.style.backgroundPosition = 'center';
       visual.style.backgroundRepeat = 'no-repeat';
     }else{
       visual.removeAttribute('style');
     }
-    COMBO.nombre = ofertaCache.titulo;
-    COMBO.precio = Number(ofertaCache.precioActual) || COMBO.precio;
-    const btn = document.getElementById('btnComprarOferta');
-    if(btn) btn.innerHTML = btn.innerHTML.replace(/Comprar .*? — \$[0-9.,]+ MXN/, `Comprar ${escapeHtml(ofertaCache.titulo)} — $${formatearPrecio(ofertaCache.precioActual)} MXN`);
+    actualizarBotonOferta();
+    iniciarCountdownOferta();
   }
 
   async function cargarOfertaPrincipal(){
@@ -1745,6 +1819,9 @@
     document.getElementById('ofertaEditDescripcion').value = ofertaCache.descripcion;
     document.getElementById('ofertaEditPrecioTachado').value = formatearPrecio(ofertaCache.precioTachado);
     document.getElementById('ofertaEditPrecioActual').value = formatearPrecio(ofertaCache.precioActual);
+    document.getElementById('ofertaEditPrecioSubira').value = formatearPrecio(ofertaCache.precioSubira || ofertaCache.precioTachado);
+    document.getElementById('ofertaEditTerminaTexto').value = ofertaCache.terminaTexto || OFERTA_DEFAULT.terminaTexto;
+    document.getElementById('ofertaEditTerminaEn').value = new Date(Number(ofertaCache.terminaEn) - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16);
     document.getElementById('ofertaEditLista').value = ofertaCache.lista.join('\n');
     const preview = document.getElementById('ofertaFondoPreview');
     if(ofertaCache.fondoUrl){ preview.src = ofertaCache.fondoUrl; preview.style.display = 'block'; }
@@ -1773,6 +1850,9 @@
       descripcion: document.getElementById('ofertaEditDescripcion').value.trim() || OFERTA_DEFAULT.descripcion,
       precioTachado: Number(document.getElementById('ofertaEditPrecioTachado').value),
       precioActual: Number(document.getElementById('ofertaEditPrecioActual').value),
+      precioSubira: Number(document.getElementById('ofertaEditPrecioSubira').value),
+      terminaTexto: document.getElementById('ofertaEditTerminaTexto').value.trim() || OFERTA_DEFAULT.terminaTexto,
+      terminaEn: new Date(document.getElementById('ofertaEditTerminaEn').value).getTime(),
       lista: document.getElementById('ofertaEditLista').value.split('\n').map(x => x.trim()).filter(Boolean),
       fondoUrl: ofertaCache.fondoUrl || ''
     };
@@ -1938,7 +2018,17 @@
       carrito = {};
     }
     actualizarContadorCarrito();
+    actualizarEstadoPrimeraCompra(user);
   });
+
+  async function actualizarEstadoPrimeraCompra(user){
+    usuarioTieneCompras = false;
+    if(user){
+      try{ usuarioTieneCompras = (await obtenerPedidosDeUsuario(user.uid)).length > 0; }
+      catch(e){ console.warn('No se pudo verificar si el usuario ya compró:', e); }
+    }
+    pintarOfertaPrincipal();
+  }
 
   const ICONO_PERSONA = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
   const ICONO_ENGRANE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`;
