@@ -348,8 +348,8 @@
   .recipe-card .card-info .precio{font-size:16px;font-weight:700;color:var(--caramelo);}
   .recipe-card .card-info .recetas{font-size:11px;color:var(--choco-suave);font-weight:500;margin-top:2px;}
   .recipe-card img{width:100%;height:100%;object-fit:cover;}
-  .recipe-edit-btn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(44,26,14,.88);color:var(--crema);border:none;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18);}
-  .recipe-edit-btn:hover{background:var(--caramelo);color:var(--choco);}
+  .recipe-edit-btn, .oferta-edit-btn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(44,26,14,.88);color:var(--crema);border:none;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18);}
+  .recipe-edit-btn:hover, .oferta-edit-btn:hover{background:var(--caramelo);color:var(--choco);}
   .rcard-a{top:20px;left:8%;transform:rotate(-4deg);}
   .rcard-b{top:100px;right:3%;transform:rotate(5deg);}
   .rcard-c{top:280px;left:20%;transform:rotate(2deg);}
@@ -387,7 +387,18 @@
     box-shadow:var(--sombra-media);
     border:1px solid var(--crema-3);
   }
-  @media(max-width:840px){.oferta-inner{grid-template-columns:1fr;}}
+  @media(max-width:840px){
+    .oferta{padding:64px 18px;}
+    .oferta-inner{grid-template-columns:1fr;border-radius:10px;}
+    .oferta .oferta-visual{min-height:360px;padding:42px 24px;}
+    .oferta .oferta-info{padding:38px 24px;}
+  }
+  @media(max-width:480px){
+    .oferta{padding:48px 14px;}
+    .oferta .oferta-visual{min-height:330px;padding:36px 20px;}
+    .oferta .oferta-visual h2{font-size:28px;}
+    .oferta .oferta-visual p{font-size:14px;}
+  }
   .oferta-visual{
     background:
       linear-gradient(0deg, rgba(44,26,14,0.78), rgba(44,26,14,0.78)),
@@ -402,6 +413,10 @@
     position:relative;
     overflow:hidden;
   }
+  .oferta-visual.con-fondo-personalizado{
+    background-color:transparent;
+    text-shadow:0 2px 10px rgba(0,0,0,0.65);
+  }
   .oferta-visual::after{
     content:'';
     position:absolute;
@@ -411,6 +426,7 @@
       linear-gradient(135deg, rgba(44,26,14,0.18), rgba(44,26,14,0.45));
     pointer-events:none;
   }
+  .oferta-visual.con-fondo-personalizado::after{display:none;}
   .oferta-visual > *{position:relative;z-index:1;}
   .oferta-label{
     display:inline-block;
@@ -803,8 +819,9 @@
   .modal-overlay{
     position:fixed;inset:0;
     background:rgba(44,26,14,0.6);
-    display:none;align-items:center;justify-content:center;
+    display:none;align-items:flex-start;justify-content:center;
     z-index:200;padding:20px;
+    overflow-y:auto;
     backdrop-filter:blur(4px);
   }
   .modal-overlay.show{display:flex;}
@@ -812,9 +829,18 @@
     background:var(--blanco);
     border-radius:12px;padding:40px;
     max-width:420px;width:100%;
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
     text-align:center;position:relative;
     box-shadow:0 40px 80px rgba(44,26,14,0.3);
     border:1px solid var(--crema-3);
+  }
+  .modal-box.oferta-editor-box{max-width:620px;text-align:left;}
+  .modal-box.oferta-editor-box h3, .modal-box.oferta-editor-box p{text-align:center;}
+  @media(max-width:520px){
+    .modal-overlay{padding:12px;}
+    .modal-box{padding:28px 18px;max-height:calc(100vh - 24px);}
+    .modal-box.oferta-editor-box{max-width:100%;}
   }
   .modal-close{
     position:absolute;top:16px;right:16px;
@@ -1233,10 +1259,11 @@
 <section class="oferta" id="oferta">
   <div class="oferta-inner fade-up">
     <div class="oferta-visual">
-      <div class="oferta-label">★ El más pedido</div>
-      <h2>Recetario de Recetarios</h2>
-      <p>Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.</p>
-      <div class="recetarios-list">
+      <button class="oferta-edit-btn" id="btnEditarOferta" onclick="window.abrirEditorOferta()" style="display:none;">Editar fondo y textos</button>
+      <div class="oferta-label" id="ofertaLabel">★ El más pedido</div>
+      <h2 id="ofertaTitulo">Recetario de Recetarios</h2>
+      <p id="ofertaDescripcion">Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.</p>
+      <div class="recetarios-list" id="ofertaLista">
         <span>Recetario de Frappés</span>
         <span>Recetario de Donas</span>
         <span>Recetario de Galletas</span>
@@ -1246,8 +1273,8 @@
     </div>
     <div class="oferta-info">
       <div class="precio-row">
-        <span class="precio-tachado">$149</span>
-        <span class="precio-actual">$99</span>
+        <span class="precio-tachado" id="ofertaPrecioTachado">$149.00</span>
+        <span class="precio-actual" id="ofertaPrecioActual">$99.00</span>
         <span class="precio-moneda">MXN</span>
       </div>
       <div class="precio-nota">Pago único · sin suscripción · acceso de por vida</div>
@@ -1257,9 +1284,9 @@
         <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Tips para que salga bien desde la primera vez</li>
         <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Ideal para vender por encargo</li>
       </ul>
-      <button class="btn-comprar-grande" onclick="abrirModal('combo')">
+      <button class="btn-comprar-grande" id="btnComprarOferta" onclick="abrirModal('combo')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
-        Comprar Recetario de Recetarios — $99 MXN
+        Comprar Recetario de Recetarios — $99.00 MXN
       </button>
       <button class="btn-agregar-link" onclick="window.agregarAlCarrito('combo')">+ Agregar al carrito en vez de comprar ahora</button>
       <div class="nota-pago">
@@ -1438,6 +1465,27 @@
 </div>
 
 
+
+
+<!-- MODAL OFERTA PRINCIPAL -->
+<div class="modal-overlay" id="ofertaEditorOverlay">
+  <div class="modal-box oferta-editor-box">
+    <button class="modal-close" onclick="cerrarEditorOferta()">✕</button>
+    <h3>Editar Recetario de Recetarios</h3>
+    <p style="color:var(--choco-suave);font-size:13px;margin-bottom:18px;">Las letras predeterminadas se cargan automáticamente; puedes escribir encima para modificarlas.</p>
+    <form class="admin-form" onsubmit="return guardarOfertaPrincipal(event)">
+      <div><label>Etiqueta</label><input type="text" id="ofertaEditLabel" required></div>
+      <div><label>Título</label><input type="text" id="ofertaEditTitulo" required></div>
+      <div><label>Precio anterior</label><input type="number" id="ofertaEditPrecioTachado" min="0.01" step="0.01" required></div>
+      <div><label>Precio actual</label><input type="number" id="ofertaEditPrecioActual" min="0.01" step="0.01" required></div>
+      <div class="full"><label>Descripción</label><textarea id="ofertaEditDescripcion" required></textarea></div>
+      <div class="full"><label>Lista de recetarios (uno por línea)</label><textarea id="ofertaEditLista" required></textarea></div>
+      <div class="full"><label>Imagen de fondo opcional</label><input type="file" id="ofertaEditFondo" accept="image/*" onchange="previsualizarFondoOferta(event)"><img id="ofertaFondoPreview" class="preview-img" style="display:none;margin-top:10px;"></div>
+      <div class="full" style="display:flex;gap:10px;justify-content:flex-end;"><button type="button" class="btn-cancelar-mini" onclick="cerrarEditorOferta()">Cancelar</button><button type="submit" class="btn-guardar">Guardar cambios</button></div>
+    </form>
+  </div>
+</div>
+
 <!-- MODAL EJEMPLOS DEL HERO -->
 <div class="modal-overlay" id="heroExampleOverlay">
   <div class="modal-box">
@@ -1478,7 +1526,7 @@
       <form class="admin-form" id="formProducto" onsubmit="return manejarGuardarProducto(event)">
         <input type="hidden" id="prodId" value="">
         <div><label>Nombre del recetario</label><input type="text" id="prodNombre" required placeholder="Recetario de Frappés"></div>
-        <div><label>Precio (MXN)</label><input type="number" id="prodPrecio" required placeholder="18" min="1" step="1"></div>
+        <div><label>Precio (MXN)</label><input type="number" id="prodPrecio" required placeholder="18.00" min="0.01" step="0.01"></div>
         <div class="full"><label>Descripción corta</label><textarea id="prodDescripcion" required placeholder="9 frappés cremosos..."></textarea></div>
         <div><label>Emoji (respaldo sin imagen)</label><input type="text" id="prodEmoji" placeholder="🥤" maxlength="4"></div>
         <div><label>Stripe Price ID</label><input type="text" id="prodPriceId" placeholder="price_xxxxx"></div>
@@ -1538,19 +1586,19 @@
   }
 
   const PRODUCTOS_SEMILLA = [
-    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤", claseColor:"frappes-bg", priceId:"price_REEMPLAZA_FRAPPES" },
-    { id:"donas",    nombre:"Recetario de Donas",        precio:18, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩", claseColor:"donas-bg", priceId:"price_REEMPLAZA_DONAS" },
-    { id:"galletas", nombre:"Recetario de Galletas",     precio:18, descripcion:"De las crocantes a las suaves rellenas, con el punto exacto de horneado para cada tipo.", emoji:"🍪", claseColor:"galletas-bg", priceId:"price_REEMPLAZA_GALLETAS" },
-    { id:"pasteles", nombre:"Recetario de Pasteles",     precio:18, descripcion:"Bizcochos que no se desmoronan y rellenos que se sostienen, para pasteles de cumpleaños o pedido.", emoji:"🧁", claseColor:"pasteles-bg", priceId:"price_REEMPLAZA_PASTELES" },
-    { id:"payqueso", nombre:"Recetario de Pay de Queso", precio:18, descripcion:"Horneado y sin hornear, con la consistencia cremosa que todos preguntan cómo lograste.", emoji:"🍰", claseColor:"payqueso-bg", priceId:"price_REEMPLAZA_PAYQUESO" },
+    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18.00, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤", claseColor:"frappes-bg", priceId:"price_REEMPLAZA_FRAPPES" },
+    { id:"donas",    nombre:"Recetario de Donas",        precio:18.00, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩", claseColor:"donas-bg", priceId:"price_REEMPLAZA_DONAS" },
+    { id:"galletas", nombre:"Recetario de Galletas",     precio:18.00, descripcion:"De las crocantes a las suaves rellenas, con el punto exacto de horneado para cada tipo.", emoji:"🍪", claseColor:"galletas-bg", priceId:"price_REEMPLAZA_GALLETAS" },
+    { id:"pasteles", nombre:"Recetario de Pasteles",     precio:18.00, descripcion:"Bizcochos que no se desmoronan y rellenos que se sostienen, para pasteles de cumpleaños o pedido.", emoji:"🧁", claseColor:"pasteles-bg", priceId:"price_REEMPLAZA_PASTELES" },
+    { id:"payqueso", nombre:"Recetario de Pay de Queso", precio:18.00, descripcion:"Horneado y sin hornear, con la consistencia cremosa que todos preguntan cómo lograste.", emoji:"🍰", claseColor:"payqueso-bg", priceId:"price_REEMPLAZA_PAYQUESO" },
   ];
 
-  const COMBO = { id:"combo", nombre:"Recetario de Recetarios", precio:99, emoji:"🎉", priceId:"price_REEMPLAZA_COMBO" };
+  const COMBO = { id:"combo", nombre:"Recetario de Recetarios", precio:99.00, emoji:"🎉", priceId:"price_REEMPLAZA_COMBO" };
 
   const HERO_EXAMPLES_DEFAULT = [
-    { id:"pasteles", nombre:"Pasteles", precio:"$18 MXN", recetas:"8 recetas incluidas", clase:"rcard-a", fondo:"linear-gradient(160deg,#FBEFE0 0%,#F3DCC4 100%)" },
-    { id:"frappes", nombre:"Frappés", precio:"$18 MXN", recetas:"9 recetas incluidas", clase:"rcard-b", fondo:"linear-gradient(160deg,#F0E4D6 0%,#E5D2BC 100%)" },
-    { id:"donas", nombre:"Donas", precio:"$18 MXN", recetas:"7 recetas incluidas", clase:"rcard-c", fondo:"linear-gradient(160deg,#FCE8DC 0%,#F6D4C0 100%)" },
+    { id:"pasteles", nombre:"Pasteles", precio:"$18.00 MXN", recetas:"8 recetas incluidas", clase:"rcard-a", fondo:"linear-gradient(160deg,#FBEFE0 0%,#F3DCC4 100%)" },
+    { id:"frappes", nombre:"Frappés", precio:"$18.00 MXN", recetas:"9 recetas incluidas", clase:"rcard-b", fondo:"linear-gradient(160deg,#F0E4D6 0%,#E5D2BC 100%)" },
+    { id:"donas", nombre:"Donas", precio:"$18.00 MXN", recetas:"7 recetas incluidas", clase:"rcard-c", fondo:"linear-gradient(160deg,#FCE8DC 0%,#F6D4C0 100%)" },
   ];
   let heroExamplesCache = HERO_EXAMPLES_DEFAULT.map(e => ({ ...e }));
   let heroExampleImagenPendiente = null;
@@ -1622,6 +1670,119 @@
       reader.readAsDataURL(archivo);
     });
   }
+
+
+  function formatearPrecio(valor){
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero.toFixed(2) : '0.00';
+  }
+
+  const OFERTA_DEFAULT = {
+    label: '★ El más pedido',
+    titulo: 'Recetario de Recetarios',
+    descripcion: 'Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.',
+    precioTachado: 149.00,
+    precioActual: 99.00,
+    lista: ['Recetario de Frappés', 'Recetario de Donas', 'Recetario de Galletas', 'Recetario de Pasteles', 'Recetario de Pay de Queso'],
+    fondoUrl: ''
+  };
+  let ofertaCache = { ...OFERTA_DEFAULT, lista: [...OFERTA_DEFAULT.lista] };
+  let ofertaFondoPendiente = null;
+
+  function normalizarOferta(datos){
+    const lista = Array.isArray(datos?.lista) && datos.lista.length ? datos.lista : OFERTA_DEFAULT.lista;
+    return { ...OFERTA_DEFAULT, ...(datos || {}), lista };
+  }
+
+  function pintarOfertaPrincipal(){
+    document.getElementById('ofertaLabel').textContent = ofertaCache.label;
+    document.getElementById('ofertaTitulo').textContent = ofertaCache.titulo;
+    document.getElementById('ofertaDescripcion').textContent = ofertaCache.descripcion;
+    document.getElementById('ofertaPrecioTachado').textContent = `$${formatearPrecio(ofertaCache.precioTachado)}`;
+    document.getElementById('ofertaPrecioActual').textContent = `$${formatearPrecio(ofertaCache.precioActual)}`;
+    document.getElementById('ofertaLista').innerHTML = ofertaCache.lista.map(item => `<span>${escapeHtml(item)}</span>`).join('');
+    const visual = document.querySelector('.oferta-visual');
+    visual.classList.toggle('con-fondo-personalizado', Boolean(ofertaCache.fondoUrl));
+    if(ofertaCache.fondoUrl){
+      visual.style.backgroundImage = `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`;
+      visual.style.backgroundSize = 'cover';
+      visual.style.backgroundPosition = 'center';
+      visual.style.backgroundRepeat = 'no-repeat';
+    }else{
+      visual.removeAttribute('style');
+    }
+    COMBO.nombre = ofertaCache.titulo;
+    COMBO.precio = Number(ofertaCache.precioActual) || COMBO.precio;
+    const btn = document.getElementById('btnComprarOferta');
+    if(btn) btn.innerHTML = btn.innerHTML.replace(/Comprar .*? — \$[0-9.,]+ MXN/, `Comprar ${escapeHtml(ofertaCache.titulo)} — $${formatearPrecio(ofertaCache.precioActual)} MXN`);
+  }
+
+  async function cargarOfertaPrincipal(){
+    try{
+      const snap = await getDoc(doc(db, 'contenido', 'oferta_principal'));
+      ofertaCache = normalizarOferta(snap.exists() ? snap.data() : null);
+    }catch(e){
+      console.warn('Usando oferta principal predeterminada:', e);
+      ofertaCache = normalizarOferta(JSON.parse(localStorage.getItem('ofertaPrincipal') || 'null'));
+    }
+    pintarOfertaPrincipal();
+  }
+
+  window.abrirEditorOferta = function(){
+    if(!esAdmin(usuarioActual)) return;
+    document.getElementById('ofertaEditLabel').value = ofertaCache.label;
+    document.getElementById('ofertaEditTitulo').value = ofertaCache.titulo;
+    document.getElementById('ofertaEditDescripcion').value = ofertaCache.descripcion;
+    document.getElementById('ofertaEditPrecioTachado').value = formatearPrecio(ofertaCache.precioTachado);
+    document.getElementById('ofertaEditPrecioActual').value = formatearPrecio(ofertaCache.precioActual);
+    document.getElementById('ofertaEditLista').value = ofertaCache.lista.join('\n');
+    const preview = document.getElementById('ofertaFondoPreview');
+    if(ofertaCache.fondoUrl){ preview.src = ofertaCache.fondoUrl; preview.style.display = 'block'; }
+    else { preview.removeAttribute('src'); preview.style.display = 'none'; }
+    document.getElementById('ofertaEditFondo').value = '';
+    ofertaFondoPendiente = null;
+    document.getElementById('ofertaEditorOverlay').classList.add('show');
+  };
+
+  window.cerrarEditorOferta = function(){ document.getElementById('ofertaEditorOverlay').classList.remove('show'); };
+
+  window.previsualizarFondoOferta = function(event){
+    const archivo = event.target.files[0];
+    if(!archivo) return;
+    ofertaFondoPendiente = archivo;
+    const preview = document.getElementById('ofertaFondoPreview');
+    preview.src = URL.createObjectURL(archivo);
+    preview.style.display = 'block';
+  };
+
+  window.guardarOfertaPrincipal = async function(event){
+    event.preventDefault();
+    const datos = {
+      label: document.getElementById('ofertaEditLabel').value.trim() || OFERTA_DEFAULT.label,
+      titulo: document.getElementById('ofertaEditTitulo').value.trim() || OFERTA_DEFAULT.titulo,
+      descripcion: document.getElementById('ofertaEditDescripcion').value.trim() || OFERTA_DEFAULT.descripcion,
+      precioTachado: Number(document.getElementById('ofertaEditPrecioTachado').value),
+      precioActual: Number(document.getElementById('ofertaEditPrecioActual').value),
+      lista: document.getElementById('ofertaEditLista').value.split('\n').map(x => x.trim()).filter(Boolean),
+      fondoUrl: ofertaCache.fondoUrl || ''
+    };
+    try{
+      if(ofertaFondoPendiente){
+        try{ datos.fondoUrl = await subirImagenProducto(ofertaFondoPendiente, 'oferta-principal-fondo'); }
+        catch(e){
+          if(!esErrorPermisosFirebase(e)) throw e;
+          datos.fondoUrl = await archivoADataUrl(ofertaFondoPendiente);
+        }
+      }
+      ofertaCache = normalizarOferta(datos);
+      localStorage.setItem('ofertaPrincipal', JSON.stringify(ofertaCache));
+      try{ await setDoc(doc(db, 'contenido', 'oferta_principal'), { ...ofertaCache, actualizado: serverTimestamp() }, { merge:true }); }
+      catch(e){ if(!esErrorPermisosFirebase(e)) throw e; console.warn('Firestore no permitió guardar la oferta; quedó local.', e); }
+      pintarOfertaPrincipal();
+      window.cerrarEditorOferta();
+    }catch(e){ alert('No se pudo guardar la oferta: ' + e.message); }
+    return false;
+  };
 
   function esErrorPermisosFirebase(error){
     const codigo = (error?.code || '').toLowerCase();
@@ -1722,7 +1883,7 @@
             <h3>${escapeHtml(p.nombre)}</h3>
             <p>${escapeHtml(p.descripcion || '')}</p>
             <div class="producto-precio-row">
-              <div class="producto-precio">$${p.precio} <span>MXN</span></div>
+              <div class="producto-precio">$${formatearPrecio(p.precio)} <span>MXN</span></div>
             </div>
             <div class="producto-acciones">
               <button class="btn-agregar-carrito" onclick="window.agregarAlCarrito('${p.id}')" title="Agregar al carrito">
@@ -1760,6 +1921,7 @@
     pintarGridProductos();
     pintarHeroExamples();
     document.getElementById('adminAgregarWrap').style.display = esAdmin(user) ? 'block' : 'none';
+    document.getElementById('btnEditarOferta').style.display = esAdmin(user) ? 'inline-block' : 'none';
     // Si el usuario cierra sesión, vaciamos su carrito (no tiene sentido
     // conservarlo para la siguiente persona que use el mismo navegador).
     if(!user && habiaSesionAntes){
@@ -1833,13 +1995,17 @@
             <span>${formatearFecha(p.fecha)}</span><br>
             <span class="estado-pill ${p.estado === 'pagado' ? 'pagado' : 'pendiente'}">${p.estado === 'pagado' ? 'Pagado' : 'Pendiente'}</span>
           </div>
-          <div class="monto">$${p.montoPagado ?? p.monto ?? '--'}</div>
+          <div class="monto">${formatearMontoPedido(p.montoPagado ?? p.monto)}</div>
         </div>`).join('');
     }catch(e){ contenido.innerHTML = '<div class="historial-vacio">No se pudo cargar tu historial.</div>'; }
   };
 
   window.cerrarHistorial = function(){ document.getElementById('historialOverlay').classList.remove('show'); };
   document.getElementById('historialOverlay').addEventListener('click', e => { if(e.target.id === 'historialOverlay') window.cerrarHistorial(); });
+
+  function formatearMontoPedido(monto){
+    return monto === undefined || monto === null || monto === '' ? '$--' : `$${formatearPrecio(monto)}`;
+  }
 
   function formatearFecha(ts){
     if(!ts) return '';
@@ -2017,7 +2183,7 @@
           <div class="miniatura">${miniatura}</div>
           <div class="detalle">
             <h4>${escapeHtml(p.nombre)}</h4>
-            <div class="precio-unit">$${p.precio} MXN c/u</div>
+            <div class="precio-unit">$${formatearPrecio(p.precio)} MXN c/u</div>
           </div>
           <div class="cantidad-control">
             <button onclick="window.cambiarCantidadCarrito('${id}', -1)">−</button>
@@ -2030,7 +2196,7 @@
         </div>`;
     }).join('');
 
-    document.getElementById('carritoTotal').textContent = `$${total} MXN`;
+    document.getElementById('carritoTotal').textContent = `$${formatearPrecio(total)} MXN`;
     footer.style.display = 'block';
   }
 
@@ -2085,7 +2251,7 @@
         ${p.imagenUrl
           ? `<img src="${p.imagenUrl}" alt="${escapeHtml(p.nombre)}" width="52" height="52">`
           : `<div class="emoji-fallback">${p.emoji || '📖'}</div>`}
-        <div class="info"><h4>${escapeHtml(p.nombre)}</h4><span>$${p.precio} MXN</span></div>
+        <div class="info"><h4>${escapeHtml(p.nombre)}</h4><span>$${formatearPrecio(p.precio)} MXN</span></div>
         <div class="acciones">
           <button class="btn-icono" onclick="window.abrirAdmin('${p.id}')" title="Editar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg></button>
           ${p.id !== 'combo' ? `<button class="btn-icono borrar" onclick="window.manejarEliminarProducto('${p.id}')" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg></button>` : ''}
@@ -2179,7 +2345,7 @@
             <span>${escapeHtml(p.email || 'Sin correo')} · ${formatearFecha(p.fecha)}</span><br>
             <span class="estado-pill ${p.estado === 'pagado' ? 'pagado' : 'pendiente'}">${p.estado === 'pagado' ? 'Pagado' : 'Pendiente'}</span>
           </div>
-          <div class="monto">$${p.montoPagado ?? p.monto ?? '--'}</div>
+          <div class="monto">${formatearMontoPedido(p.montoPagado ?? p.monto)}</div>
         </div>`).join('');
     }catch(e){ lista.innerHTML = '<div class="historial-vacio">No se pudieron cargar los pedidos.</div>'; }
   }
@@ -2195,7 +2361,7 @@
       iconoWrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>`;
     }
     document.getElementById('modalTitulo').textContent = productoActual.nombre;
-    document.getElementById('modalPrecio').textContent = `$${productoActual.precio} MXN`;
+    document.getElementById('modalPrecio').textContent = `$${formatearPrecio(productoActual.precio)} MXN`;
     document.getElementById('modalOverlay').classList.add('show');
   };
 
@@ -2204,7 +2370,7 @@
 
   document.getElementById('btnPagarStripe').addEventListener('click', async () => {
     if(!productoActual || !usuarioActual) return;
-    alert("Aquí se conecta Stripe Checkout para: " + productoActual.nombre + " ($" + productoActual.precio + " MXN).\nRevisa functions/index.js para la integración real.");
+    alert("Aquí se conecta Stripe Checkout para: " + productoActual.nombre + " ($" + formatearPrecio(productoActual.precio) + " MXN).\nRevisa functions/index.js para la integración real.");
   });
 
   window.toggleFaq = function(el){ el.classList.toggle('open'); };
@@ -2216,6 +2382,7 @@
 
   cargarProductos();
   cargarHeroExamples();
+  cargarOfertaPrincipal();
 </script>
 </body>
 </html>
