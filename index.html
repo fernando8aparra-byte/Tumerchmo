@@ -390,12 +390,12 @@
   @media(max-width:840px){
     .oferta{padding:64px 18px;}
     .oferta-inner{grid-template-columns:1fr;border-radius:10px;}
-    .oferta .oferta-visual{min-height:360px;padding:42px 24px;}
+    .oferta .oferta-visual{min-height:auto;padding:0;}
     .oferta .oferta-info{padding:38px 24px;}
   }
   @media(max-width:480px){
     .oferta{padding:48px 14px;}
-    .oferta .oferta-visual{min-height:330px;padding:32px 18px;}
+    .oferta .oferta-visual{min-height:auto;padding:0;}
     .oferta .oferta-visual h2{font-size:28px;}
     .oferta .oferta-visual p{font-size:14px;}
     .oferta-visual .recetarios-list{max-height:150px;overflow-y:auto;}
@@ -403,18 +403,20 @@
   .oferta-visual{
     background-image:var(--oferta-imagen-fondo);
     background-color:#111;
-    background-size:cover;
+    background-size:contain;
     background-position:center;
     background-repeat:no-repeat;
-    padding:56px 44px;
+    padding:0;
     color:var(--crema);
-    display:flex;flex-direction:column;justify-content:center;
+    aspect-ratio:1 / 1;
+    min-height:auto;
+    display:flex;align-items:center;justify-content:center;
     position:relative;
     overflow:hidden;
   }
   .oferta-visual.con-fondo-personalizado{
-    background-color:transparent;
-    text-shadow:0 2px 10px rgba(0,0,0,0.65);
+    background-color:#111;
+    text-shadow:none;
   }
   .oferta-visual::after{
     content:'';
@@ -425,6 +427,10 @@
   }
   .oferta-visual.con-fondo-personalizado::after{display:none;}
   .oferta-visual > *{position:relative;z-index:1;}
+  .oferta-visual .oferta-label,
+  .oferta-visual h2,
+  .oferta-visual p,
+  .oferta-visual .recetarios-list{display:none;}
   .oferta-label{
     display:inline-block;
     background:var(--caramelo);
@@ -1262,7 +1268,7 @@
 <section class="oferta" id="oferta">
   <div class="oferta-inner fade-up">
     <div class="oferta-visual">
-      <button class="oferta-edit-btn" id="btnEditarOferta" onclick="window.abrirEditorOferta()" style="display:none;">Editar fondo y textos</button>
+      <button class="oferta-edit-btn" id="btnEditarOferta" onclick="window.abrirEditorOferta()" style="display:none;" aria-label="Editar imagen de fondo" title="Editar imagen de fondo">✎</button>
       <div class="oferta-label" id="ofertaLabel">★ El más pedido</div>
       <h2 id="ofertaTitulo">Recetario de Recetarios</h2>
       <p id="ofertaDescripcion">Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.</p>
@@ -1708,8 +1714,8 @@
     visual.classList.toggle('con-fondo-personalizado', Boolean(ofertaCache.fondoUrl));
     if(ofertaCache.fondoUrl){
       visual.style.setProperty('background-image', `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`, 'important');
-      visual.style.backgroundColor = 'transparent';
-      visual.style.backgroundSize = 'cover';
+      visual.style.backgroundColor = '#111';
+      visual.style.backgroundSize = 'contain';
       visual.style.backgroundPosition = 'center';
       visual.style.backgroundRepeat = 'no-repeat';
     }else{
