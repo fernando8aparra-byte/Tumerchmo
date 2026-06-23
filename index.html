@@ -387,7 +387,18 @@
     box-shadow:var(--sombra-media);
     border:1px solid var(--crema-3);
   }
-  @media(max-width:840px){.oferta-inner{grid-template-columns:1fr;}}
+  @media(max-width:840px){
+    .oferta{padding:64px 18px;}
+    .oferta-inner{grid-template-columns:1fr;border-radius:10px;}
+    .oferta .oferta-visual{min-height:360px;padding:42px 24px;}
+    .oferta .oferta-info{padding:38px 24px;}
+  }
+  @media(max-width:480px){
+    .oferta{padding:48px 14px;}
+    .oferta .oferta-visual{min-height:330px;padding:36px 20px;}
+    .oferta .oferta-visual h2{font-size:28px;}
+    .oferta .oferta-visual p{font-size:14px;}
+  }
   .oferta-visual{
     background:
       linear-gradient(0deg, rgba(44,26,14,0.78), rgba(44,26,14,0.78)),
@@ -402,6 +413,10 @@
     position:relative;
     overflow:hidden;
   }
+  .oferta-visual.con-fondo-personalizado{
+    background-color:transparent;
+    text-shadow:0 2px 10px rgba(0,0,0,0.65);
+  }
   .oferta-visual::after{
     content:'';
     position:absolute;
@@ -411,6 +426,7 @@
       linear-gradient(135deg, rgba(44,26,14,0.18), rgba(44,26,14,0.45));
     pointer-events:none;
   }
+  .oferta-visual.con-fondo-personalizado::after{display:none;}
   .oferta-visual > *{position:relative;z-index:1;}
   .oferta-label{
     display:inline-block;
@@ -803,8 +819,9 @@
   .modal-overlay{
     position:fixed;inset:0;
     background:rgba(44,26,14,0.6);
-    display:none;align-items:center;justify-content:center;
+    display:none;align-items:flex-start;justify-content:center;
     z-index:200;padding:20px;
+    overflow-y:auto;
     backdrop-filter:blur(4px);
   }
   .modal-overlay.show{display:flex;}
@@ -812,9 +829,18 @@
     background:var(--blanco);
     border-radius:12px;padding:40px;
     max-width:420px;width:100%;
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
     text-align:center;position:relative;
     box-shadow:0 40px 80px rgba(44,26,14,0.3);
     border:1px solid var(--crema-3);
+  }
+  .modal-box.oferta-editor-box{max-width:620px;text-align:left;}
+  .modal-box.oferta-editor-box h3, .modal-box.oferta-editor-box p{text-align:center;}
+  @media(max-width:520px){
+    .modal-overlay{padding:12px;}
+    .modal-box{padding:28px 18px;max-height:calc(100vh - 24px);}
+    .modal-box.oferta-editor-box{max-width:100%;}
   }
   .modal-close{
     position:absolute;top:16px;right:16px;
@@ -1443,7 +1469,7 @@
 
 <!-- MODAL OFERTA PRINCIPAL -->
 <div class="modal-overlay" id="ofertaEditorOverlay">
-  <div class="modal-box">
+  <div class="modal-box oferta-editor-box">
     <button class="modal-close" onclick="cerrarEditorOferta()">✕</button>
     <h3>Editar Recetario de Recetarios</h3>
     <p style="color:var(--choco-suave);font-size:13px;margin-bottom:18px;">Las letras predeterminadas se cargan automáticamente; puedes escribir encima para modificarlas.</p>
@@ -1676,9 +1702,15 @@
     document.getElementById('ofertaPrecioActual').textContent = `$${formatearPrecio(ofertaCache.precioActual)}`;
     document.getElementById('ofertaLista').innerHTML = ofertaCache.lista.map(item => `<span>${escapeHtml(item)}</span>`).join('');
     const visual = document.querySelector('.oferta-visual');
-    visual.style.backgroundImage = ofertaCache.fondoUrl
-      ? `linear-gradient(0deg, rgba(44,26,14,0.78), rgba(44,26,14,0.78)), url("${ofertaCache.fondoUrl}"), var(--oferta-imagen-fondo), var(--choco)`
-      : '';
+    visual.classList.toggle('con-fondo-personalizado', Boolean(ofertaCache.fondoUrl));
+    if(ofertaCache.fondoUrl){
+      visual.style.backgroundImage = `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`;
+      visual.style.backgroundSize = 'cover';
+      visual.style.backgroundPosition = 'center';
+      visual.style.backgroundRepeat = 'no-repeat';
+    }else{
+      visual.removeAttribute('style');
+    }
     COMBO.nombre = ofertaCache.titulo;
     COMBO.precio = Number(ofertaCache.precioActual) || COMBO.precio;
     const btn = document.getElementById('btnComprarOferta');
