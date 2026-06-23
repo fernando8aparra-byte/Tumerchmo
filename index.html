@@ -529,7 +529,21 @@
     max-width:1180px;margin:0 auto;
   }
   @media(max-width:980px){.grid-productos{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:560px){.grid-productos{grid-template-columns:1fr;}}
+  @media(max-width:560px){
+    .catalogo{padding:64px 10px;}
+    .grid-productos{grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px;}
+    .producto-card{border-radius:6px;}
+    .producto-body{padding:8px;}
+    .producto-body h3{font-size:11px; line-height:1.15; margin-bottom:4px;}
+    .producto-body p{display:none;}
+    .producto-precio-row{margin-bottom:8px;}
+    .producto-precio{font-size:14px;}
+    .producto-precio span{display:none;}
+    .producto-acciones{flex-direction:column; gap:5px;}
+    .btn-agregar-carrito,
+    .btn-comprar{width:100%; padding:7px 3px; font-size:9px; gap:0;}
+    .btn-agregar-carrito svg{display:none;}
+  }
 
   .producto-card{
     background:var(--blanco);
@@ -1714,8 +1728,8 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
                 Agregar
               </button>
-              <button class="btn-comprar" onclick="window.abrirModal('${p.id}')">
-                Comprar ahora
+              <button class="btn-comprar" onclick="window.verDetalleProducto('${p.id}')">
+                Ver detalles
               </button>
             </div>
           </div>
@@ -1733,6 +1747,10 @@
     if(id === 'combo') return COMBO;
     return productosCache.find(p => p.id === id);
   }
+
+  window.verDetalleProducto = function(idProducto){
+    window.location.href = 'product.html?id=' + encodeURIComponent(idProducto);
+  };
 
   escucharSesion((user) => {
     const habiaSesionAntes = usuarioActual !== null;
