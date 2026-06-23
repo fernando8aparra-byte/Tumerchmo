@@ -23,6 +23,8 @@
     --blanco:#FFFFFF;
     --sombra-suave: 0 2px 20px rgba(44,26,14,0.08);
     --sombra-media: 0 8px 40px rgba(44,26,14,0.12);
+    /* Cambia esta ruta para poner una imagen de fondo en el apartado "El más pedido". */
+    --oferta-imagen-fondo: url('assets/img/fondo-recetarios.jpg');
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -387,7 +389,13 @@
   }
   @media(max-width:840px){.oferta-inner{grid-template-columns:1fr;}}
   .oferta-visual{
-    background:var(--choco);
+    background:
+      linear-gradient(0deg, rgba(44,26,14,0.78), rgba(44,26,14,0.78)),
+      var(--oferta-imagen-fondo),
+      var(--choco);
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
     padding:56px 44px;
     color:var(--crema);
     display:flex;flex-direction:column;justify-content:center;
@@ -397,12 +405,13 @@
   .oferta-visual::after{
     content:'';
     position:absolute;
-    bottom:-60px;right:-60px;
-    width:200px;height:200px;
-    border-radius:50%;
-    background:rgba(212,136,42,0.15);
+    inset:0;
+    background:
+      radial-gradient(circle at 100% 100%, rgba(212,136,42,0.20) 0 120px, transparent 121px),
+      linear-gradient(135deg, rgba(44,26,14,0.18), rgba(44,26,14,0.45));
     pointer-events:none;
   }
+  .oferta-visual > *{position:relative;z-index:1;}
   .oferta-label{
     display:inline-block;
     background:var(--caramelo);
