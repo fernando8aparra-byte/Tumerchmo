@@ -395,15 +395,14 @@
   }
   @media(max-width:480px){
     .oferta{padding:48px 14px;}
-    .oferta .oferta-visual{min-height:330px;padding:36px 20px;}
+    .oferta .oferta-visual{min-height:330px;padding:32px 18px;}
     .oferta .oferta-visual h2{font-size:28px;}
     .oferta .oferta-visual p{font-size:14px;}
+    .oferta-visual .recetarios-list{max-height:150px;overflow-y:auto;}
   }
   .oferta-visual{
-    background:
-      linear-gradient(0deg, rgba(44,26,14,0.78), rgba(44,26,14,0.78)),
-      var(--oferta-imagen-fondo),
-      var(--choco);
+    background-image:var(--oferta-imagen-fondo);
+    background-color:#111;
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -421,9 +420,7 @@
     content:'';
     position:absolute;
     inset:0;
-    background:
-      radial-gradient(circle at 100% 100%, rgba(212,136,42,0.20) 0 120px, transparent 121px),
-      linear-gradient(135deg, rgba(44,26,14,0.18), rgba(44,26,14,0.45));
+    background:linear-gradient(135deg, rgba(0,0,0,0.10), rgba(0,0,0,0.24));
     pointer-events:none;
   }
   .oferta-visual.con-fondo-personalizado::after{display:none;}
@@ -451,6 +448,10 @@
   .oferta-visual .recetarios-list{
     margin-top:28px;
     display:flex;flex-direction:column;gap:10px;
+    max-height:220px;
+    overflow-y:auto;
+    padding-right:6px;
+    -webkit-overflow-scrolling:touch;
   }
   .oferta-visual .recetarios-list span{
     font-size:14px;font-weight:500;opacity:.9;
@@ -837,10 +838,12 @@
   }
   .modal-box.oferta-editor-box{max-width:620px;text-align:left;}
   .modal-box.oferta-editor-box h3, .modal-box.oferta-editor-box p{text-align:center;}
+  .modal-box.oferta-editor-box .admin-form{max-height:calc(100vh - 210px);overflow-y:auto;-webkit-overflow-scrolling:touch;}
   @media(max-width:520px){
-    .modal-overlay{padding:12px;}
-    .modal-box{padding:28px 18px;max-height:calc(100vh - 24px);}
-    .modal-box.oferta-editor-box{max-width:100%;}
+    .modal-overlay{padding:10px;align-items:stretch;}
+    .modal-box{padding:26px 16px;max-height:calc(100dvh - 20px);overflow-y:auto;}
+    .modal-box.oferta-editor-box{max-width:100%;height:calc(100dvh - 20px);display:flex;flex-direction:column;}
+    .modal-box.oferta-editor-box .admin-form{grid-template-columns:1fr;max-height:none;flex:1;overflow-y:auto;padding:16px;margin-bottom:0;}
   }
   .modal-close{
     position:absolute;top:16px;right:16px;
@@ -1704,7 +1707,8 @@
     const visual = document.querySelector('.oferta-visual');
     visual.classList.toggle('con-fondo-personalizado', Boolean(ofertaCache.fondoUrl));
     if(ofertaCache.fondoUrl){
-      visual.style.backgroundImage = `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`;
+      visual.style.setProperty('background-image', `url("${String(ofertaCache.fondoUrl).replace(/"/g, '%22')}")`, 'important');
+      visual.style.backgroundColor = 'transparent';
       visual.style.backgroundSize = 'cover';
       visual.style.backgroundPosition = 'center';
       visual.style.backgroundRepeat = 'no-repeat';
