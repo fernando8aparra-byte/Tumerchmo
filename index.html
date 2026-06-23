@@ -412,6 +412,27 @@
     pointer-events:none;
   }
   .oferta-visual > *{position:relative;z-index:1;}
+  .btn-editar-fondo-oferta{
+    position:absolute;
+    top:18px;
+    right:18px;
+    z-index:2;
+    display:none;
+    align-items:center;
+    gap:7px;
+    background:rgba(255,255,255,0.92);
+    color:var(--choco);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:999px;
+    padding:9px 14px;
+    font-family:'Poppins',sans-serif;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 10px 28px rgba(44,26,14,0.18);
+  }
+  .btn-editar-fondo-oferta:hover{background:var(--blanco);}
+  .btn-editar-fondo-oferta.show{display:flex;}
   .oferta-label{
     display:inline-block;
     background:var(--caramelo);
@@ -1217,7 +1238,11 @@
 <!-- ═══════════════ OFERTA ═══════════════ -->
 <section class="oferta" id="oferta">
   <div class="oferta-inner fade-up">
-    <div class="oferta-visual">
+    <div class="oferta-visual" id="ofertaVisual">
+      <button class="btn-editar-fondo-oferta" id="btnEditarFondoOferta" onclick="abrirEditorFondoOferta()" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+        Editar fondo
+      </button>
       <div class="oferta-label">★ El más pedido</div>
       <h2>Recetario de Recetarios</h2>
       <p>Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.</p>
@@ -1440,6 +1465,28 @@
   </div>
 </div>
 
+<!-- MODAL FONDO OFERTA -->
+<div class="modal-overlay" id="ofertaFondoOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarEditorFondoOferta()">✕</button>
+    <h3>Editar fondo de "El más pedido"</h3>
+    <p style="color:var(--choco-suave);font-size:13px;margin-bottom:18px;">Sube una imagen para colocarla detrás del apartado Recetario de Recetarios.</p>
+    <form class="admin-form" onsubmit="return guardarFondoOferta(event)">
+      <div class="full">
+        <label>Imagen de fondo</label>
+        <input type="file" id="ofertaFondoArchivo" accept="image/*" onchange="previsualizarFondoOferta(event)">
+        <div class="hint">📸 Recomendado: imagen horizontal 1200×900px o más. El sistema agrega una capa oscura para que el texto se lea bien.</div>
+        <img id="ofertaFondoPreview" class="preview-img" style="display:none;margin-top:10px;">
+      </div>
+      <div class="full" style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+        <button type="button" class="btn-cancelar-mini" onclick="cerrarEditorFondoOferta()">Cancelar</button>
+        <button type="button" class="btn-cancelar-mini" onclick="quitarFondoOferta()">Quitar fondo</button>
+        <button type="submit" class="btn-guardar" id="btnGuardarFondoOferta">Guardar fondo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- MODAL HISTORIAL -->
 <div class="modal-overlay" id="historialOverlay">
   <div class="modal-box historial-box">
@@ -1539,6 +1586,101 @@
   ];
   let heroExamplesCache = HERO_EXAMPLES_DEFAULT.map(e => ({ ...e }));
   let heroExampleImagenPendiente = null;
+  let ofertaFondoImagenPendiente = null;
+  let ofertaFondoUrlActual = '';
+
+  function cssUrl(url){
+    return `url("${String(url).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`;
+  }
+
+  function aplicarFondoOferta(url){
+    ofertaFondoUrlActual = url || '';
+    document.documentElement.style.setProperty('--oferta-imagen-fondo', url ? cssUrl(url) : "url('assets/img/fondo-recetarios.jpg')");
+    const preview = document.getElementById('ofertaFondoPreview');
+    if(preview){
+      if(url){ preview.src = url; preview.style.display = 'block'; }
+      else { preview.removeAttribute('src'); preview.style.display = 'none'; }
+    }
+  }
+
+  async function cargarFondoOferta(){
+    const local = localStorage.getItem('ofertaFondoUrl') || '';
+    if(local) aplicarFondoOferta(local);
+    try{
+      const snap = await getDoc(doc(db, "contenido", "oferta_fondo"));
+      const url = snap.exists() ? (snap.data().imagenUrl || '') : '';
+      if(url){
+        localStorage.setItem('ofertaFondoUrl', url);
+        aplicarFondoOferta(url);
+      }
+    }catch(e){
+      console.warn('No se pudo cargar el fondo de oferta desde Firebase; se usará el fondo local o predeterminado.', e);
+    }
+  }
+
+  function actualizarBotonFondoOferta(){
+    document.getElementById('btnEditarFondoOferta')?.classList.toggle('show', esAdmin(usuarioActual));
+  }
+
+  window.abrirEditorFondoOferta = function(){
+    if(!esAdmin(usuarioActual)) return;
+    ofertaFondoImagenPendiente = null;
+    document.getElementById('ofertaFondoArchivo').value = '';
+    aplicarFondoOferta(ofertaFondoUrlActual);
+    document.getElementById('ofertaFondoOverlay').classList.add('show');
+  };
+
+  window.cerrarEditorFondoOferta = function(){ document.getElementById('ofertaFondoOverlay').classList.remove('show'); };
+  window.previsualizarFondoOferta = function(event){
+    const archivo = event.target.files[0];
+    if(!archivo) return;
+    ofertaFondoImagenPendiente = archivo;
+    const preview = document.getElementById('ofertaFondoPreview');
+    preview.src = URL.createObjectURL(archivo);
+    preview.style.display = 'block';
+  };
+
+  window.guardarFondoOferta = async function(event){
+    event.preventDefault();
+    if(!ofertaFondoImagenPendiente){ alert('Primero selecciona una imagen.'); return false; }
+    const btn = document.getElementById('btnGuardarFondoOferta');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    try{
+      let url;
+      try{
+        url = await subirImagenProducto(ofertaFondoImagenPendiente, 'oferta-fondo');
+      }catch(e){
+        if(!esErrorPermisosFirebase(e)) throw e;
+        console.warn('Firebase Storage no permitió subir el fondo; se guardará una copia local.', e);
+        url = await archivoADataUrl(ofertaFondoImagenPendiente);
+      }
+      localStorage.setItem('ofertaFondoUrl', url);
+      aplicarFondoOferta(url);
+      try{
+        await setDoc(doc(db, "contenido", "oferta_fondo"), { imagenUrl:url, actualizado: serverTimestamp() }, { merge:true });
+      }catch(e){
+        if(!esErrorPermisosFirebase(e)) throw e;
+        console.warn('Firebase Firestore no permitió guardar el fondo; quedó guardado localmente en este navegador.', e);
+      }
+      window.cerrarEditorFondoOferta();
+    }catch(e){ alert('No se pudo guardar el fondo: ' + e.message); }
+    finally{ btn.disabled = false; btn.textContent = 'Guardar fondo'; }
+    return false;
+  };
+
+  window.quitarFondoOferta = async function(){
+    ofertaFondoImagenPendiente = null;
+    localStorage.removeItem('ofertaFondoUrl');
+    aplicarFondoOferta('');
+    try{
+      await setDoc(doc(db, "contenido", "oferta_fondo"), { imagenUrl:'', actualizado: serverTimestamp() }, { merge:true });
+    }catch(e){
+      if(!esErrorPermisosFirebase(e)) console.warn('No se pudo quitar el fondo en Firebase:', e);
+    }
+    window.cerrarEditorFondoOferta();
+  };
+
+  document.getElementById('ofertaFondoOverlay').addEventListener('click', e => { if(e.target.id === 'ofertaFondoOverlay') window.cerrarEditorFondoOferta(); });
 
   function normalizarHeroExamples(examples){
     return HERO_EXAMPLES_DEFAULT.map(def => ({ ...def, ...(examples || []).find(e => e.id === def.id) }));
@@ -1740,6 +1882,7 @@
     pintarBotonCuenta();
     pintarGridProductos();
     pintarHeroExamples();
+    actualizarBotonFondoOferta();
     document.getElementById('adminAgregarWrap').style.display = esAdmin(user) ? 'block' : 'none';
     // Si el usuario cierra sesión, vaciamos su carrito (no tiene sentido
     // conservarlo para la siguiente persona que use el mismo navegador).
@@ -2197,6 +2340,8 @@
 
   cargarProductos();
   cargarHeroExamples();
+  cargarFondoOferta();
+  actualizarBotonFondoOferta();
 </script>
 </body>
 </html>
