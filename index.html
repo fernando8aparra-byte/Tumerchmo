@@ -1589,6 +1589,26 @@
     preview.src = URL.createObjectURL(archivo);
     preview.style.display = 'block';
   };
+
+  function archivoADataUrl(archivo){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(archivo);
+    });
+  }
+
+  function esErrorPermisosFirebase(error){
+    const codigo = (error?.code || '').toLowerCase();
+    const mensaje = (error?.message || '').toLowerCase();
+    return codigo.includes('permission-denied')
+      || codigo.includes('unauthorized')
+      || mensaje.includes('missing or insufficient permissions')
+      || mensaje.includes('permission denied')
+      || mensaje.includes('unauthorized');
+  }
+
   window.guardarHeroExample = async function(event){
     event.preventDefault();
     const id = document.getElementById('heroExampleId').value;
@@ -1602,12 +1622,26 @@
     };
     try{
       if(heroExampleImagenPendiente){
-        actualizado.imagenUrl = await subirImagenProducto(heroExampleImagenPendiente, `hero-${id}`);
+        try{
+          actualizado.imagenUrl = await subirImagenProducto(heroExampleImagenPendiente, `hero-${id}`);
+        }catch(e){
+          if(!esErrorPermisosFirebase(e)) throw e;
+          console.warn('Firebase Storage no permitió subir la imagen; se guardará una copia local del ejemplo.', e);
+          actualizado.imagenUrl = await archivoADataUrl(heroExampleImagenPendiente);
+        }
       }
+
       heroExamplesCache[idx] = actualizado;
       const items = heroExamplesCache.map(({ id, nombre, precio, recetas, imagenUrl }) => ({ id, nombre, precio, recetas, ...(imagenUrl ? { imagenUrl } : {}) }));
       localStorage.setItem('heroProductExamples', JSON.stringify(items));
-      await setDoc(doc(db, "contenido", "hero_productos"), { items, actualizado: serverTimestamp() }, { merge:true });
+
+      try{
+        await setDoc(doc(db, "contenido", "hero_productos"), { items, actualizado: serverTimestamp() }, { merge:true });
+      }catch(e){
+        if(!esErrorPermisosFirebase(e)) throw e;
+        console.warn('Firebase Firestore no permitió guardar el ejemplo; quedó guardado localmente en este navegador.', e);
+      }
+
       pintarHeroExamples();
       window.cerrarEditorHeroExample();
     }catch(e){ alert('No se pudo guardar el ejemplo: ' + e.message); }
