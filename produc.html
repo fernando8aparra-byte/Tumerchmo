@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto - Tumerchmo</title>
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/merchct-d059a.firebasestorage.app/o/logo%2Flogo.jpg?alt=media">
+  <meta http-equiv="refresh" content="0; url=product.html">
+  <script>
+    const destino = 'product.html' + window.location.search + window.location.hash;
+    window.location.replace(destino);
+  </script>
+</head>
+<body>
+  <p>Redirigiendo al detalle del producto... <a id="detalleLink" href="product.html">Abrir producto</a></p>
+  <script>document.getElementById('detalleLink').href = 'product.html' + window.location.search + window.location.hash;</script>
+</body>
+</html>
