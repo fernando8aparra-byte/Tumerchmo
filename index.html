@@ -527,6 +527,7 @@
     display:flex;align-items:center;justify-content:center;gap:10px;
   }
   .btn-comprar-grande:hover{background:var(--caramelo-claro);transform:translateY(-1px);}
+  .btn-comprar-grande:disabled{opacity:.7;cursor:not-allowed;transform:none;}
   .btn-agregar-link{
     background:none;
     border:none;
@@ -1566,7 +1567,13 @@
         <div><label>Precio (MXN)</label><input type="number" id="prodPrecio" required placeholder="18.00" min="0.01" step="0.01"></div>
         <div class="full"><label>Descripción corta</label><textarea id="prodDescripcion" required placeholder="9 frappés cremosos..."></textarea></div>
         <div><label>Emoji (respaldo sin imagen)</label><input type="text" id="prodEmoji" placeholder="🥤" maxlength="4"></div>
-        <div><label>Stripe Price ID</label><input type="text" id="prodPriceId" placeholder="price_xxxxx"></div>
+      <div class="full">
+  <label>PDF del recetario</label>
+  <div class="campo-imagen">
+    <input type="file" id="prodPdfArchivo" accept="application/pdf" onchange="previsualizarPdf(event)">
+    <div class="hint" id="prodPdfHint">📄 Sube el PDF de este recetario. Se enviará automáticamente por correo al cliente cuando pague.</div>
+  </div>
+</div>
         <div class="full">
           <label>Imagen del producto</label>
           <div class="campo-imagen">
@@ -1601,6 +1608,15 @@
   import {
     doc, setDoc, getDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // -------------------------------------------------------------------
+  // NUEVO: cliente de Cloud Functions, para conectar con Stripe.
+  // -------------------------------------------------------------------
+  import {
+    getFunctions, httpsCallable
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+
+  import { getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
   // -------------------------------------------------------------------
   // Ilustraciones SVG propias por categoría (sin depender de fotos con
@@ -1840,6 +1856,14 @@
 
   window.cerrarEditorOferta = function(){ document.getElementById('ofertaEditorOverlay').classList.remove('show'); };
 
+window.previsualizarPdf = function(event){
+  const archivo = event.target.files[0];
+  if(!archivo) return;
+  archivoPdfPendiente = archivo;
+  const hint = document.getElementById('prodPdfHint');
+  if(hint) hint.textContent = '✅ PDF listo: ' + archivo.name;
+};
+
   window.previsualizarImagenOferta = function(event){
     const archivo = event.target.files[0];
     if(!archivo) return;
@@ -1938,6 +1962,44 @@
   // Carrito en memoria: { idProducto: cantidad }. Vive mientras dure la
   // pestaña abierta. Cada usuario empieza con su carrito vacío al entrar.
   let carrito = {};
+
+  // -------------------------------------------------------------------
+  // NUEVO: cliente de Cloud Functions para crear sesiones de Stripe
+  // Checkout. "app" no está exportado por firebase-config.js, así que
+  // usamos getApp() para tomar la instancia ya inicializada ahí mismo.
+  // -------------------------------------------------------------------
+  const functions = getFunctions(getApp(), "us-central1");
+  const llamarCrearCheckoutSession = httpsCallable(functions, "crearCheckoutSession");
+
+  // Deshabilita un botón mientras se procesa el pago, para que el
+  // usuario no le dé doble clic y mande dos compras por accidente.
+  function ponerBotonEnCarga(boton, textoCarga){
+    if(!boton) return () => {};
+    const original = boton.innerHTML;
+    boton.disabled = true;
+    boton.innerHTML = `<span class="spinner-mini"></span> ${textoCarga}`;
+    return () => { boton.disabled = false; boton.innerHTML = original; };
+  }
+
+  // Llama a la Cloud Function con el carrito y redirige a Stripe Checkout.
+  // items: [{ id: "donas", cantidad: 2 }, ...]
+  async function irAPagarConStripe(items, botonQueDispara){
+    if(!usuarioActual){
+      window.location.href = 'login.html?volver=' + encodeURIComponent('index.html#catalogo');
+      return;
+    }
+    const restaurarBoton = ponerBotonEnCarga(botonQueDispara, 'Conectando con Stripe...');
+    try{
+      const resultado = await llamarCrearCheckoutSession({ items });
+      const url = resultado.data && resultado.data.url;
+      if(!url) throw new Error('No se recibió la URL de pago.');
+      window.location.href = url; // Redirige a la página de pago de Stripe
+    }catch(e){
+      console.error('Error creando sesión de pago:', e);
+      alert('No se pudo iniciar el pago: ' + (e.message || 'Intenta de nuevo en un momento.'));
+      restaurarBoton();
+    }
+  }
 
   async function cargarProductos(){
     try{
@@ -2307,7 +2369,12 @@
     footer.style.display = 'block';
   }
 
-  window.abrirCheckoutCarrito = function(){
+  // -------------------------------------------------------------------
+  // MODIFICADO: ahora manda el carrito real a Stripe vía Cloud Function
+  // en vez de mostrar un alert(). El servidor recalcula los precios
+  // desde Firestore, así que nunca confía en lo que haya en pantalla.
+  // -------------------------------------------------------------------
+  window.abrirCheckoutCarrito = async function(){
     if(!usuarioActual){
       window.location.href = 'login.html?volver=' + encodeURIComponent('index.html#catalogo');
       return;
@@ -2315,16 +2382,9 @@
     const ids = Object.keys(carrito);
     if(ids.length === 0) return;
 
-    // En producción esto manda TODO el carrito a tu backend de Firebase
-    // (createCheckoutSession con line_items múltiples) para que Stripe
-    // cobre todos los productos juntos en un solo pago.
-    const detalle = ids.map(id => {
-      const p = buscarProductoPorId(id);
-      return p ? `${p.nombre} x${carrito[id]}` : '';
-    }).filter(Boolean).join('\n');
-    const total = ids.reduce((s, id) => s + (buscarProductoPorId(id)?.precio || 0) * carrito[id], 0);
-
-    alert("Aquí se conecta Stripe Checkout para todo tu carrito:\n\n" + detalle + "\n\nTotal: $" + total + " MXN\n\nRevisa functions/index.js para la integración real con múltiples productos.");
+    const items = ids.map(id => ({ id, cantidad: carrito[id] }));
+    const boton = document.getElementById('btnPagarCarrito');
+    await irAPagarConStripe(items, boton);
   };
 
   window.abrirAdmin = async function(idEditar){
@@ -2384,6 +2444,9 @@
     document.getElementById('prodId').value = '';
     document.getElementById('prodImagenPreview').style.display = 'none';
     archivoImagenPendiente = null;
+    archivoPdfPendiente = null;
+    const hint = document.getElementById('prodPdfHint');
+    if(hint) hint.textContent = '📄 Sube el PDF de este recetario. Se enviará automáticamente por correo al cliente cuando pague.';
   };
 
   window.previsualizarImagen = function(event){
@@ -2419,6 +2482,11 @@
         const url = await subirImagenProducto(archivoImagenPendiente, idFinal);
         await setDoc(doc(db, "productos", idFinal), { imagenUrl: url }, { merge:true });
       }
+      if(archivoPdfPendiente){
+        const pdfUrl = await subirPdfProducto(archivoPdfPendiente, idFinal);
+        await setDoc(doc(db, "productos", idFinal), { pdfUrl }, { merge:true });
+      }
+
       await cargarProductos();
       pintarListaAdminProductos();
       window.limpiarFormProducto();
@@ -2475,9 +2543,16 @@
   window.cerrarModal = function(){ document.getElementById('modalOverlay').classList.remove('show'); };
   document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id === 'modalOverlay') window.cerrarModal(); });
 
-  document.getElementById('btnPagarStripe').addEventListener('click', async () => {
+  // -------------------------------------------------------------------
+  // MODIFICADO: ahora manda al producto individual a Stripe vía Cloud
+  // Function en vez de mostrar un alert().
+  // -------------------------------------------------------------------
+  document.getElementById('btnPagarStripe').addEventListener('click', async (e) => {
     if(!productoActual || !usuarioActual) return;
-    alert("Aquí se conecta Stripe Checkout para: " + productoActual.nombre + " ($" + formatearPrecio(productoActual.precio) + " MXN).\nRevisa functions/index.js para la integración real.");
+    await irAPagarConStripe(
+      [{ id: productoActual.id, cantidad: 1 }],
+      e.currentTarget
+    );
   });
 
   window.toggleFaq = function(el){ el.classList.toggle('open'); };
