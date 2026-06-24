@@ -1601,7 +1601,7 @@
 <script type="module">
   import {
     auth, db, escucharSesion, esAdmin, cerrarSesion,
-    obtenerProductos, crearProducto, actualizarProducto, eliminarProducto, subirImagenProducto, subirPdfProducto,
+    obtenerProductos, crearProducto, actualizarProducto, eliminarProducto, subirImagenProducto,
     obtenerPedidosDeUsuario, obtenerTodosLosPedidos,
   } from './firebase-config.js';
 
@@ -1958,7 +1958,6 @@ window.previsualizarPdf = function(event){
   let usuarioActual = null;
   let productoActual = null;
   let archivoImagenPendiente = null;
-  let archivoPdfPendiente = null;
 
   // Carrito en memoria: { idProducto: cantidad }. Vive mientras dure la
   // pestaña abierta. Cada usuario empieza con su carrito vacío al entrar.
@@ -2433,13 +2432,11 @@ window.previsualizarPdf = function(event){
     document.getElementById('prodPrecio').value = p.precio || '';
     document.getElementById('prodDescripcion').value = p.descripcion || '';
     document.getElementById('prodEmoji').value = p.emoji || '';
+    document.getElementById('prodPriceId').value = p.priceId || '';
     const preview = document.getElementById('prodImagenPreview');
     if(p.imagenUrl){ preview.src = p.imagenUrl; preview.style.display = 'block'; }
     else { preview.style.display = 'none'; }
     archivoImagenPendiente = null;
-    archivoPdfPendiente = null;
-    const hint = document.getElementById('prodPdfHint');
-    if(hint) hint.textContent = p.pdfUrl ? '✅ PDF ya subido anteriormente.' : '📄 Sube el PDF de este recetario. Se enviará automáticamente por correo al cliente cuando pague.';
   }
 
   window.limpiarFormProducto = function(){
@@ -2472,6 +2469,7 @@ window.previsualizarPdf = function(event){
         precio: Number(document.getElementById('prodPrecio').value),
         descripcion: document.getElementById('prodDescripcion').value.trim(),
         emoji: document.getElementById('prodEmoji').value.trim() || '📖',
+        priceId: document.getElementById('prodPriceId').value.trim(),
       };
       let idFinal = id;
       if(!id){
