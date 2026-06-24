@@ -2437,6 +2437,9 @@ window.previsualizarPdf = function(event){
     if(p.imagenUrl){ preview.src = p.imagenUrl; preview.style.display = 'block'; }
     else { preview.style.display = 'none'; }
     archivoImagenPendiente = null;
+    archivoPdfPendiente = null;
+    const hint = document.getElementById('prodPdfHint');
+    if(hint) hint.textContent = p.pdfUrl ? '✅ PDF ya subido anteriormente.' : '📄 Sube el PDF de este recetario. Se enviará automáticamente por correo al cliente cuando pague.';
   }
 
   window.limpiarFormProducto = function(){
