@@ -118,9 +118,11 @@ export async function subirImagenProducto(archivo, productoId) {
 // Guarda el PDF en /pdfs/{productoId}/{nombre} y devuelve la URL pública.
 // El webhook de Stripe usa esa URL para enviarla por correo al cliente.
 export async function subirPdfProducto(archivo, productoId) {
-  const nombreArchivo = `${productoId}-${Date.now()}-${archivo.name}`;
+  const nombreOriginal = archivo.name || 'recetario.pdf';
+  const nombreSeguro = nombreOriginal.replace(/[^a-zA-Z0-9._-]/g, '-');
+  const nombreArchivo = `${productoId}-${Date.now()}-${nombreSeguro}`;
   const storageRef = ref(storage, `pdfs/${productoId}/${nombreArchivo}`);
-  await uploadBytes(storageRef, archivo);
+  await uploadBytes(storageRef, archivo, { contentType: 'application/pdf' });
   return await getDownloadURL(storageRef);
 }
 
