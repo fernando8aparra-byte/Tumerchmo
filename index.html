@@ -2432,7 +2432,6 @@ window.previsualizarPdf = function(event){
     document.getElementById('prodPrecio').value = p.precio || '';
     document.getElementById('prodDescripcion').value = p.descripcion || '';
     document.getElementById('prodEmoji').value = p.emoji || '';
-    document.getElementById('prodPriceId').value = p.priceId || '';
     const preview = document.getElementById('prodImagenPreview');
     if(p.imagenUrl){ preview.src = p.imagenUrl; preview.style.display = 'block'; }
     else { preview.style.display = 'none'; }
@@ -2472,7 +2471,6 @@ window.previsualizarPdf = function(event){
         precio: Number(document.getElementById('prodPrecio').value),
         descripcion: document.getElementById('prodDescripcion').value.trim(),
         emoji: document.getElementById('prodEmoji').value.trim() || '📖',
-        priceId: document.getElementById('prodPriceId').value.trim(),
       };
       let idFinal = id;
       if(!id){
