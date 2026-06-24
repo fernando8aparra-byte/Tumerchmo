@@ -2509,7 +2509,10 @@ window.previsualizarPdf = function(event){
       pintarListaAdminProductos();
       window.limpiarFormProducto();
     }catch(e){
-      alert('No se pudo guardar el producto: ' + e.message);
+      alert('ERROR DETALLE:\n' +
+        'mensaje: ' + e.message + '\n' +
+        'code: ' + (e.code || 'sin code') + '\n' +
+        'name: ' + (e.name || 'sin name'));
       console.error(e);
     }finally{
       btn.disabled = false;
