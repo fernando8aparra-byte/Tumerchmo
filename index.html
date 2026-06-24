@@ -1567,6 +1567,7 @@
         <div><label>Precio (MXN)</label><input type="number" id="prodPrecio" required placeholder="18.00" min="0.01" step="0.01"></div>
         <div class="full"><label>Descripción corta</label><textarea id="prodDescripcion" required placeholder="9 frappés cremosos..."></textarea></div>
         <div><label>Emoji (respaldo sin imagen)</label><input type="text" id="prodEmoji" placeholder="🥤" maxlength="4"></div>
+        <input type="hidden" id="prodPriceId" value="">
       <div class="full">
   <label>PDF del recetario</label>
   <div class="campo-imagen">
@@ -1601,7 +1602,7 @@
 <script type="module">
   import {
     auth, db, escucharSesion, esAdmin, cerrarSesion,
-    obtenerProductos, crearProducto, actualizarProducto, eliminarProducto, subirImagenProducto,
+    obtenerProductos, crearProducto, actualizarProducto, eliminarProducto, subirImagenProducto, subirPdfProducto,
     obtenerPedidosDeUsuario, obtenerTodosLosPedidos,
   } from './firebase-config.js';
 
@@ -1958,6 +1959,7 @@ window.previsualizarPdf = function(event){
   let usuarioActual = null;
   let productoActual = null;
   let archivoImagenPendiente = null;
+  let archivoPdfPendiente = null;
 
   // Carrito en memoria: { idProducto: cantidad }. Vive mientras dure la
   // pestaña abierta. Cada usuario empieza con su carrito vacío al entrar.
@@ -2436,7 +2438,15 @@ window.previsualizarPdf = function(event){
     const preview = document.getElementById('prodImagenPreview');
     if(p.imagenUrl){ preview.src = p.imagenUrl; preview.style.display = 'block'; }
     else { preview.style.display = 'none'; }
+    const pdfHint = document.getElementById('prodPdfHint');
+    if(pdfHint){
+      pdfHint.textContent = p.pdfUrl
+        ? '✅ Este recetario ya tiene un PDF guardado. Sube otro archivo solo si quieres reemplazarlo.'
+        : '📄 Sube el PDF de este recetario. Se enviará automáticamente por correo al cliente cuando pague.';
+    }
+    document.getElementById('prodPdfArchivo').value = '';
     archivoImagenPendiente = null;
+    archivoPdfPendiente = null;
   }
 
   window.limpiarFormProducto = function(){
