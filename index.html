@@ -1603,7 +1603,7 @@ window.previsualizarPdf = function(event){
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
                 Agregar
               </button>
-              <button class="btn-comprar" onclick="event.stopPropagation(); window.verDetalleProducto('${p.id}')">
+              <button class="btn-comprar" onclick="event.stopPropagation(); window.comprarAhora('${p.id}', this)">
                 Comprar ahora
               </button>
             </div>
@@ -1628,6 +1628,13 @@ window.previsualizarPdf = function(event){
 
   window.verDetalleProducto = function(idProducto){
     window.location.href = 'product.html?id=' + encodeURIComponent(idProducto);
+  };
+
+  // Compra inmediata desde la tarjeta del catálogo: usa la misma Cloud
+  // Function de Stripe que el carrito, pero manda solo este recetario.
+  window.comprarAhora = async function(idProducto, botonQueDispara){
+    if(!buscarProductoPorId(idProducto)) return;
+    await irAPagarConStripe([{ id: idProducto, cantidad: 1 }], botonQueDispara);
   };
 
   escucharSesion((user) => {
