@@ -141,9 +141,10 @@
     margin-left:6px;letter-spacing:.3px;
     background:#E0F0E8;color:var(--menta);
   }
+  .estado-pill.pendiente{background:#FFF3D8;color:var(--caramelo);}
 
   .compra-acciones{flex-shrink:0;}
-  .btn-descargar{
+  .btn-descargar, .btn-pagar-stripe{
     display:inline-flex;align-items:center;gap:8px;
     background:var(--choco);color:var(--crema);
     font-weight:600;font-size:13.5px;
@@ -153,8 +154,10 @@
     transition:background .2s ease, transform .15s ease;
     white-space:nowrap;
   }
-  .btn-descargar:hover{background:var(--choco-medio);transform:translateY(-1px);}
-  .btn-descargar:disabled{cursor:not-allowed;opacity:.75;transform:none;}
+  .btn-descargar:hover, .btn-pagar-stripe:hover{background:var(--choco-medio);transform:translateY(-1px);}
+  .btn-descargar:disabled, .btn-pagar-stripe:disabled{cursor:not-allowed;opacity:.75;transform:none;}
+  .btn-pagar-stripe{background:#635BFF;}
+  .btn-pagar-stripe:hover{background:#5148E8;}
   .btn-descargar.sin-pdf{
     background:var(--crema-2);color:var(--choco-suave);
     cursor:not-allowed;
@@ -219,11 +222,15 @@
 
 <script type="module">
   import { escucharSesion, obtenerPedidosDeUsuario } from "./firebase-config.js";
+  import { getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
   const elCarga = document.getElementById('estadoCarga');
   const elVacio = document.getElementById('estadoVacio');
   const elError = document.getElementById('estadoError');
   const elLista = document.getElementById('listaCompras');
+  const functions = getFunctions(getApp(), "us-central1");
+  const llamarCrearCheckoutSession = httpsCallable(functions, "crearCheckoutSession");
 
   function escapeHtml(t){
     const d = document.createElement('div');
@@ -278,11 +285,55 @@
     }
   };
 
+  function obtenerItemsDePedido(pedido){
+    if(Array.isArray(pedido.items) && pedido.items.length){
+      return pedido.items.map(item => ({
+        id: item.id || item.productoId || item.idProducto || item.productId,
+        cantidad: Number(item.cantidad || item.quantity || 1),
+      })).filter(item => item.id);
+    }
+
+    const id = pedido.productoId || pedido.idProducto || pedido.productId || pedido.idRecetario;
+    return id ? [{ id, cantidad: Number(pedido.cantidad || 1) }] : [];
+  }
+
+  function ponerBotonEnCarga(boton, textoCarga){
+    if(!boton) return () => {};
+    const original = boton.innerHTML;
+    boton.disabled = true;
+    boton.innerHTML = `<span class="spinner-descarga"></span> ${textoCarga}`;
+    return () => { boton.disabled = false; boton.innerHTML = original; };
+  }
+
+  window.pagarPedidoConStripe = async function(pedidoId, boton){
+    const pedido = pedidosCache.find(p => p.id === pedidoId);
+    const items = pedido ? obtenerItemsDePedido(pedido) : [];
+    if(!items.length){
+      alert('No se pudo encontrar el producto de este pedido. Intenta comprarlo de nuevo desde el catálogo.');
+      return;
+    }
+
+    const restaurarBoton = ponerBotonEnCarga(boton, 'Conectando con Stripe...');
+    try{
+      const resultado = await llamarCrearCheckoutSession({ items });
+      const url = resultado.data && resultado.data.url;
+      if(!url) throw new Error('No se recibió la URL de pago.');
+      window.location.href = url;
+    }catch(e){
+      console.error('Error creando sesión de pago:', e);
+      alert('No se pudo iniciar el pago: ' + (e.message || 'Intenta de nuevo en un momento.'));
+      restaurarBoton();
+    }
+  };
+
+  let pedidosCache = [];
+
   function crearTarjeta(pedido){
     const div = document.createElement('div');
     div.className = 'compra-card';
 
     const tienePdf = !!pedido.pdfUrl;
+    const estaPagado = pedido.estado === 'pagado';
     const fechaTexto = formatearFecha(pedido.fecha);
     const nombreProducto = pedido.nombreProducto || 'Recetario';
 
@@ -295,17 +346,21 @@
       <div class="compra-info">
         <h3>${escapeHtml(nombreProducto)}</h3>
         <div class="meta">
-          ${fechaTexto ? `Comprado el ${fechaTexto}` : ''}
-          <span class="estado-pill">Pagado</span>
+          ${fechaTexto ? `${estaPagado ? 'Comprado' : 'Pedido'} el ${fechaTexto}` : ''}
+          <span class="estado-pill ${estaPagado ? '' : 'pendiente'}">${estaPagado ? 'Pagado' : 'Pendiente de pago'}</span>
         </div>
       </div>
       <div class="compra-acciones">
-        ${tienePdf
-          ? `<button class="btn-descargar" onclick="window.descargarPdf('${pedido.pdfUrl}', '${escapeHtml(nombreProducto)}', this)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Descargar PDF
-            </button>`
-          : `<span class="btn-descargar sin-pdf">PDF no disponible</span>`}
+        ${estaPagado
+          ? (tienePdf
+            ? `<button class="btn-descargar" onclick="window.descargarPdf('${pedido.pdfUrl}', '${escapeHtml(nombreProducto)}', this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Descargar PDF
+              </button>`
+            : `<span class="btn-descargar sin-pdf">PDF no disponible</span>`)
+          : `<button class="btn-pagar-stripe" onclick="window.pagarPedidoConStripe('${pedido.id}', this)">
+              Pagar con Stripe
+            </button>`}
       </div>`;
     return div;
   }
@@ -325,15 +380,15 @@
 
     try{
       const pedidos = await obtenerPedidosDeUsuario(user.uid);
-      const pedidosPagados = pedidos.filter(p => p.estado === 'pagado');
+      pedidosCache = pedidos;
 
-      if(!pedidosPagados.length){
+      if(!pedidos.length){
         mostrar(elVacio);
         return;
       }
 
       elLista.innerHTML = '';
-      pedidosPagados.forEach(pedido => {
+      pedidos.forEach(pedido => {
         elLista.appendChild(crearTarjeta(pedido));
       });
       mostrar(elLista);
