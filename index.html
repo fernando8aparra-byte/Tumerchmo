@@ -421,6 +421,7 @@
   }
 
   .producto-card{
+    cursor:pointer;
     background:var(--blanco);
     border-radius:8px;
     border:1px solid var(--crema-3);
@@ -1581,34 +1582,38 @@ window.previsualizarPdf = function(event){
               width="1024"
               height="1024"
             >
-            ${esAdmin(usuarioActual) ? `<span class="tag-mini" onclick="window.abrirAdmin('${p.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg> Editar foto</span>` : ''}
+            ${esAdmin(usuarioActual) ? `<span class="tag-mini" onclick="event.stopPropagation(); window.abrirAdmin('${p.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg> Editar foto</span>` : ''}
           </div>`
         : `<div class="producto-top">
             <div class="producto-top-ilustracion">${ilustracionPorId(p.id, p.claseColor)}</div>
-            ${esAdmin(usuarioActual) ? `<span class="tag-mini" onclick="window.abrirAdmin('${p.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg> Subir foto</span>` : ''}
+            ${esAdmin(usuarioActual) ? `<span class="tag-mini" onclick="event.stopPropagation(); window.abrirAdmin('${p.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg> Subir foto</span>` : ''}
           </div>`;
 
       return `
-        <div class="producto-card fade-up in">
+        <div class="producto-card fade-up in" role="button" tabindex="0" onclick="window.verDetalleProducto('${p.id}')" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); window.verDetalleProducto('${p.id}'); }">
           ${topHtml}
           <div class="producto-body">
             <h3>${escapeHtml(p.nombre)}</h3>
-            <p>${escapeHtml(p.descripcion || '')}</p>
+            <p>${escapeHtml(primerasTresPalabras(p.descripcion || ''))}</p>
             <div class="producto-precio-row">
               <div class="producto-precio">$${formatearPrecio(p.precio)} <span>MXN</span></div>
             </div>
             <div class="producto-acciones">
-              <button class="btn-agregar-carrito" onclick="window.agregarAlCarrito('${p.id}')" title="Agregar al carrito">
+              <button class="btn-agregar-carrito" onclick="event.stopPropagation(); window.agregarAlCarrito('${p.id}')" title="Agregar al carrito">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
                 Agregar
               </button>
-              <button class="btn-comprar" onclick="window.verDetalleProducto('${p.id}')">
-                Ver detalles
+              <button class="btn-comprar" onclick="event.stopPropagation(); window.verDetalleProducto('${p.id}')">
+                Comprar ahora
               </button>
             </div>
           </div>
         </div>`;
     }).join('');
+  }
+
+  function primerasTresPalabras(texto){
+    return String(texto).trim().split(/\s+/).filter(Boolean).slice(0, 3).join(' ');
   }
 
   function escapeHtml(t){
