@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tumerchmo — Detalle del recetario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FDF6EC;
+    --crema-2:#F5E6D0;
+    --crema-3:#EDD9BB;
+    --fresa:#C94B6D;
+    --fresa-oscuro:#A33758;
+    --caramelo:#D4882A;
+    --caramelo-claro:#F0B860;
+    --menta:#4A9980;
+    --choco:#2C1A0E;
+    --choco-medio:#5C3820;
+    --choco-suave:#8B6347;
+    --blanco:#FFFFFF;
+    --sombra-suave: 0 2px 20px rgba(44,26,14,0.08);
+    --sombra-media: 0 8px 40px rgba(44,26,14,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Poppins',sans-serif;background:var(--crema);color:var(--choco);}
+  h1,h2,h3{font-family:'Playfair Display',serif;line-height:1.1;}
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(253,246,236,0.96);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--crema-3);
+  }
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 32px;max-width:1180px;margin:0 auto;
+  }
+  .logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--choco);display:flex;align-items:center;gap:4px;letter-spacing:-.5px;}
+  .logo .dot{color:var(--caramelo);}
+  .nav-volver{
+    display:flex;align-items:center;gap:8px;
+    font-weight:600;font-size:13.5px;color:var(--choco-suave);
+  }
+  .nav-volver:hover{color:var(--choco);}
+  .btn-carrito{
+    position:relative;background:var(--choco);color:var(--crema);border:none;
+    width:42px;height:42px;border-radius:4px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .2s ease;
+  }
+  .btn-carrito:hover{background:var(--choco-medio);}
+
+  .breadcrumb{
+    max-width:1180px;margin:24px auto 0;padding:0 32px;
+    font-size:13px;color:var(--choco-suave);font-weight:500;
+  }
+  .breadcrumb a:hover{color:var(--caramelo);}
+
+  .detalle{
+    max-width:1180px;margin:0 auto;padding:32px 32px 100px;
+    display:grid;grid-template-columns:1fr 1fr;gap:56px;
+    align-items:flex-start;
+  }
+  @media(max-width:860px){.detalle{grid-template-columns:1fr;gap:28px;}}
+
+  .detalle-img{
+    position:relative;width:100%;
+    aspect-ratio:1/1;
+    border-radius:12px;overflow:hidden;
+    background:var(--crema-2);
+    border:1px solid var(--crema-3);
+    box-shadow:var(--sombra-suave);
+  }
+  .detalle-img img{width:100%;height:100%;object-fit:cover;}
+  .detalle-img svg{width:100%;height:100%;display:block;}
+
+  .detalle-info .section-tag{
+    display:inline-block;font-size:11px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;color:var(--caramelo);
+    margin-bottom:14px;
+  }
+  .detalle-info h1{font-size:clamp(28px,3.5vw,40px);margin-bottom:16px;}
+  .detalle-info .descripcion{
+    font-size:15px;color:var(--choco-suave);line-height:1.7;
+    font-weight:400;margin-bottom:28px;
+  }
+  .detalle-precio{
+    font-family:'Playfair Display',serif;font-size:42px;font-weight:700;
+    color:var(--choco);margin-bottom:6px;
+  }
+  .detalle-precio span{font-size:14px;color:var(--choco-suave);font-weight:500;font-family:'Poppins',sans-serif;}
+  .detalle-nota{font-size:13px;color:var(--choco-suave);font-weight:500;margin-bottom:28px;}
+
+  .detalle-acciones{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+  .btn-primary{
+    background:var(--choco);color:var(--crema);font-weight:600;font-size:15px;
+    padding:16px 28px;border-radius:4px;border:none;cursor:pointer;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:background .2s ease, transform .15s ease;letter-spacing:.2px;
+    flex-grow:1;justify-content:center;
+  }
+  .btn-primary:hover{background:var(--choco-medio);transform:translateY(-1px);}
+  .btn-secondary{
+    background:var(--crema-2);color:var(--choco);font-weight:600;font-size:15px;
+    padding:16px 24px;border-radius:4px;border:1.5px solid var(--crema-3);cursor:pointer;
+    transition:all .2s ease;letter-spacing:.2px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-secondary:hover{background:var(--choco);color:var(--crema);border-color:var(--choco);}
+  .btn-secondary.agregado{background:var(--menta);color:white;border-color:var(--menta);}
+
+  .lista-incluye{list-style:none;margin-bottom:8px;}
+  .lista-incluye li{
+    display:flex;align-items:flex-start;gap:12px;
+    margin-bottom:12px;font-weight:500;font-size:14.5px;
+  }
+  .lista-incluye li .check{
+    width:18px;height:18px;border-radius:50%;background:var(--menta);color:white;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+  }
+  .lista-incluye li .check svg{width:10px;height:10px;}
+
+  .nota-pago{
+    display:flex;align-items:center;gap:8px;
+    font-size:12.5px;color:var(--choco-suave);font-weight:500;
+    margin-top:24px;padding-top:20px;border-top:1px solid var(--crema-3);
+  }
+
+  .relacionados{padding:0 32px 100px;max-width:1180px;margin:0 auto;}
+  .relacionados h2{font-size:22px;margin-bottom:22px;}
+  .grid-relacionados{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  @media(max-width:980px){.grid-relacionados{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.grid-relacionados{grid-template-columns:repeat(2,1fr);gap:12px;}}
+  .mini-card{
+    background:var(--blanco);border-radius:8px;border:1px solid var(--crema-3);
+    overflow:hidden;cursor:pointer;transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .mini-card:hover{transform:translateY(-3px);box-shadow:var(--sombra-media);}
+  .mini-card .mini-img{width:100%;aspect-ratio:1/1;background:var(--crema-2);overflow:hidden;}
+  .mini-card .mini-img img{width:100%;height:100%;object-fit:cover;}
+  .mini-card .mini-img svg{width:100%;height:100%;display:block;}
+  .mini-card .mini-body{padding:12px;}
+  .mini-card .mini-body h4{font-size:13.5px;font-family:'Playfair Display',serif;margin-bottom:4px;}
+  .mini-card .mini-body .precio{font-size:14px;font-weight:700;color:var(--choco);}
+
+  .no-encontrado{
+    max-width:560px;margin:100px auto;text-align:center;padding:0 32px;
+  }
+  .no-encontrado h2{font-size:24px;margin-bottom:12px;}
+  .no-encontrado p{color:var(--choco-suave);margin-bottom:24px;}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(44,26,14,0.6);
+    display:none;align-items:center;justify-content:center;z-index:200;
+    padding:20px;backdrop-filter:blur(4px);
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:var(--blanco);border-radius:12px;padding:40px;
+    max-width:420px;width:100%;text-align:center;position:relative;
+    box-shadow:0 40px 80px rgba(44,26,14,0.3);border:1px solid var(--crema-3);
+  }
+  .modal-close{
+    position:absolute;top:16px;right:16px;background:var(--crema-2);border:none;
+    width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;
+    color:var(--choco);display:flex;align-items:center;justify-content:center;
+  }
+  .modal-box .icono-grande{
+    width:64px;height:64px;border-radius:50%;background:var(--crema-2);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+    color:var(--caramelo);overflow:hidden;
+  }
+  .modal-box .icono-grande img{width:100%;height:100%;object-fit:cover;}
+  .modal-box h3{font-size:22px;margin-bottom:8px;}
+  .modal-box p{font-size:14px;color:var(--choco-suave);font-weight:400;margin-bottom:24px;line-height:1.6;}
+  .modal-precio{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--choco);margin-bottom:24px;}
+  .btn-comprar-grande{
+    background:var(--caramelo);color:var(--choco);font-weight:700;font-size:16px;
+    padding:18px;border-radius:4px;text-align:center;border:none;cursor:pointer;
+    width:100%;letter-spacing:.3px;transition:background .2s ease, transform .15s ease;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .btn-comprar-grande:hover{background:var(--caramelo-claro);transform:translateY(-1px);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">Tumerchmo<span class="dot">.</span></a>
+    <a href="index.html#catalogo" class="nav-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Volver al catálogo
+    </a>
+    <button class="btn-carrito" onclick="window.location.href='index.html#catalogo'" aria-label="Ver carrito">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+    </button>
+  </nav>
+</header>
+
+<div class="breadcrumb" id="breadcrumb">
+  <a href="index.html">Inicio</a> / <a href="index.html#catalogo">Recetarios</a> / <span id="breadcrumbNombre">Cargando...</span>
+</div>
+
+<div id="contenidoDetalle"></div>
+
+<div class="relacionados" id="relacionadosWrap" style="display:none;">
+  <h2>También te puede interesar</h2>
+  <div class="grid-relacionados" id="gridRelacionados"></div>
+</div>
+
+<!-- MODAL CHECKOUT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <div class="icono-grande" id="modalIconoWrap">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+    </div>
+    <h3 id="modalTitulo">Recetario</h3>
+    <p>Vas a pagar de forma segura con Stripe. Te llega el acceso a tu correo al instante.</p>
+    <div class="modal-precio" id="modalPrecio">$18 MXN</div>
+    <button class="btn-comprar-grande" id="btnPagarStripe">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      Pagar ahora
+    </button>
+  </div>
+</div>
+
+<script type="module">
+  import { obtenerProductos, escucharSesion } from './firebase-config.js';
+
+  const ILUSTRACIONES = {
+    frappes: `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#F0E4D6"/><ellipse cx="150" cy="270" rx="90" ry="10" fill="#C9A678" opacity="0.3"/><rect x="100" y="70" width="100" height="170" rx="14" fill="#6B452B"/><rect x="106" y="76" width="88" height="158" rx="10" fill="#8B5E3C"/><rect x="112" y="86" width="76" height="26" rx="13" fill="#F4D9A8"/><rect x="112" y="86" width="50" height="26" rx="13" fill="#FCE8C0"/><circle cx="225" cy="95" r="22" fill="#fff" opacity="0.9"/><circle cx="250" cy="120" r="15" fill="#fff" opacity="0.7"/><circle cx="80" cy="105" r="17" fill="#fff" opacity="0.6"/><line x1="122" y1="140" x2="122" y2="200" stroke="#5C3820" stroke-width="5" stroke-linecap="round" opacity="0.4"/><line x1="150" y1="130" x2="150" y2="200" stroke="#5C3820" stroke-width="5" stroke-linecap="round" opacity="0.4"/><line x1="178" y1="140" x2="178" y2="200" stroke="#5C3820" stroke-width="5" stroke-linecap="round" opacity="0.4"/><rect x="143" y="40" width="14" height="36" rx="6" fill="#D4882A"/></svg>`,
+    donas: `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#FCE8DC"/><ellipse cx="150" cy="265" rx="95" ry="10" fill="#D9A878" opacity="0.3"/><circle cx="105" cy="140" r="55" fill="#A8703F"/><circle cx="105" cy="140" r="20" fill="#FCE8C0"/><circle cx="105" cy="130" r="48" fill="#C94B6D"/><circle cx="105" cy="130" r="18" fill="#FCE8C0"/><circle cx="85" cy="105" r="5" fill="#fff"/><circle cx="130" cy="100" r="4" fill="#fff"/><circle cx="65" cy="135" r="4" fill="#fff"/><circle cx="140" cy="150" r="3.5" fill="#fff"/><circle cx="205" cy="175" r="50" fill="#A8703F"/><circle cx="205" cy="175" r="18" fill="#FCE8C0"/><circle cx="205" cy="167" r="44" fill="#D4882A"/><circle cx="205" cy="167" r="16" fill="#FCE8C0"/><circle cx="185" cy="145" r="4" fill="#fff"/><circle cx="225" cy="142" r="3.5" fill="#fff"/><circle cx="170" cy="175" r="3.5" fill="#fff"/></svg>`,
+    galletas: `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#F5E8D0"/><ellipse cx="150" cy="265" rx="95" ry="10" fill="#D9C090" opacity="0.3"/><circle cx="110" cy="130" r="58" fill="#C99355"/><circle cx="110" cy="130" r="58" fill="#D4A468" opacity="0.6"/><circle cx="90" cy="110" r="6" fill="#6B452B"/><circle cx="130" cy="105" r="5" fill="#6B452B"/><circle cx="125" cy="145" r="6" fill="#6B452B"/><circle cx="85" cy="150" r="5" fill="#6B452B"/><circle cx="105" cy="130" r="4.5" fill="#6B452B"/><circle cx="210" cy="180" r="50" fill="#B07D42"/><circle cx="210" cy="180" r="50" fill="#C8965C" opacity="0.6"/><circle cx="195" cy="160" r="5.5" fill="#5C3820"/><circle cx="225" cy="165" r="4.5" fill="#5C3820"/><circle cx="220" cy="195" r="5" fill="#5C3820"/><circle cx="190" cy="195" r="4.5" fill="#5C3820"/></svg>`,
+    pasteles: `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#FFE0E8"/><ellipse cx="150" cy="265" rx="95" ry="12" fill="#D9B98C" opacity="0.4"/><path d="M70 150 C70 110 110 82 150 82 C190 82 230 110 230 150 L222 230 C218 248 190 258 150 258 C110 258 82 248 78 230 Z" fill="#8B5A2B"/><path d="M74 154 C74 116 112 88 150 88 C188 88 226 116 226 154 L220 222 C214 240 188 248 150 248 C112 248 86 240 80 222 Z" fill="#A8703F"/><ellipse cx="150" cy="154" rx="78" ry="22" fill="#6B3F1D"/><ellipse cx="150" cy="146" rx="72" ry="18" fill="#E8C39A"/><path d="M85 138 Q150 112 215 138" stroke="#C9A06C" stroke-width="3" fill="none" opacity="0.6"/><circle cx="115" cy="128" r="5" fill="#D4882A"/><circle cx="185" cy="124" r="6" fill="#A33758"/><circle cx="150" cy="112" r="5" fill="#4A9980"/><circle cx="90" cy="142" r="4" fill="#A33758"/><circle cx="210" cy="148" r="4" fill="#D4882A"/><circle cx="150" cy="160" r="4.5" fill="#fff"/></svg>`,
+    payqueso: `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#E0F0E8"/><ellipse cx="150" cy="255" rx="95" ry="10" fill="#C9D9C0" opacity="0.3"/><path d="M150 70 L235 230 L65 230 Z" fill="#D9A864"/><path d="M150 80 L227 225 L73 225 Z" fill="#F0D49C"/><rect x="65" y="225" width="170" height="16" rx="4" fill="#A8703F"/><path d="M150 85 L160 105 L180 108 L165 122 L168 142 L150 132 L132 142 L135 122 L120 108 L140 105 Z" fill="#C94B6D" opacity="0.85"/><circle cx="115" cy="160" r="5" fill="#C94B6D"/><circle cx="190" cy="170" r="6" fill="#A33758"/><circle cx="150" cy="195" r="5" fill="#D4882A"/></svg>`,
+  };
+
+  const PRODUCTOS_SEMILLA = [
+    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤" },
+    { id:"donas",    nombre:"Recetario de Donas",        precio:18, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩" },
+    { id:"galletas", nombre:"Recetario de Galletas",     precio:18, descripcion:"De las crocantes a las suaves rellenas, con el punto exacto de horneado para cada tipo.", emoji:"🍪" },
+    { id:"pasteles", nombre:"Recetario de Pasteles",     precio:18, descripcion:"Bizcochos que no se desmoronan y rellenos que se sostienen, para pasteles de cumpleaños o pedido.", emoji:"🧁" },
+    { id:"payqueso", nombre:"Recetario de Pay de Queso", precio:18, descripcion:"Horneado y sin hornear, con la consistencia cremosa que todos preguntan cómo lograste.", emoji:"🍰" },
+  ];
+
+  const COMBO = { id:"combo", nombre:"Recetario de Recetarios", precio:99, descripcion:"Todas las recetas de Tumerchmo reunidas en un solo lugar, listas para empezar a vender hoy mismo.", emoji:"🎉" };
+
+  function escapeHtml(t){
+    const d = document.createElement('div');
+    d.textContent = t || '';
+    return d.innerHTML;
+  }
+
+  function ilustracionPorId(id){
+    if(ILUSTRACIONES[id]) return ILUSTRACIONES[id];
+    return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#F5E6D0"/><circle cx="150" cy="150" r="60" fill="#D4882A" opacity="0.5"/></svg>`;
+  }
+
+  let usuarioActual = null;
+  let productosCache = [];
+  let productoActual = null;
+
+  function obtenerIdDeUrl(){
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  }
+
+  async function cargarTodo(){
+    try{
+      const productosDb = await obtenerProductos();
+      productosCache = productosDb.length > 0 ? productosDb : PRODUCTOS_SEMILLA;
+    }catch(e){
+      productosCache = PRODUCTOS_SEMILLA;
+    }
+    pintarDetalle();
+  }
+
+  function buscarProducto(id){
+    if(id === 'combo') return COMBO;
+    return productosCache.find(p => p.id === id);
+  }
+
+  function pintarDetalle(){
+    const id = obtenerIdDeUrl();
+    productoActual = id ? buscarProducto(id) : null;
+    const cont = document.getElementById('contenidoDetalle');
+
+    if(!productoActual){
+      document.getElementById('breadcrumbNombre').textContent = 'Producto no encontrado';
+      cont.innerHTML = `
+        <div class="no-encontrado">
+          <h2>No encontramos ese recetario</h2>
+          <p>Puede que el enlace esté incompleto o el producto ya no exista.</p>
+          <a href="index.html#catalogo" class="btn-primary" style="display:inline-flex;">Ver todos los recetarios</a>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('breadcrumbNombre').textContent = productoActual.nombre;
+
+    const imagenHtml = productoActual.imagenUrl
+      ? `<img src="${productoActual.imagenUrl}" alt="${escapeHtml(productoActual.nombre)}" loading="eager">`
+      : ilustracionPorId(productoActual.id);
+
+    cont.innerHTML = `
+      <div class="detalle">
+        <div class="detalle-img">${imagenHtml}</div>
+        <div class="detalle-info">
+          <div class="section-tag">Recetario digital</div>
+          <h1>${escapeHtml(productoActual.nombre)}</h1>
+          <p class="descripcion">${escapeHtml(productoActual.descripcion || '')}</p>
+          <div class="detalle-precio">$${productoActual.precio} <span>MXN</span></div>
+          <div class="detalle-nota">Pago único · acceso de por vida · entrega digital al instante</div>
+          <ul class="lista-incluye">
+            <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Acceso inmediato después de pagar</li>
+            <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Cantidades exactas y tiempos de cocción</li>
+            <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Ideal para vender por encargo</li>
+          </ul>
+          <div class="detalle-acciones">
+            <button class="btn-primary" onclick="window.abrirModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Comprar ahora — $${productoActual.precio} MXN
+            </button>
+            <button class="btn-secondary" id="btnAgregarDetalle" onclick="window.agregarDesdeDetalle()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+              Agregar al carrito
+            </button>
+          </div>
+          <div class="nota-pago">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Pago cifrado con Stripe · No guardamos tu tarjeta
+          </div>
+        </div>
+      </div>`;
+
+    pintarRelacionados();
+  }
+
+  function pintarRelacionados(){
+    const wrap = document.getElementById('relacionadosWrap');
+    const grid = document.getElementById('gridRelacionados');
+    const otros = productosCache.filter(p => p.id !== productoActual.id).slice(0, 4);
+    if(otros.length === 0){ wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    grid.innerHTML = otros.map(p => {
+      const img = p.imagenUrl
+        ? `<img src="${p.imagenUrl}" alt="${escapeHtml(p.nombre)}" loading="lazy">`
+        : ilustracionPorId(p.id);
+      return `
+        <div class="mini-card" onclick="window.location.href='produc.html?id=${p.id}'">
+          <div class="mini-img">${img}</div>
+          <div class="mini-body">
+            <h4>${escapeHtml(p.nombre)}</h4>
+            <div class="precio">$${p.precio} MXN</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.agregarDesdeDetalle = function(){
+    if(!usuarioActual){
+      window.location.href = 'login.html?volver=' + encodeURIComponent('produc.html?id=' + productoActual.id);
+      return;
+    }
+    // Carrito compartido vía localStorage para que index.html lo pueda leer.
+    try{
+      const carrito = JSON.parse(localStorage.getItem('tumerchmo_carrito') || '{}');
+      carrito[productoActual.id] = (carrito[productoActual.id] || 0) + 1;
+      localStorage.setItem('tumerchmo_carrito', JSON.stringify(carrito));
+    }catch(e){}
+
+    const btn = document.getElementById('btnAgregarDetalle');
+    const textoOriginal = btn.innerHTML;
+    btn.classList.add('agregado');
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Agregado`;
+    setTimeout(() => { btn.classList.remove('agregado'); btn.innerHTML = textoOriginal; }, 1400);
+  };
+
+  window.abrirModal = function(){
+    if(!usuarioActual){
+      window.location.href = 'login.html?volver=' + encodeURIComponent('produc.html?id=' + productoActual.id);
+      return;
+    }
+    const iconoWrap = document.getElementById('modalIconoWrap');
+    if(productoActual.imagenUrl){
+      iconoWrap.innerHTML = `<img src="${productoActual.imagenUrl}" alt="${escapeHtml(productoActual.nombre)}">`;
+    }else{
+      iconoWrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>`;
+    }
+    document.getElementById('modalTitulo').textContent = productoActual.nombre;
+    document.getElementById('modalPrecio').textContent = `$${productoActual.precio} MXN`;
+    document.getElementById('modalOverlay').classList.add('show');
+  };
+
+  window.cerrarModal = function(){ document.getElementById('modalOverlay').classList.remove('show'); };
+  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id === 'modalOverlay') window.cerrarModal(); });
+
+  document.getElementById('btnPagarStripe').addEventListener('click', () => {
+    if(!productoActual) return;
+    alert("Aquí se conecta Stripe Checkout para: " + productoActual.nombre + " ($" + productoActual.precio + " MXN).\nRevisa functions/index.js para la integración real.");
+  });
+
+  escucharSesion((user) => { usuarioActual = user; });
+
+  cargarTodo();
+</script>
+</body>
+</html>

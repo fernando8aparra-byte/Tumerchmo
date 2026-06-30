@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// =====================================================================
+// TUMERCHMO — Reglas de seguridad de Firestore
+// =====================================================================
+// Ideas clave:
+// - Cualquiera (incluso sin sesión) puede LEER productos y el contenido
+//   de la oferta principal/hero, porque la tienda los muestra a todos.
+// - Solo el admin (su correo está en CORREOS_ADMIN) puede escribir
+//   productos, oferta principal y los ejemplos del hero.
+// - Los PEDIDOS nunca los crea ni edita el navegador directamente.
+//   Solo el webhook de Stripe los crea (usa el SDK de Admin, que se
+//   salta estas reglas por diseño). El navegador solo puede LEER sus
+//   propios pedidos, o todos si es admin.
+// =====================================================================
+
+function esAdmin() {
+  return request.auth != null &&
+    request.auth.token.email in ["fernando8aparra@gmail.com"];
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -----------------------------------------------------------------
+    // productos — catálogo público
+    // -----------------------------------------------------------------
+    match /productos/{idProducto} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // contenido — oferta principal, ejemplos del hero, etc.
+    // -----------------------------------------------------------------
+    match /contenido/{idDoc} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // usuarios — cada persona puede leer/crear su propio perfil
+    // -----------------------------------------------------------------
+    match /usuarios/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && request.auth.uid == uid
+        // Un usuario normal no puede subirse el rol a "admin" él mismo.
+        && request.resource.data.rol == resource.data.rol;
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // pedidos — SOLO LECTURA desde el navegador.
+    // La escritura real la hace el webhook de Stripe con el SDK de
+    // Admin (Cloud Functions), que no pasa por estas reglas.
+    // -----------------------------------------------------------------
+    match /pedidos/{idPedido} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.uid || esAdmin());
+      allow write: if false;
+    }
+  }
+}

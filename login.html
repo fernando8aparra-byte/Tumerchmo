@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar sesión — Tumerchmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FFF8EF;
+    --crema-2:#FFEFD9;
+    --fresa:#E8336D;
+    --fresa-oscuro:#C21F56;
+    --caramelo:#F0A93E;
+    --menta:#5FB89C;
+    --choco:#3A2218;
+    --choco-suave:#6B4B3A;
+    --blanco:#FFFFFF;
+    --sombra: 0 24px 50px rgba(58,34,24,0.16);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    font-family:'Poppins',sans-serif;
+    background:var(--crema);
+    color:var(--choco);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  h1,.display{ font-family:'Fredoka',sans-serif; line-height:1.05; }
+
+  a{ text-decoration:none; color:inherit; }
+
+  /* fondo decorativo */
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(2px);
+    opacity:.5;
+    z-index:0;
+  }
+  .blob1{width:340px;height:340px;background:var(--caramelo);top:-120px;right:-100px;}
+  .blob2{width:280px;height:280px;background:var(--menta);bottom:-110px;left:-100px;opacity:.4;}
+
+  .volver{
+    position:fixed;
+    top:24px;
+    left:24px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    font-size:14px;
+    color:var(--choco);
+    z-index:10;
+  }
+  .volver:hover{ color:var(--fresa); }
+
+  .caja{
+    position:relative;
+    z-index:1;
+    background:var(--blanco);
+    border-radius:28px;
+    box-shadow:var(--sombra);
+    padding:42px;
+    max-width:420px;
+    width:100%;
+  }
+
+  .logo-top{
+    text-align:center;
+    font-family:'Fredoka',sans-serif;
+    font-size:28px;
+    font-weight:700;
+    color:var(--fresa);
+    margin-bottom:6px;
+  }
+  .logo-top span{ color:var(--caramelo); }
+
+  .subtitulo{
+    text-align:center;
+    color:var(--choco-suave);
+    font-size:14px;
+    font-weight:500;
+    margin-bottom:28px;
+  }
+
+  .tabs{
+    display:flex;
+    background:var(--crema-2);
+    border-radius:50px;
+    padding:4px;
+    margin-bottom:26px;
+  }
+  .tabs button{
+    flex:1;
+    background:none;
+    border:none;
+    padding:11px;
+    border-radius:50px;
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--choco-suave);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .tabs button.activo{
+    background:var(--fresa);
+    color:white;
+  }
+
+  .campo{ margin-bottom:16px; }
+  .campo label{
+    display:block;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--choco-suave);
+    margin-bottom:6px;
+  }
+  .campo input{
+    width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:2px solid var(--crema-2);
+    font-family:'Poppins',sans-serif;
+    font-size:14.5px;
+    color:var(--choco);
+    background:var(--crema);
+    transition:border-color .15s ease;
+  }
+  .campo input:focus{
+    outline:none;
+    border-color:var(--fresa);
+  }
+
+  .error-msg{
+    background:#FDEBEF;
+    color:var(--fresa-oscuro);
+    font-size:13px;
+    font-weight:600;
+    padding:11px 14px;
+    border-radius:12px;
+    margin-bottom:16px;
+    display:none;
+  }
+  .error-msg.show{ display:block; }
+
+  .ok-msg{
+    background:#E4F4ED;
+    color:#2F8C6B;
+    font-size:13px;
+    font-weight:600;
+    padding:11px 14px;
+    border-radius:12px;
+    margin-bottom:16px;
+    display:none;
+  }
+  .ok-msg.show{ display:block; }
+
+  .btn-primario{
+    width:100%;
+    background:var(--fresa);
+    color:white;
+    font-weight:700;
+    font-size:16px;
+    padding:16px;
+    border-radius:50px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 14px 26px rgba(232,51,109,0.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .btn-primario:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(232,51,109,0.45); }
+  .btn-primario:disabled{ opacity:.7; cursor:default; transform:none; }
+
+  .divisor{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:22px 0 16px;
+    font-size:12px;
+    color:var(--choco-suave);
+    font-weight:600;
+  }
+  .divisor::before, .divisor::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--crema-2);
+  }
+
+  .btn-google{
+    width:100%;
+    background:var(--blanco);
+    border:2px solid var(--crema-2);
+    color:var(--choco);
+    font-weight:700;
+    font-size:14.5px;
+    padding:14px;
+    border-radius:50px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:border-color .15s ease;
+  }
+  .btn-google:hover{ border-color:var(--choco); }
+
+  .pie-nota{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--choco-suave);
+    font-weight:500;
+    margin-top:22px;
+  }
+
+  .spinner{
+    display:inline-block;
+    width:15px;height:15px;
+    border:2px solid rgba(255,255,255,0.4);
+    border-top-color:white;
+    border-radius:50%;
+    animation:girar .6s linear infinite;
+  }
+  @keyframes girar{ to{ transform:rotate(360deg); } }
+
+  @media (max-width:420px){
+    .caja{ padding:30px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<a href="index.html" class="volver">← Volver a Tumerchmo</a>
+
+<div class="caja">
+  <div class="logo-top">Tumerchmo<span>.</span></div>
+  <div class="subtitulo">Entra a tu cuenta para comprar y ver tus recetarios</div>
+
+  <div class="tabs">
+    <button id="tabLogin" class="activo" onclick="cambiarTab('login')">Iniciar sesión</button>
+    <button id="tabRegistro" onclick="cambiarTab('registro')">Crear cuenta</button>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="ok-msg" id="okMsg"></div>
+
+  <!-- Formulario de inicio de sesión -->
+  <form id="formLogin" onsubmit="return manejarLogin(event)">
+    <div class="campo">
+      <label>Correo</label>
+      <input type="email" id="loginCorreo" required placeholder="tucorreo@ejemplo.com" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Contraseña</label>
+      <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn-primario" id="btnLogin">Entrar</button>
+  </form>
+
+  <!-- Formulario de registro -->
+  <form id="formRegistro" style="display:none;" onsubmit="return manejarRegistro(event)">
+    <div class="campo">
+      <label>Nombre</label>
+      <input type="text" id="regNombre" required placeholder="Tu nombre" autocomplete="name">
+    </div>
+    <div class="campo">
+      <label>Correo</label>
+      <input type="email" id="regCorreo" required placeholder="tucorreo@ejemplo.com" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Contraseña</label>
+      <input type="password" id="regPassword" required minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+    </div>
+    <button type="submit" class="btn-primario" id="btnRegistro">Crear mi cuenta</button>
+  </form>
+
+  <div class="divisor">o continúa con</div>
+  <button class="btn-google" id="btnGoogle">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.08-1.81 2.72v2.26h2.92c1.71-1.57 2.69-3.89 2.69-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.71c-.18-.54-.28-1.11-.28-1.71s.1-1.17.28-1.71V4.96H.96A8.99 8.99 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+    Continuar con Google
+  </button>
+
+  <div class="pie-nota">🔒 Tu información está protegida con Firebase Authentication</div>
+</div>
+
+<script type="module">
+  import {
+    iniciarSesionConCorreo,
+    registrarConCorreo,
+    iniciarSesionConGoogle,
+    escucharSesion,
+  } from './firebase-config.js';
+
+  // Si ya hay una sesión activa, no tiene sentido quedarse en login: lo regresamos al index.
+  // (Se hace con una bandera para no redirigir antes de que el usuario alcance a ver la página
+  // si apenas está cargando Firebase).
+  let redirigiendo = false;
+  escucharSesion((user) => {
+    if(user && !redirigiendo){
+      redirigiendo = true;
+      irAlIndex();
+    }
+  });
+
+  function irAlIndex(){
+    const params = new URLSearchParams(window.location.search);
+    const destino = params.get('volver') || 'index.html';
+    window.location.href = destino;
+  }
+
+  window.cambiarTab = function(tab){
+    const esLogin = tab === 'login';
+    document.getElementById('tabLogin').classList.toggle('activo', esLogin);
+    document.getElementById('tabRegistro').classList.toggle('activo', !esLogin);
+    document.getElementById('formLogin').style.display = esLogin ? 'block' : 'none';
+    document.getElementById('formRegistro').style.display = esLogin ? 'none' : 'block';
+    ocultarMensajes();
+  };
+
+  function ocultarMensajes(){
+    document.getElementById('errorMsg').classList.remove('show');
+    document.getElementById('okMsg').classList.remove('show');
+  }
+  function mostrarError(msg){
+    ocultarMensajes();
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function mostrarOk(msg){
+    ocultarMensajes();
+    const el = document.getElementById('okMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function traducirError(codigo){
+    const mapa = {
+      'auth/invalid-email': 'El correo no es válido.',
+      'auth/user-not-found': 'No encontramos una cuenta con ese correo.',
+      'auth/wrong-password': 'La contraseña es incorrecta.',
+      'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+      'auth/email-already-in-use': 'Ya existe una cuenta con ese correo, mejor inicia sesión.',
+      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+      'auth/popup-closed-by-user': 'Cerraste la ventana de Google antes de terminar.',
+      'auth/network-request-failed': 'No hay conexión a internet, intenta de nuevo.',
+    };
+    return mapa[codigo] || 'Algo salió mal, intenta de nuevo.';
+  }
+
+  window.manejarLogin = async function(event){
+    event.preventDefault();
+    ocultarMensajes();
+    const correo = document.getElementById('loginCorreo').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('btnLogin');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Entrando...';
+    try{
+      await iniciarSesionConCorreo(correo, password);
+      mostrarOk('¡Bienvenido de nuevo! Te estamos llevando a Tumerchmo...');
+      // el redirect real lo dispara escucharSesion() arriba
+    }catch(e){
+      mostrarError(traducirError(e.code));
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+    return false;
+  };
+
+  window.manejarRegistro = async function(event){
+    event.preventDefault();
+    ocultarMensajes();
+    const nombre = document.getElementById('regNombre').value.trim();
+    const correo = document.getElementById('regCorreo').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const btn = document.getElementById('btnRegistro');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
+    try{
+      await registrarConCorreo(nombre, correo, password);
+      mostrarOk('¡Cuenta creada! Te estamos llevando a Tumerchmo...');
+    }catch(e){
+      mostrarError(traducirError(e.code));
+      btn.disabled = false;
+      btn.textContent = 'Crear mi cuenta';
+    }
+    return false;
+  };
+
+  document.getElementById('btnGoogle').addEventListener('click', async () => {
+    ocultarMensajes();
+    try{
+      await iniciarSesionConGoogle();
+      mostrarOk('¡Listo! Te estamos llevando a Tumerchmo...');
+    }catch(e){
+      mostrarError(traducirError(e.code));
+    }
+  });
+</script>
+
+</body>
+</html>

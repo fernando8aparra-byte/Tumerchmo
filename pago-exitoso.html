@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Gracias por tu compra! — Tumerchmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FDF6EC; --crema-2:#F5E6D0; --crema-3:#EDD9BB;
+    --caramelo:#D4882A; --caramelo-claro:#F0B860;
+    --menta:#4A9980; --choco:#2C1A0E; --choco-medio:#5C3820; --choco-suave:#8B6347;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:var(--crema); color:var(--choco);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .caja{
+    max-width:480px; width:100%;
+    background:#fff; border:1px solid var(--crema-3); border-radius:16px;
+    padding:48px 36px; text-align:center;
+    box-shadow:0 20px 60px rgba(44,26,14,0.1);
+  }
+  .icono{
+    width:72px;height:72px;border-radius:50%;
+    background:#E0F0E8; color:var(--menta);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 22px;
+  }
+  .icono.cargando{ background:var(--crema-2); color:var(--caramelo); }
+  .icono.error{ background:#FDEBEF; color:#A33758; }
+  h1{ font-family:'Playfair Display',serif; font-size:26px; margin-bottom:12px; }
+  p{ color:var(--choco-suave); font-size:14.5px; line-height:1.65; margin-bottom:28px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--choco); color:var(--crema);
+    font-weight:600; font-size:14.5px;
+    padding:14px 28px; border-radius:6px; text-decoration:none;
+    transition:background .2s;
+  }
+  .btn:hover{ background:var(--choco-medio); }
+  .spinner{
+    width:24px;height:24px;border:3px solid rgba(44,26,14,0.15);
+    border-top-color:var(--caramelo); border-radius:50%;
+    animation:girar .7s linear infinite;
+  }
+  @keyframes girar{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="caja">
+  <div class="icono cargando" id="iconoEstado">
+    <div class="spinner"></div>
+  </div>
+  <h1 id="tituloEstado">Confirmando tu pago...</h1>
+  <p id="textoEstado">Esto toma solo unos segundos. No cierres esta página.</p>
+  <a href="index.html" class="btn" id="btnVolver" style="display:none;">
+    Ir a mis recetarios
+  </a>
+</div>
+
+<script type="module">
+  import { auth, db, escucharSesion } from './firebase-config.js';
+  import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // El webhook de Stripe puede tardar uno o dos segundos en escribir el
+  // pedido en Firestore después de que el usuario regresa a esta página.
+  // Por eso reintentamos varias veces antes de avisarle que algo salió mal.
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+
+  const iconoEstado = document.getElementById('iconoEstado');
+  const tituloEstado = document.getElementById('tituloEstado');
+  const textoEstado = document.getElementById('textoEstado');
+  const btnVolver = document.getElementById('btnVolver');
+
+  function mostrarExito(){
+    iconoEstado.className = 'icono';
+    iconoEstado.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    tituloEstado.textContent = '¡Listo, tu compra se confirmó!';
+    textoEstado.textContent = 'Ya puedes ver y descargar tus recetarios. También quedaron guardados en "Mis pedidos".';
+    btnVolver.style.display = 'inline-flex';
+  }
+
+  function mostrarPendiente(){
+    iconoEstado.className = 'icono';
+    iconoEstado.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+    tituloEstado.textContent = 'Tu pago está en proceso';
+    textoEstado.textContent = 'Stripe ya confirmó el cargo, pero tu pedido sigue registrándose. Si en un par de minutos no lo ves en "Mis pedidos", escríbenos.';
+    btnVolver.style.display = 'inline-flex';
+  }
+
+  function mostrarSinSesion(){
+    iconoEstado.className = 'icono error';
+    iconoEstado.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>`;
+    tituloEstado.textContent = 'Inicia sesión para ver tu compra';
+    textoEstado.textContent = 'Tu pago se procesó correctamente. Inicia sesión con el mismo correo para ver tu recetario.';
+    btnVolver.textContent = 'Iniciar sesión';
+    btnVolver.href = 'login.html';
+    btnVolver.style.display = 'inline-flex';
+  }
+
+  async function buscarPedidoPorSesion(uid, intento = 1){
+    const q = query(collection(db, 'pedidos'), where('uid', '==', uid), where('stripeSessionId', '==', sessionId));
+    const snap = await getDocs(q);
+    if(!snap.empty) return true;
+    if(intento >= 6) return false; // ~12 segundos de reintentos
+    await new Promise(r => setTimeout(r, 2000));
+    return buscarPedidoPorSesion(uid, intento + 1);
+  }
+
+  if(!sessionId){
+    mostrarPendiente();
+  }else{
+    escucharSesion(async (user) => {
+      if(!user){ mostrarSinSesion(); return; }
+      try{
+        const encontrado = await buscarPedidoPorSesion(user.uid);
+        if(encontrado) mostrarExito();
+        else mostrarPendiente();
+      }catch(e){
+        console.error('Error confirmando el pedido:', e);
+        mostrarPendiente();
+      }
+    });
+  }
+</script>
+</body>
+</html>
