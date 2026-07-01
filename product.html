@@ -91,11 +91,16 @@
     font-size:15px;color:var(--choco-suave);line-height:1.7;
     font-weight:400;margin-bottom:28px;
   }
+  .detalle-oferta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
   .detalle-precio{
     font-family:'Playfair Display',serif;font-size:42px;font-weight:700;
     color:var(--choco);margin-bottom:6px;
   }
   .detalle-precio span{font-size:14px;color:var(--choco-suave);font-weight:500;font-family:'Poppins',sans-serif;}
+  .detalle-precio-antes{font-size:16px;color:var(--choco-suave);text-decoration:line-through;font-weight:600;}
+  .detalle-badge-oferta{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(90deg,var(--fresa),#ff5e3a);color:#fff;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;padding:8px 12px;border-radius:999px;box-shadow:0 8px 22px rgba(201,75,109,.22);}
+  .detalle-img.tiene-oferta{border-color:rgba(201,75,109,.45);box-shadow:0 18px 50px rgba(201,75,109,.18);}
+  .detalle-img.tiene-oferta::before{content:'Oferta especial';position:absolute;top:18px;left:18px;z-index:2;background:linear-gradient(90deg,var(--fresa),#ff5e3a);color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:9px 13px;border-radius:999px;}
   .detalle-nota{font-size:13px;color:var(--choco-suave);font-weight:500;margin-bottom:28px;}
 
   .detalle-acciones{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
@@ -245,8 +250,8 @@
   };
 
   const PRODUCTOS_SEMILLA = [
-    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤" },
-    { id:"donas",    nombre:"Recetario de Donas",        precio:18, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩" },
+    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18, precioAntes:29, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤" },
+    { id:"donas",    nombre:"Recetario de Donas",        precio:18, precioAntes:25, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩" },
     { id:"galletas", nombre:"Recetario de Galletas",     precio:18, descripcion:"De las crocantes a las suaves rellenas, con el punto exacto de horneado para cada tipo.", emoji:"🍪" },
     { id:"pasteles", nombre:"Recetario de Pasteles",     precio:18, descripcion:"Bizcochos que no se desmoronan y rellenos que se sostienen, para pasteles de cumpleaños o pedido.", emoji:"🧁" },
     { id:"payqueso", nombre:"Recetario de Pay de Queso", precio:18, descripcion:"Horneado y sin hornear, con la consistencia cremosa que todos preguntan cómo lograste.", emoji:"🍰" },
@@ -310,14 +315,20 @@
     const imagenHtml = productoActual.imagenUrl
       ? `<img src="${productoActual.imagenUrl}" alt="${escapeHtml(productoActual.nombre)}" loading="eager">`
       : ilustracionPorId(productoActual.id);
+    const tieneOferta = productoActual.precioAntes && Number(productoActual.precioAntes) > Number(productoActual.precio);
+    const pctOferta = tieneOferta ? Math.round((1 - Number(productoActual.precio) / Number(productoActual.precioAntes)) * 100) : 0;
+    const ofertaDetalleHtml = tieneOferta
+      ? `<div class="detalle-oferta"><span class="detalle-precio-antes">Antes $${productoActual.precioAntes} MXN</span><span class="detalle-badge-oferta">⚡ Ahorra ${pctOferta}%</span></div>`
+      : '';
 
     cont.innerHTML = `
       <div class="detalle">
-        <div class="detalle-img">${imagenHtml}</div>
+        <div class="detalle-img${tieneOferta ? ' tiene-oferta' : ''}">${imagenHtml}</div>
         <div class="detalle-info">
           <div class="section-tag">Recetario digital</div>
           <h1>${escapeHtml(productoActual.nombre)}</h1>
           <p class="descripcion">${escapeHtml(productoActual.descripcion || '')}</p>
+          ${ofertaDetalleHtml}
           <div class="detalle-precio">$${productoActual.precio} <span>MXN</span></div>
           <div class="detalle-nota">Pago único · acceso de por vida · entrega digital al instante</div>
           <ul class="lista-incluye">
@@ -356,7 +367,7 @@
         ? `<img src="${p.imagenUrl}" alt="${escapeHtml(p.nombre)}" loading="lazy">`
         : ilustracionPorId(p.id);
       return `
-        <div class="mini-card" onclick="window.location.href='produc.html?id=${p.id}'">
+        <div class="mini-card" onclick="window.location.href='product.html?id=${p.id}'">
           <div class="mini-img">${img}</div>
           <div class="mini-body">
             <h4>${escapeHtml(p.nombre)}</h4>
@@ -368,7 +379,7 @@
 
   window.agregarDesdeDetalle = function(){
     if(!usuarioActual){
-      window.location.href = 'login.html?volver=' + encodeURIComponent('produc.html?id=' + productoActual.id);
+      window.location.href = 'login.html?volver=' + encodeURIComponent('product.html?id=' + productoActual.id);
       return;
     }
     // Carrito compartido vía localStorage para que index.html lo pueda leer.
@@ -387,7 +398,7 @@
 
   window.abrirModal = function(){
     if(!usuarioActual){
-      window.location.href = 'login.html?volver=' + encodeURIComponent('produc.html?id=' + productoActual.id);
+      window.location.href = 'login.html?volver=' + encodeURIComponent('product.html?id=' + productoActual.id);
       return;
     }
     const iconoWrap = document.getElementById('modalIconoWrap');
