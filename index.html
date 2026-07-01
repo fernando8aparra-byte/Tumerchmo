@@ -392,24 +392,31 @@
     font-size:15px;font-weight:400;line-height:1.65;
   }
 
-  .catalogo{padding:100px 32px;}
+  .catalogo{padding:100px 32px;position:relative;}
+  .catalogo::before{
+    content:'';position:absolute;inset:auto 0 18px 0;height:360px;
+    background:radial-gradient(ellipse at 50% 100%, rgba(212,136,42,0.12), transparent 68%);
+    pointer-events:none;
+  }
   .grid-productos{
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:28px;
     max-width:1180px;margin:0 auto;
+    position:relative;z-index:1;
   }
   @media(max-width:980px){.grid-productos{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:560px){
     .catalogo{padding:64px 16px;}
     .grid-productos{grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px;}
-    .producto-card{border-radius:8px;}
+    .producto-card{border-radius:18px;}
     .producto-body{padding:12px;}
     .producto-body h3{font-size:15px; line-height:1.2; margin-bottom:5px;}
     .producto-body p{display:none;}
+    .producto-meta{font-size:9px;gap:4px;margin-bottom:8px;}
     .producto-precio-row{margin-bottom:10px;}
     .producto-precio{font-size:20px;}
-    .producto-precio span{display:none;}
+    .producto-precio span.moneda{display:none;}
     .producto-acciones{flex-direction:column; gap:7px;}
     .btn-agregar-carrito,
     .btn-comprar{width:100%; padding:10px 6px; font-size:11px; gap:4px;}
@@ -419,32 +426,43 @@
 
   .producto-card{
     cursor:pointer;
-    background:var(--blanco);
-    border-radius:8px;
-    border:1px solid var(--crema-3);
+    background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,248,238,0.94));
+    border-radius:24px;
+    border:1px solid rgba(237,217,187,0.95);
     overflow:hidden;
     display:flex;flex-direction:column;
     transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     position:relative;
+    box-shadow:0 14px 36px rgba(44,26,14,0.08);
+    isolation:isolate;
+  }
+  .producto-card::after{
+    content:'';position:absolute;inset:10px;border:1px solid rgba(255,255,255,0.7);
+    border-radius:18px;pointer-events:none;z-index:1;
   }
   .producto-card:hover{
-    transform:translateY(-4px);
-    box-shadow:var(--sombra-media);
-    border-color:var(--caramelo);
+    transform:translateY(-7px);
+    box-shadow:0 22px 54px rgba(44,26,14,0.16);
+    border-color:rgba(212,136,42,0.75);
   }
   /* Tarjeta en oferta: borde relámpago sutil */
   .producto-card.tiene-oferta{
-    border-color: rgba(201,75,109,0.35);
+    border-color: rgba(201,75,109,0.55);
+    box-shadow:0 18px 48px rgba(201,75,109,0.16), 0 12px 28px rgba(44,26,14,0.08);
+  }
+  .producto-card.tiene-oferta::before{
+    content:'';position:absolute;inset:0 0 auto 0;height:5px;
+    background:linear-gradient(90deg,#C94B6D,#ff7a3a,#F0B860);z-index:6;
   }
   .producto-card.tiene-oferta:hover{
     border-color: var(--fresa);
-    box-shadow: 0 8px 40px rgba(201,75,109,0.18);
+    box-shadow: 0 24px 60px rgba(201,75,109,0.24);
   }
 
   /* ── BADGE OFERTA RELÁMPAGO EN LA TARJETA ── */
   .badge-oferta{
     position:absolute;
-    top:0; left:0;
+    top:16px; left:16px;
     z-index:5;
     background: linear-gradient(90deg, #C94B6D, #ff5e3a);
     color:#fff;
@@ -452,8 +470,8 @@
     font-weight:800;
     letter-spacing:.8px;
     text-transform:uppercase;
-    padding:5px 12px 5px 10px;
-    border-radius:0 0 10px 0;
+    padding:7px 12px 7px 10px;
+    border-radius:999px;
     display:flex;
     align-items:center;
     gap:5px;
@@ -488,9 +506,9 @@
   .producto-top{
     position:relative;
     width:100%;
-    padding-bottom:100%;
+    padding-bottom:96%;
     overflow:hidden;
-    background:var(--crema-2);
+    background:linear-gradient(145deg,var(--crema-2),#fff5e7);
     flex-shrink:0;
   }
   .producto-top img{
@@ -506,6 +524,11 @@
   }
   .producto-card:hover .producto-top img{
     transform:scale(1.04);
+  }
+  .producto-top::after{
+    content:'';position:absolute;left:18px;right:18px;bottom:12px;height:18px;
+    background:radial-gradient(ellipse, rgba(44,26,14,0.18), transparent 68%);
+    filter:blur(5px);opacity:.42;z-index:1;pointer-events:none;
   }
   .producto-top-ilustracion{
     position:absolute;
@@ -537,6 +560,7 @@
   .producto-body{
     padding:22px;
     display:flex;flex-direction:column;flex-grow:1;
+    position:relative;z-index:2;
   }
   .producto-body h3{
     font-size:17px;margin-bottom:6px;
@@ -544,9 +568,19 @@
   }
   .producto-body p{
     font-size:13px;color:var(--choco-suave);
-    font-weight:400;margin-bottom:18px;
+    font-weight:400;margin-bottom:14px;
     flex-grow:1;line-height:1.55;
   }
+  .producto-meta{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    margin-bottom:14px;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--choco-suave);
+  }
+  .producto-meta span{
+    display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;
+    background:rgba(245,230,208,0.72);border:1px solid rgba(237,217,187,0.85);
+  }
+  .producto-meta .meta-oferta{color:var(--fresa-oscuro);background:rgba(201,75,109,0.1);border-color:rgba(201,75,109,0.22);}
   .producto-precio-row{
     display:flex;align-items:center;
     justify-content:space-between;margin-bottom:16px;
@@ -1408,8 +1442,8 @@
   }
 
   const PRODUCTOS_SEMILLA = [
-    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18.00, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤", claseColor:"frappes-bg", priceId:"price_REEMPLAZA_FRAPPES" },
-    { id:"donas",    nombre:"Recetario de Donas",        precio:18.00, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩", claseColor:"donas-bg", priceId:"price_REEMPLAZA_DONAS" },
+    { id:"frappes",  nombre:"Recetario de Frappés",      precio:18.00, precioAntes:29.00, descripcion:"9 frappés cremosos de café, chocolate y fruta, con la proporción exacta para que no te queden aguados.", emoji:"🥤", claseColor:"frappes-bg", priceId:"price_REEMPLAZA_FRAPPES" },
+    { id:"donas",    nombre:"Recetario de Donas",        precio:18.00, precioAntes:25.00, descripcion:"Masa esponjosa garantizada y 6 glaseados distintos para que tu vitrina se vea irresistible.", emoji:"🍩", claseColor:"donas-bg", priceId:"price_REEMPLAZA_DONAS" },
     { id:"galletas", nombre:"Recetario de Galletas",     precio:18.00, descripcion:"De las crocantes a las suaves rellenas, con el punto exacto de horneado para cada tipo.", emoji:"🍪", claseColor:"galletas-bg", priceId:"price_REEMPLAZA_GALLETAS" },
     { id:"pasteles", nombre:"Recetario de Pasteles",     precio:18.00, descripcion:"Bizcochos que no se desmoronan y rellenos que se sostienen, para pasteles de cumpleaños o pedido.", emoji:"🧁", claseColor:"pasteles-bg", priceId:"price_REEMPLAZA_PASTELES" },
     { id:"payqueso", nombre:"Recetario de Pay de Queso", precio:18.00, descripcion:"Horneado y sin hornear, con la consistencia cremosa que todos preguntan cómo lograste.", emoji:"🍰", claseColor:"payqueso-bg", priceId:"price_REEMPLAZA_PAYQUESO" },
@@ -1640,10 +1674,15 @@
           <div class="producto-body">
             <h3>${escapeHtml(p.nombre)}</h3>
             <p>${escapeHtml(primerasTresPalabras(p.descripcion || ''))}</p>
+            <div class="producto-meta">
+              <span>PDF inmediato</span>
+              <span>Recetas probadas</span>
+              ${tieneOferta ? '<span class="meta-oferta">Oferta visible</span>' : ''}
+            </div>
             <div class="producto-precio-row">
               <div>
                 ${precioAnteHtml}
-                <div class="producto-precio">$${formatearPrecio(p.precio)} <span>MXN${descuentoPill}</span></div>
+                <div class="producto-precio">$${formatearPrecio(p.precio)} <span class="moneda">MXN</span>${descuentoPill}</div>
               </div>
             </div>
             <div class="producto-acciones">
