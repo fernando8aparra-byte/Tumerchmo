@@ -148,12 +148,16 @@
     overflow:hidden;cursor:pointer;transition:transform .2s ease, box-shadow .2s ease;
   }
   .mini-card:hover{transform:translateY(-3px);box-shadow:var(--sombra-media);}
-  .mini-card .mini-img{width:100%;aspect-ratio:1/1;background:var(--crema-2);overflow:hidden;}
+  .mini-card .mini-img{width:100%;aspect-ratio:1/1;background:var(--crema-2);overflow:hidden;position:relative;}
   .mini-card .mini-img img{width:100%;height:100%;object-fit:cover;}
   .mini-card .mini-img svg{width:100%;height:100%;display:block;}
   .mini-card .mini-body{padding:12px;}
   .mini-card .mini-body h4{font-size:13.5px;font-family:'Playfair Display',serif;margin-bottom:4px;}
   .mini-card .mini-body .precio{font-size:14px;font-weight:700;color:var(--choco);}
+  .mini-precio-antes{display:block;font-size:11px;color:var(--choco-suave);text-decoration:line-through;font-weight:600;margin-bottom:2px;}
+  .mini-badge-oferta{position:absolute;top:8px;left:8px;background:linear-gradient(90deg,var(--fresa),#ff5e3a);color:#fff;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:5px 8px;border-radius:999px;box-shadow:0 6px 16px rgba(201,75,109,.22);}
+  .mini-card.tiene-oferta{border-color:rgba(201,75,109,.42);}
+  .mini-card.tiene-oferta .precio{color:var(--fresa-oscuro);}
 
   .no-encontrado{
     max-width:560px;margin:100px auto;text-align:center;padding:0 32px;
@@ -265,6 +269,11 @@
     return d.innerHTML;
   }
 
+  function formatearPrecio(valor){
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero.toFixed(2) : '0.00';
+  }
+
   function ilustracionPorId(id){
     if(ILUSTRACIONES[id]) return ILUSTRACIONES[id];
     return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#F5E6D0"/><circle cx="150" cy="150" r="60" fill="#D4882A" opacity="0.5"/></svg>`;
@@ -318,7 +327,7 @@
     const tieneOferta = productoActual.precioAntes && Number(productoActual.precioAntes) > Number(productoActual.precio);
     const pctOferta = tieneOferta ? Math.round((1 - Number(productoActual.precio) / Number(productoActual.precioAntes)) * 100) : 0;
     const ofertaDetalleHtml = tieneOferta
-      ? `<div class="detalle-oferta"><span class="detalle-precio-antes">Antes $${productoActual.precioAntes} MXN</span><span class="detalle-badge-oferta">⚡ Ahorra ${pctOferta}%</span></div>`
+      ? `<div class="detalle-oferta"><span class="detalle-precio-antes">Antes $${formatearPrecio(productoActual.precioAntes)} MXN</span><span class="detalle-badge-oferta">⚡ Ahorra ${pctOferta}%</span></div>`
       : '';
 
     cont.innerHTML = `
@@ -329,7 +338,7 @@
           <h1>${escapeHtml(productoActual.nombre)}</h1>
           <p class="descripcion">${escapeHtml(productoActual.descripcion || '')}</p>
           ${ofertaDetalleHtml}
-          <div class="detalle-precio">$${productoActual.precio} <span>MXN</span></div>
+          <div class="detalle-precio">$${formatearPrecio(productoActual.precio)} <span>MXN</span></div>
           <div class="detalle-nota">Pago único · acceso de por vida · entrega digital al instante</div>
           <ul class="lista-incluye">
             <li><span class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Acceso inmediato después de pagar</li>
@@ -339,7 +348,7 @@
           <div class="detalle-acciones">
             <button class="btn-primary" onclick="window.abrirModal()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              Comprar ahora — $${productoActual.precio} MXN
+              Comprar ahora — $${formatearPrecio(productoActual.precio)} MXN
             </button>
             <button class="btn-secondary" id="btnAgregarDetalle" onclick="window.agregarDesdeDetalle()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
@@ -366,12 +375,16 @@
       const img = p.imagenUrl
         ? `<img src="${p.imagenUrl}" alt="${escapeHtml(p.nombre)}" loading="lazy">`
         : ilustracionPorId(p.id);
+      const tieneOferta = p.precioAntes && Number(p.precioAntes) > Number(p.precio);
+      const precioAntesHtml = tieneOferta ? `<span class="mini-precio-antes">Antes $${formatearPrecio(p.precioAntes)} MXN</span>` : '';
+      const badgeOferta = tieneOferta ? '<span class="mini-badge-oferta">Oferta</span>' : '';
       return `
-        <div class="mini-card" onclick="window.location.href='product.html?id=${p.id}'">
-          <div class="mini-img">${img}</div>
+        <div class="mini-card${tieneOferta ? ' tiene-oferta' : ''}" onclick="window.location.href='product.html?id=${p.id}'">
+          <div class="mini-img">${badgeOferta}${img}</div>
           <div class="mini-body">
             <h4>${escapeHtml(p.nombre)}</h4>
-            <div class="precio">$${p.precio} MXN</div>
+            ${precioAntesHtml}
+            <div class="precio">$${formatearPrecio(p.precio)} MXN</div>
           </div>
         </div>`;
     }).join('');
@@ -408,7 +421,7 @@
       iconoWrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>`;
     }
     document.getElementById('modalTitulo').textContent = productoActual.nombre;
-    document.getElementById('modalPrecio').textContent = `$${productoActual.precio} MXN`;
+    document.getElementById('modalPrecio').textContent = `$${formatearPrecio(productoActual.precio)} MXN`;
     document.getElementById('modalOverlay').classList.add('show');
   };
 
