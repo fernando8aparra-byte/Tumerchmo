@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis pedidos · F3RN4N</title>
+<link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<style>
+:root{
+  --bg:#0B0E11;
+  --surface:#1B1F24;
+  --surface-2:#22262B;
+  --surface-3:#2B3036;
+  --border:#333840;
+  --border-soft:#33384020;
+  --text:#FFFFFF;
+  --text-muted:#848E9C;
+  --text-faint:#5E6673;
+  --gold:#F0B90B;
+  --gold-soft:#F0B90B1F;
+  --danger:#F6465D;
+  --success:#0ECB81;
+  --info:#60A5FA;
+  --accent:var(--gold);
+  --accent-soft:var(--gold-soft);
+  font-family:'Inter',sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, #1c1a10 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, #14171a 0%, transparent 40%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:'tnum' 1; /* números tabulares -- se alinean mejor en listas */
+}
+button{ font-family:inherit; cursor:pointer; }
+input, select{ font-family:inherit; }
+
+.topnav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 24px; border-bottom:1px solid var(--border);
+  background:#0B0E11cc; backdrop-filter:blur(10px); position:sticky; top:0; z-index:20;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+  width:30px; height:30px; border-radius:8px; overflow:hidden; flex-shrink:0;
+  background:linear-gradient(135deg, var(--gold), #C99400);
+  display:flex; align-items:center; justify-content:center;
+}
+.brand-mark img{ width:100%; height:100%; object-fit:cover; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.15; }
+.brand-text b{ font-weight:800; font-size:15px; letter-spacing:.2px; }
+.brand-text span{ font-size:11px; color:var(--text-muted); }
+.back-link{
+  display:inline-flex; align-items:center; gap:7px; color:var(--text-muted);
+  text-decoration:none; font-size:13px; font-weight:600; padding:9px 16px;
+  border:1px solid var(--border); border-radius:8px; transition:all .15s; flex-shrink:0;
+}
+.back-link:hover{ color:var(--text); border-color:var(--text-faint); }
+.back-link svg{ width:15px; height:15px; }
+
+.wrap{ max-width:900px; margin:0 auto; padding:28px 20px 80px; }
+
+.gate{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; gap:16px; padding:24px; }
+.spinner{ width:30px; height:30px; border-radius:50%; border:2.5px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.gate .txt{ font-size:13.5px; color:var(--text-muted); }
+
+.page-title{ font-size:21px; font-weight:800; letter-spacing:-.3px; margin-bottom:4px; }
+.page-sub{ font-size:13px; color:var(--text-muted); margin-bottom:22px; }
+
+/* ---------------- Barra de búsqueda / filtros ---------------- */
+.filter-bar{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:16px; margin-bottom:20px; display:flex; flex-direction:column; gap:12px;
+}
+.filter-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.filter-field{ flex:1; min-width:160px; position:relative; }
+.filter-field label{ display:block; font-size:11px; color:var(--text-faint); margin-bottom:5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+.filter-field input, .filter-field select{
+  width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:8px; padding:9px 11px; font-size:13px; outline:none; transition:border-color .12s;
+}
+.filter-field input:focus, .filter-field select:focus{ border-color:var(--accent); }
+.filter-field svg{ position:absolute; right:11px; bottom:9px; width:15px; height:15px; color:var(--text-faint); pointer-events:none; }
+.filter-summary{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; color:var(--text-faint); }
+.filter-clear{ background:none; border:none; color:var(--accent); font-size:12px; font-weight:700; padding:2px; }
+.filter-clear:hover{ text-decoration:underline; }
+
+/* ---------------- Tarjeta de pedido ---------------- */
+.order-card{
+  background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--border-soft);
+  border-radius:12px; padding:16px; margin-bottom:12px; transition:border-color .15s;
+}
+.order-card[data-status="completado"]{ border-left-color:var(--success); }
+.order-card[data-status="error"]{ border-left-color:var(--danger); }
+.order-card[data-status="procesando"]{ border-left-color:var(--info); }
+.order-card[data-status="pendiente"]{ border-left-color:var(--gold); }
+
+.order-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:4px; flex-wrap:wrap; }
+.order-top-l b{ font-size:14.5px; font-weight:700; display:block; }
+.order-top-l .meta{ font-size:11.5px; color:var(--text-faint); margin-top:2px; }
+.order-top-r{ text-align:right; flex-shrink:0; }
+.order-amount{ font-family:'JetBrains Mono','Inter',monospace; font-weight:700; font-size:14px; }
+.order-status{
+  display:inline-block; padding:2px 10px; border-radius:999px; font-size:9.5px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.04em; margin-top:4px;
+}
+.order-status.completado{ background:#0ECB8122; color:var(--success); }
+.order-status.procesando{ background:#60A5FA22; color:var(--info); }
+.order-status.error{ background:#F6465D22; color:var(--danger); }
+.order-status.pendiente{ background:#F0B90B22; color:var(--gold); }
+
+/* ---------------- Identificadores con botón de copiar ---------------- */
+.id-chips{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.id-chip{
+  display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border);
+  border-radius:8px; padding:6px 6px 6px 11px; font-size:12px;
+}
+.id-chip .k{ color:var(--text-faint); font-weight:600; }
+.id-chip .v{ font-family:'JetBrains Mono','Inter',monospace; color:var(--text); }
+.copy-btn{
+  display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:6px;
+  background:var(--surface-3); border:1px solid var(--border); color:var(--text-muted);
+  transition:all .12s; flex-shrink:0;
+}
+.copy-btn:hover{ color:var(--text); border-color:var(--text-faint); }
+.copy-btn.copied{ background:#0ECB8122; border-color:var(--success); color:var(--success); }
+.copy-btn svg{ width:13px; height:13px; }
+
+/* ---------------- Resultado del proveedor ---------------- */
+.order-result{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.result-grid{ display:flex; flex-direction:column; gap:0; }
+.result-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:6px 0; border-bottom:1px solid var(--border-soft); font-size:12px; }
+.result-row:last-child{ border-bottom:none; }
+.result-label{ color:var(--text-faint); flex-shrink:0; }
+.result-value{ color:var(--text); font-weight:600; text-align:right; word-break:break-word; }
+.raw-result{ font-family:'JetBrains Mono','Inter',monospace; font-size:11.5px; color:var(--text-muted); white-space:pre-wrap; word-break:break-word; }
+.raw-result img{ max-width:100%; border-radius:8px; margin:6px 0; display:block; }
+.error-text{ font-size:12px; color:var(--danger); }
+
+.order-note{ margin-top:10px; }
+.order-note label{ font-size:10.5px; color:var(--text-faint); display:block; margin-bottom:5px; }
+.order-note textarea{
+  width:100%; resize:vertical; background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+  padding:8px 10px; color:var(--text); font-size:12.5px; font-family:inherit; min-height:44px;
+}
+.note-status{ font-size:10.5px; color:var(--text-faint); margin-top:3px; display:block; }
+
+.verify-btn{
+  margin-top:10px; background:var(--surface-2); border:1px solid var(--border); color:var(--text-muted);
+  border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600; transition:all .12s;
+}
+.verify-btn:hover{ color:var(--text); border-color:var(--text-faint); }
+
+.empty-state{ display:flex; flex-direction:column; align-items:center; gap:10px; padding:60px 20px; text-align:center; }
+.empty-state svg{ width:34px; height:34px; color:var(--text-faint); }
+.empty-state .txt{ font-size:13px; color:var(--text-faint); max-width:280px; }
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(14px);
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  padding:11px 18px; border-radius:10px; font-size:13px; font-weight:600; opacity:0; pointer-events:none;
+  transition:opacity .2s, transform .2s; z-index:200; box-shadow:0 10px 26px -10px #000000b0;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark">
+      <img src="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e" alt="F3RN4N">
+    </div>
+    <div class="brand-text"><b>F3RN4N</b><span>Mis pedidos</span></div>
+  </div>
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<div class="wrap">
+  <div id="gate-loading" class="gate">
+    <div class="spinner"></div>
+    <div class="txt">Cargando tus pedidos…</div>
+  </div>
+
+  <div id="gate-login" class="gate" style="display:none;">
+    <div class="txt">Necesitas iniciar sesión para ver tus pedidos.</div>
+    <a class="back-link" href="index.html" style="margin-top:6px;">Ir a iniciar sesión</a>
+  </div>
+
+  <div id="page-content" style="display:none;">
+    <div class="page-title">Mis pedidos</div>
+    <div class="page-sub">Historial completo, con estado y resultado de cada uno.</div>
+
+    <div class="filter-bar">
+      <div class="filter-row">
+        <div class="filter-field">
+          <label for="f-search">Buscar (IMEI, SN, nota o servicio)</label>
+          <input id="f-search" type="text" placeholder="Ej. 356327109216543, o el nombre de tu cliente…" oninput="applyFilters()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </div>
+        <div class="filter-field" style="max-width:170px;">
+          <label for="f-date">Fecha</label>
+          <input id="f-date" type="date" oninput="applyFilters()">
+        </div>
+        <div class="filter-field" style="max-width:170px;">
+          <label for="f-status">Estado</label>
+          <select id="f-status" onchange="applyFilters()">
+            <option value="">Todos</option>
+            <option value="completado">Completado</option>
+            <option value="procesando">Procesando</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="error">Error</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-summary">
+        <span id="filter-count">—</span>
+        <button class="filter-clear" onclick="clearFilters()">Limpiar filtros</button>
+      </div>
+    </div>
+
+    <div id="orders-list"><div class="empty-state"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2zk1jEQJcyTfEb7RsmsNtFAp3J5sSnI",
+  authDomain: "f3rn4n.firebaseapp.com",
+  projectId: "f3rn4n",
+  storageBucket: "f3rn4n.firebasestorage.app",
+  messagingSenderId: "156609223149",
+  appId: "1:156609223149:web:b1d92517932610696cafe4",
+  measurementId: "G-5SME8LS1V2"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const PLACE_ORDER_ENDPOINT = "https://tumerchmo.com/api/place_order.php";
+const IMEI_CHECK_ENDPOINT = "https://tumerchmo.com/api/imeicheck.php";
+
+function ordersCollection(){ return db.collection('orders'); }
+function technicianRef(uid){ return db.collection('technicians').doc(uid); }
+async function isAdminUser(user){
+  if(!user) return false;
+  try{
+    const token = await user.getIdTokenResult();
+    return token.claims.admin === true;
+  }catch(e){
+    console.error('isAdminUser error:', e);
+    return false;
+  }
+}
+
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* ---------------- Copiar con un clic ---------------- */
+function copyValue(btn, value){
+  navigator.clipboard.writeText(value).then(()=>{
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.innerHTML = COPY_ICON;
+    }, 1200);
+  }).catch(()=> showToast('No se pudo copiar'));
+}
+const COPY_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+
+/* ---------------- Resultado del proveedor (mismo parser que index.html) ---------------- */
+function sanitizeProviderHtml(s){
+  if(s == null) return '';
+  if(typeof DOMPurify === 'undefined') return escapeHtml(s);
+  return DOMPurify.sanitize(String(s), {
+    ALLOWED_TAGS: ['br', 'span', 'b', 'i', 'u', 'strong', 'em', 'img'],
+    ALLOWED_ATTR: ['style', 'src', 'alt', 'width', 'height'],
+    ALLOWED_URI_REGEXP: /^https:\/\//i,
+  });
+}
+function parseProviderResult(rawHtml){
+  if(!rawHtml) return null;
+  const raw = String(rawHtml);
+  let imageUrl = null;
+  const imgMatch = raw.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if(imgMatch && /^https:\/\//i.test(imgMatch[1])) imageUrl = imgMatch[1];
+  const lines = raw.split(/<br\s*\/?>/i);
+  const fields = [];
+  lines.forEach(line => {
+    const withoutImg = line.replace(/<img[^>]*>/gi, '').trim();
+    if(!withoutImg) return;
+    const m = withoutImg.match(/^([^:<]{2,40}):\s*(.+)$/);
+    if(!m) return;
+    const label = m[1].trim();
+    const valueRaw = m[2].trim();
+    let color = null, value;
+    const spanMatch = valueRaw.match(/<span[^>]*style=["'][^"']*color:\s*([a-z]+)[^"']*["'][^>]*>(.*?)<\/span>/i);
+    if(spanMatch){ color = spanMatch[1].toLowerCase(); value = spanMatch[2]; }
+    else{ value = valueRaw.replace(/<[^>]+>/g, ''); }
+    value = value.trim();
+    if(label && value) fields.push({ label, value, color });
+  });
+  if(fields.length < 3) return null;
+  return { imageUrl, fields };
+}
+function renderParsedResult(parsed){
+  const COLOR_MAP = { green:'var(--success)', red:'var(--danger)', orange:'var(--gold)', yellow:'var(--gold)' };
+  const imgHtml = parsed.imageUrl ? `<img src="${escapeHtml(parsed.imageUrl)}" alt="" style="max-width:110px; display:block; margin:0 auto 10px; border-radius:10px;">` : '';
+  const rows = parsed.fields.map(f => `
+    <div class="result-row">
+      <span class="result-label">${escapeHtml(f.label)}</span>
+      <span class="result-value" style="${f.color && COLOR_MAP[f.color] ? 'color:' + COLOR_MAP[f.color] + ';' : ''}">${escapeHtml(f.value)}</span>
+    </div>`).join('');
+  return `${imgHtml}<div class="result-grid">${rows}</div>`;
+}
+function renderProviderResult(rawResult){
+  const parsed = parseProviderResult(rawResult);
+  return parsed ? renderParsedResult(parsed) : `<div class="raw-result">${sanitizeProviderHtml(rawResult)}</div>`;
+}
+
+const ORDER_STATUS_DISPLAY = {
+  pendiente:  { label: 'Enviando al proveedor…' },
+  procesando: { label: 'En proceso' },
+  completado: { label: 'Completado' },
+  error:      { label: 'Error' },
+};
+
+function orderAmount(o){ return Number(o.amount ?? o.amountCharged ?? 0) || 0; }
+function orderLabel(o){ return o.serviceLabel || o.device || o.program || o.service || 'Servicio'; }
+function fmtDate(v){
+  if(!v) return '—';
+  const d = v.toDate ? v.toDate() : new Date(v);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' + d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+}
+function dateKey(v){
+  if(!v) return '';
+  const d = v.toDate ? v.toDate() : new Date(v);
+  if(isNaN(d.getTime())) return '';
+  return d.toISOString().slice(0,10);
+}
+
+let allOrders = [];
+
+/* ---------------- CONTROL DE ACCESO (cuenta deshabilitada) ----------------
+   Mismo criterio que tec/index.html: si el admin deshabilitó esta
+   cuenta, no puede usar ninguna página de /tec/. El admin nunca se
+   bloquea a sí mismo (evita quedarse fuera por accidente). */
+function showAccessDeniedAndRedirect(){
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; gap:14px;">
+      <div style="width:56px; height:56px; border-radius:50%; background:var(--danger)22; display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:28px; height:28px;"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+      </div>
+      <h2 style="font-size:19px; font-weight:800;">Ups, parece que no tienes permitido estar aquí</h2>
+      <p style="font-size:13px; color:var(--text-muted); max-width:320px;">Tu cuenta no tiene acceso a la sección de técnicos. Si crees que es un error, contacta a soporte.</p>
+      <p style="font-size:12px; color:var(--text-faint);">Te vamos a redirigir en <span id="ad-countdown">3</span> segundos…</p>
+    </div>
+  `;
+  let seconds = 3;
+  const counterEl = document.getElementById('ad-countdown');
+  const timer = setInterval(()=>{
+    seconds--;
+    if(counterEl) counterEl.textContent = seconds;
+    if(seconds <= 0){
+      clearInterval(timer);
+      window.location.href = '../index.html';
+    }
+  }, 1000);
+}
+
+auth.onAuthStateChanged(async user => {
+  if(!user){
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('gate-login').style.display = 'flex';
+    return;
+  }
+  try{
+    const isAdminNow = await isAdminUser(user);
+    if(!isAdminNow){
+      const profileDoc = await technicianRef(user.uid).get();
+      if(profileDoc.exists && profileDoc.data().enabled === false){
+        showAccessDeniedAndRedirect();
+        return;
+      }
+    }
+
+    const snap = await ordersCollection().where('ownerUid', '==', user.uid).orderBy('createdAt', 'desc').limit(300).get();
+    allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+    applyFilters();
+  }catch(e){
+    console.error(e);
+    document.getElementById('gate-loading').innerHTML = `<div class="txt" style="color:var(--danger);">Error al cargar: ${escapeHtml(e.message)}</div>`;
+  }
+});
+
+function clearFilters(){
+  document.getElementById('f-search').value = '';
+  document.getElementById('f-date').value = '';
+  document.getElementById('f-status').value = '';
+  applyFilters();
+}
+
+function applyFilters(){
+  const q = document.getElementById('f-search').value.toLowerCase().trim();
+  const date = document.getElementById('f-date').value;
+  const status = document.getElementById('f-status').value;
+
+  const filtered = allOrders.filter(o => {
+    if(status && o.status !== status) return false;
+    if(date && dateKey(o.createdAt) !== date) return false;
+    if(q){
+      const haystack = [
+        orderLabel(o), o.imei, o.sn, o.ecid, o.username, o.customerEmail, o.myNote, o.dhruOrderId
+      ].filter(Boolean).join(' ').toLowerCase();
+      if(!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('filter-count').textContent =
+    filtered.length === allOrders.length ? `${allOrders.length} pedido(s)` : `${filtered.length} de ${allOrders.length} pedido(s)`;
+
+  renderOrders(filtered);
+}
+
+function renderOrders(orders){
+  const el = document.getElementById('orders-list');
+  if(!orders.length){
+    el.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <div class="txt">${allOrders.length ? 'Ningún pedido coincide con tu búsqueda.' : 'Todavía no tienes pedidos.'}</div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = orders.map(o => {
+    const statusInfo = ORDER_STATUS_DISPLAY[o.status] || { label: o.status || '—' };
+
+    const idChips = [];
+    if(o.ecid) idChips.push(['ECID', o.ecid]);
+    else {
+      if(o.imei) idChips.push(['IMEI', o.imei]);
+      if(o.sn && o.sn !== o.imei) idChips.push(['SN', o.sn]);
+    }
+    if(o.username) idChips.push(['Usuario', o.username]);
+    if(o.customerEmail) idChips.push(['Correo', o.customerEmail]);
+
+    const idChipsHtml = idChips.length ? `<div class="id-chips">${idChips.map(([k,v]) => `
+      <div class="id-chip">
+        <span class="k">${escapeHtml(k)}:</span>
+        <span class="v">${escapeHtml(v)}</span>
+        <button class="copy-btn" onclick='copyValue(this, ${JSON.stringify(v)})' title="Copiar ${escapeHtml(k)}">${COPY_ICON}</button>
+      </div>
+    `).join('')}</div>` : '';
+
+    let resultHtml = '';
+    if(o.status === 'completado' && o.result){
+      resultHtml = `<div class="order-result">${renderProviderResult(o.result)}</div>`;
+    } else if(o.status === 'error' && o.response){
+      resultHtml = `<div class="order-result"><span class="error-text">${sanitizeProviderHtml(o.response)}</span></div>`;
+    } else if(o.status === 'procesando' || o.status === 'pendiente'){
+      const refLine = o.dhruOrderId ? `Orden proveedor: ${escapeHtml(o.dhruOrderId)}` : 'Todavía no se recibió número de orden del proveedor';
+      resultHtml = `<div class="order-result"><span class="error-text" style="color:var(--text-faint);">${refLine}</span>
+        <div><button class="verify-btn" onclick="verifyOrderNow('${o.id}')">Verificar estado</button></div></div>`;
+    }
+
+    return `
+      <div class="order-card" data-status="${o.status || ''}">
+        <div class="order-top">
+          <div class="order-top-l">
+            <b>${escapeHtml(orderLabel(o))}</b>
+            <div class="meta">${fmtDate(o.createdAt)}</div>
+          </div>
+          <div class="order-top-r">
+            <div class="order-amount">$${orderAmount(o).toFixed(2)}</div>
+            <div class="order-status ${o.status || 'pendiente'}">${statusInfo.label}</div>
+          </div>
+        </div>
+        ${idChipsHtml}
+        ${resultHtml}
+        <div class="order-note">
+          <label for="note-${o.id}">Tu nota privada (solo tú la ves)</label>
+          <textarea id="note-${o.id}" rows="1" placeholder="Ej. Era el cliente Juan, taller de la esquina…"
+            onblur="saveOrderNote('${o.id}', this.value)">${escapeHtml(o.myNote || '')}</textarea>
+          <span class="note-status" id="note-status-${o.id}"></span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function saveOrderNote(orderId, note){
+  const statusEl = document.getElementById('note-status-' + orderId);
+  try{
+    await ordersCollection().doc(orderId).update({ myNote: note.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    const local = allOrders.find(o => o.id === orderId);
+    if(local) local.myNote = note.trim();
+    if(statusEl){ statusEl.textContent = 'Guardado ✔'; setTimeout(()=>{ if(statusEl) statusEl.textContent = ''; }, 1500); }
+  }catch(e){
+    if(statusEl) statusEl.textContent = 'No se pudo guardar: ' + e.message;
+  }
+}
+
+async function verifyOrderNow(orderId){
+  const order = allOrders.find(o => o.id === orderId);
+  if(!order) return;
+  showToast('Consultando estado…');
+  try{
+    const idToken = await auth.currentUser.getIdToken();
+    let endpoint, body;
+    if(order.service === 'imeicheck'){
+      endpoint = IMEI_CHECK_ENDPOINT;
+      body = { step: 'status', orderId: order.dhruOrderId };
+    } else {
+      endpoint = PLACE_ORDER_ENDPOINT;
+      body = { step: 'status', orderId };
+    }
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(()=> ({}));
+    if(!res.ok || !data.ok){ showToast('Todavía en proceso, intenta en un momento.'); return; }
+
+    // Volvemos a leer el pedido de Firestore -- el servidor ya actualizó
+    // status/result ahí mismo al consultar.
+    const fresh = await ordersCollection().doc(orderId).get();
+    if(fresh.exists){
+      const idx = allOrders.findIndex(o => o.id === orderId);
+      if(idx >= 0) allOrders[idx] = { id: orderId, ...fresh.data() };
+      applyFilters();
+    }
+    showToast(data.status === 4 ? 'Pedido completado ✔' : 'Todavía en proceso.');
+  }catch(e){
+    showToast('Error: ' + e.message);
+  }
+}
+</script>
+</body>
+</html>

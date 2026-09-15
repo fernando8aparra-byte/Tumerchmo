@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F3RN4N · Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#10141B;
+  --surface:#171D27;
+  --surface-2:#1F2733;
+  --surface-3:#262F3D;
+  --border:#2A3341;
+  --text:#EDF0F4;
+  --text-muted:#8891A0;
+  --text-faint:#5B6474;
+  --ios:#4FA8FF;
+  --ios-soft:#4FA8FF1A;
+  --android:#7CDB6A;
+  --android-soft:#7CDB6A1A;
+  --amber:#FF9C3D;
+  --amber-soft:#FF9C3D1A;
+  --danger:#FF5D5D;
+  --danger-soft:#FF5D5D1A;
+  --ok:#4FD17E;
+  --ok-soft:#4FD17E1A;
+  --manual:#8891A0;
+  --manual-soft:#8891A01A;
+  --gold:#F0B90B;
+  --gold-soft:#F0B90B1F;
+  --radius:10px;
+  --accent:var(--amber);
+  --accent-soft:var(--amber-soft);
+  font-family:'Inter',sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, #1a2130 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, #161c27 0%, transparent 40%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body.os-apple{ --accent:var(--ios); --accent-soft:var(--ios-soft); }
+body.os-android{ --accent:var(--android); --accent-soft:var(--android-soft); }
+::selection{ background:var(--accent-soft); color:var(--text); }
+button{ font-family:inherit; cursor:pointer; }
+input{ font-family:inherit; }
+a{ color:inherit; }
+
+/* ---------- NAV (compartido con Index) ---------- */
+.topnav{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; border-bottom:1px solid var(--border); background:#10141Bcc; backdrop-filter:blur(10px); position:sticky; top:0; z-index:50; gap:14px; }
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{ width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg, var(--gold), #C99400); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.brand-mark svg{ width:16px; height:16px; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.15; }
+.brand-text b{ font-family:'Inter',sans-serif; font-weight:800; font-size:15px; letter-spacing:.2px; }
+.brand-text span{ font-size:11px; color:var(--text-muted); }
+
+/* ---------- HAMBURGER (rediseñado) ---------- */
+.hamburger{
+  width:42px; height:42px; border-radius:12px;
+  background:linear-gradient(180deg, var(--surface-2), var(--surface));
+  border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all .18s; position:relative;
+  box-shadow:0 1px 0 #ffffff08 inset, 0 4px 10px -6px #000000a0;
+}
+.hamburger svg{ width:18px; height:18px; color:var(--text-muted); transition:color .18s; }
+.hamburger:hover{ border-color:var(--accent); background:linear-gradient(180deg, var(--surface-3), var(--surface-2)); }
+.hamburger:hover svg{ color:var(--accent); }
+.hamburger:active{ transform:scale(.94); }
+.hamburger .dot{
+  position:absolute; top:-3px; right:-3px; width:10px; height:10px; border-radius:50%;
+  background:var(--android); border:2px solid var(--bg); display:none;
+  box-shadow:0 0 0 2px #7CDB6A33;
+}
+.hamburger.logged .dot{ display:block; }
+
+/* ---------- DRAWER (rediseñado, compartido) ---------- */
+.overlay{ position:fixed; inset:0; background:#080a0ecc; backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity .2s; z-index:90; }
+.overlay.show{ opacity:1; pointer-events:auto; }
+.drawer{ position:fixed; top:0; right:0; height:100%; width:360px; max-width:92vw; background:var(--surface); border-left:1px solid var(--border); transform:translateX(100%); transition:transform .25s cubic-bezier(.4,0,.2,1); z-index:95; display:flex; flex-direction:column; padding:22px 22px 26px; overflow-y:auto; }
+.drawer.show{ transform:translateX(0); }
+.drawer-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.drawer-head h3{ font-family:'Inter',sans-serif; font-size:17px; font-weight:800; letter-spacing:-.2px; }
+.drawer-close{
+  width:32px; height:32px; border-radius:9px;
+  background:linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted);
+  transition:all .15s;
+}
+.drawer-close:hover{ color:var(--danger); border-color:var(--danger); background:var(--danger-soft); }
+.drawer-close svg{ width:14px; height:14px; }
+.account-card{
+  display:flex; align-items:center; gap:14px;
+  background:linear-gradient(135deg, var(--surface-2), var(--surface-3));
+  border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;
+  box-shadow:0 1px 0 #ffffff08 inset;
+}
+.avatar{
+  width:46px; height:46px; border-radius:50%;
+  background:linear-gradient(135deg, var(--gold), #C99400);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Inter',sans-serif; font-weight:800; font-size:16px; color:#10141B; flex-shrink:0; overflow:hidden;
+  box-shadow:0 0 0 3px var(--surface-2), 0 0 0 4px var(--gold-soft);
+}
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+.account-info{ overflow:hidden; }
+.account-info b{ display:block; font-size:14px; }
+.account-info span{ display:block; font-size:11.5px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px; }
+
+.balance-card-drawer{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:18px;
+}
+.balance-card-drawer .k{ font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; }
+.balance-card-drawer .v{ font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:700; color:var(--ok); margin-top:3px; }
+
+.auth-tabs{ display:flex; gap:4px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:4px; margin-bottom:20px; }
+.auth-tabs button{ flex:1; background:transparent; border:none; color:var(--text-muted); font-size:12.5px; font-weight:600; padding:8px; border-radius:999px; transition:all .15s; }
+.auth-tabs button.active{ background:var(--surface-3); color:var(--text); }
+.auth-form{ display:none; flex-direction:column; gap:14px; }
+.auth-form.visible{ display:flex; }
+.google-btn{ display:flex; align-items:center; justify-content:center; gap:10px; background:var(--text); color:#1a1a1a; border-radius:8px; padding:11px; font-size:13.5px; font-weight:600; border:1px solid var(--border); width:100%; }
+.google-btn:hover{ filter:brightness(.96); }
+.google-btn svg{ width:17px; height:17px; }
+.auth-divider{ display:flex; align-items:center; gap:10px; color:var(--text-faint); font-size:11.5px; margin:2px 0; }
+.auth-divider::before, .auth-divider::after{ content:''; flex:1; height:1px; background:var(--border); }
+.auth-error{ font-size:12.5px; color:var(--danger); display:none; }
+.auth-error.show{ display:block; }
+.guest-note{ margin-top:auto; padding-top:18px; border-top:1px solid var(--border); font-size:11.5px; color:var(--text-faint); line-height:1.5; }
+.summary-card{ background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; display:flex; flex-direction:column; gap:12px; }
+.summary-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+.summary-row:last-child{ border-bottom:none; padding-bottom:0; }
+.summary-row .k{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); }
+.summary-row .v{ font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; text-align:right; }
+.field label{ display:block; font-size:12.5px; color:var(--text-muted); margin-bottom:7px; font-weight:500; }
+.field input{ width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:11px 13px; font-size:14px; outline:none; transition:border-color .12s; }
+.field input:focus{ border-color:var(--accent); }
+.field input::placeholder{ color:var(--text-faint); }
+.btn{ border-radius:8px; padding:11px 22px; font-size:13.5px; font-weight:600; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; transition:all .12s; }
+.btn-primary{ background:var(--accent); color:#0d0f13; }
+.btn-primary:hover{ filter:brightness(1.08); }
+.btn-primary:disabled{ background:var(--surface-3); color:var(--text-faint); cursor:not-allowed; }
+.btn-ghost{ background:transparent; border-color:var(--border); color:var(--text-muted); }
+.btn-ghost:hover{ border-color:var(--text-faint); color:var(--text); }
+.btn-text{ background:transparent; color:var(--text-muted); font-size:13px; text-decoration:underline; text-underline-offset:3px; padding:6px; }
+.btn-text:hover{ color:var(--text); }
+
+.drawer-action{
+  width:100%; justify-content:flex-start; margin-top:10px; text-decoration:none;
+  display:flex; align-items:center; gap:11px; padding:11px 13px 11px 11px;
+  background:var(--surface-2);
+}
+.drawer-action:hover{ background:var(--surface-3); }
+.drawer-action .action-icon{
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface-3);
+}
+.drawer-action svg{ width:15px; height:15px; flex-shrink:0; }
+.programs-btn .action-icon{ background:#3B82F620; color:#60A5FA; }
+#dash-link .action-icon{ background:var(--gold-soft); color:var(--gold); }
+.recharge-btn .action-icon{ background:#4FD17E20; color:var(--ok); }
+#logout-link{ color:var(--danger); border-color:transparent; background:var(--danger-soft); margin-top:22px; }
+#logout-link .action-icon{ background:var(--danger-soft); color:var(--danger); }
+#logout-link:hover{ background:var(--danger); color:#10141B; }
+#logout-link:hover .action-icon{ background:#10141B33; color:#10141B; }
+
+/* Toast */
+.toast{ position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface-3); border:1px solid var(--accent); color:var(--text); padding:14px 22px; border-radius:10px; font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:10px; opacity:0; pointer-events:none; transition:all .25s; z-index:100; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ---------- CHECK LAYOUT ---------- */
+.wrap{ max-width:900px; margin:0 auto; padding:44px 32px 100px; }
+@media (max-width:600px){ .wrap{ padding:28px 18px 80px; } }
+.page-head h1{ font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:600; }
+.page-head p{ color:var(--text-muted); font-size:14px; margin-top:5px; }
+
+/* Banner ECID (arriba de todo, solo lectura / bloqueado) */
+.ecid-banner{
+  margin-top:22px; display:flex; align-items:center; gap:14px;
+  background:linear-gradient(135deg, var(--surface-2), var(--surface-3));
+  border:1px solid var(--accent); border-radius:var(--radius); padding:16px 20px;
+  box-shadow:0 1px 0 #ffffff08 inset;
+}
+.ecid-banner .lock-icon{
+  width:38px; height:38px; border-radius:10px; background:var(--accent-soft); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.ecid-banner .lock-icon svg{ width:18px; height:18px; }
+.ecid-banner .texts{ overflow:hidden; }
+.ecid-banner .k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); }
+.ecid-banner .v{ font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:600; margin-top:2px; word-break:break-all; }
+
+/* Summary strip */
+.order-strip{
+  margin-top:14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px 22px; display:flex; flex-wrap:wrap; gap:22px; align-items:center; justify-content:space-between;
+}
+.order-strip-item{ display:flex; flex-direction:column; gap:4px; }
+.order-strip-item .k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-faint); }
+.order-strip-item .v{ font-size:14px; font-weight:600; font-family:'Space Grotesk',sans-serif; }
+.order-actions{ display:flex; gap:8px; }
+
+/* Result card */
+.result-card{
+  margin-top:22px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:26px 26px 28px;
+}
+.status-pill{ display:inline-flex; align-items:center; gap:7px; padding:5px 13px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.02em; margin-bottom:16px; }
+.status-pill .dot{ width:7px; height:7px; border-radius:50%; }
+.status-ok{ background:var(--ok-soft); color:var(--ok); }
+.status-ok .dot{ background:var(--ok); }
+.status-warn{ background:var(--amber-soft); color:var(--amber); }
+.status-warn .dot{ background:var(--amber); }
+.status-bad{ background:var(--danger-soft); color:var(--danger); }
+.status-bad .dot{ background:var(--danger); }
+.status-manual{ background:var(--manual-soft); color:var(--manual); }
+.status-manual .dot{ background:var(--manual); }
+
+.result-title{ font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600; margin-bottom:8px; }
+.result-desc{ font-size:14px; color:var(--text-muted); line-height:1.6; max-width:560px; }
+
+.callout{ display:flex; gap:12px; padding:14px 16px; border-radius:9px; margin-top:18px; font-size:13px; line-height:1.55; }
+.callout svg{ width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+.callout-warn{ background:var(--amber-soft); border:1px solid #FF9C3D33; color:#ffd6ab; }
+.callout-req{ background:var(--surface-2); border:1px solid var(--border); }
+.callout-req b{ color:var(--text); }
+
+.result-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:22px; align-items:center; }
+.result-actions.top{ margin-top:0; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+.dl-btn{ background:var(--accent); color:#0d0f13; }
+.dl-btn.placeholder{ background:var(--surface-3); color:var(--text-muted); border:1px dashed var(--border); }
+.dl-note{ font-size:11.5px; color:var(--text-faint); }
+
+/* iOS checker */
+.ios-check{ margin-top:22px; padding:18px; background:var(--surface-2); border:1px solid var(--border); border-radius:9px; max-width:420px; }
+.ios-check .label{ font-size:12px; color:var(--text-muted); margin-bottom:10px; font-weight:500; }
+.ios-check-row{ display:flex; gap:8px; }
+.ios-check-row input{ flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px 12px; font-size:13.5px; font-family:'JetBrains Mono',monospace; outline:none; }
+.ios-check-row input:focus{ border-color:var(--accent); }
+.ios-result{ margin-top:12px; font-size:13px; display:none; align-items:center; gap:8px; }
+.ios-result.show{ display:flex; }
+.ios-result.ok{ color:var(--ok); }
+.ios-result.bad{ color:var(--danger); }
+.ios-tool-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:12.5px; color:var(--text-muted); }
+
+/* Carrier chips */
+.carrier-grid{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.carrier-chip{ background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:10px 18px; border-radius:8px; font-size:13.5px; font-weight:600; transition:all .12s; }
+.carrier-chip:hover{ border-color:var(--text-faint); }
+.carrier-chip.selected{ background:var(--accent); border-color:var(--accent); color:#0d0f13; }
+.carrier-note{ display:none; margin-top:16px; }
+.carrier-note.show{ display:block; }
+
+/* Unlock programs (A12/A13) */
+.unlock-options{ margin-top:22px; }
+.unlock-options-label{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); margin-bottom:12px; }
+.unlock-options-label b{ color:var(--text-muted); text-transform:none; letter-spacing:0; font-family:'JetBrains Mono',monospace; font-size:12px; }
+.program-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+@media (max-width:720px){ .program-grid{ grid-template-columns:1fr; } }
+.program-card{ background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:16px; }
+.program-head{ display:flex; align-items:flex-start; gap:10px; margin-bottom:14px; }
+.program-tag{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:11.5px; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.program-head b{ display:block; font-size:12.5px; line-height:1.3; }
+.program-meta{ display:block; font-size:11px; color:var(--text-faint); margin-top:3px; }
+.program-prices{ display:flex; flex-direction:column; gap:6px; padding-top:12px; border-top:1px solid var(--border); }
+.price-line{ display:flex; justify-content:space-between; align-items:center; font-size:12.5px; }
+.price-line span{ color:var(--text-muted); }
+.price-line b{ font-family:'JetBrains Mono',monospace; color:var(--ok); font-size:13px; }
+.price-na{ font-size:12px; color:var(--text-faint); font-style:italic; }
+
+/* Empty state */
+.empty-card{ margin-top:26px; background:var(--surface); border:1px dashed var(--border); border-radius:var(--radius); padding:44px 28px; text-align:center; }
+.empty-card svg{ width:34px; height:34px; color:var(--text-faint); margin-bottom:14px; }
+.empty-card h3{ font-family:'Space Grotesk',sans-serif; font-size:16px; margin-bottom:6px; }
+.empty-card p{ font-size:13.5px; color:var(--text-muted); margin-bottom:20px; }
+
+/* Botón "ver más opciones" dentro de un callout */
+.req-more-btn{ background:none; border:none; color:var(--accent); font-size:12.5px; font-weight:600; text-decoration:underline; text-underline-offset:2px; padding:0; margin-top:8px; display:inline-block; }
+
+/* Programa: tarjeta clicable */
+.program-card{ cursor:pointer; }
+.program-card:hover{ border-color:var(--text-faint); }
+
+/* ---------- MODAL GENÉRICO (sobrepuesto) ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:#080a0ecc; backdrop-filter:blur(3px);
+  opacity:0; pointer-events:none; transition:opacity .2s; z-index:200;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.show{ opacity:1; pointer-events:auto; }
+.modal-box{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  max-width:460px; width:100%; padding:22px; transform:translateY(10px); transition:transform .2s;
+  max-height:86vh; overflow-y:auto;
+}
+.modal-overlay.show .modal-box{ transform:translateY(0); }
+.modal-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:6px; }
+.modal-head h3{ font-family:'Space Grotesk',sans-serif; font-size:16px; line-height:1.3; }
+.modal-close{ width:30px; height:30px; border-radius:7px; background:var(--surface-2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); flex-shrink:0; }
+.modal-close:hover{ color:var(--text); }
+.modal-close svg{ width:14px; height:14px; }
+.modal-sub{ font-size:12.5px; color:var(--text-muted); margin-bottom:18px; line-height:1.5; }
+
+/* Aviso de costo dentro del modal de registro */
+.modal-cost-note{ display:flex; gap:10px; padding:12px 14px; border-radius:9px; margin-bottom:16px; background:var(--amber-soft); border:1px solid #FF9C3D33; color:#ffd6ab; font-size:12.5px; line-height:1.5; }
+.modal-cost-note svg{ width:16px; height:16px; flex-shrink:0; margin-top:1px; }
+
+/* Opciones de placa RP2350 dentro del modal */
+.board-option{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:14px 16px; margin-bottom:10px; }
+.board-option:last-child{ margin-bottom:0; }
+.board-option b{ font-size:13.5px; display:block; }
+.board-option span{ font-size:11.5px; color:var(--text-faint); }
+.board-option.pending{ opacity:.5; }
+.board-search-btn{ background:var(--surface-3); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:7px; font-size:12.5px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+.board-search-btn:hover{ border-color:var(--accent); color:var(--accent); }
+.board-search-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* Acciones de un programa dentro del modal */
+.program-action{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:14px 16px; margin-bottom:10px; }
+.program-action:last-child{ margin-bottom:0; }
+.program-action b{ font-size:13.5px; display:block; margin-bottom:2px; }
+.program-action span{ font-size:11px; color:var(--text-faint); }
+.program-action .btn{ flex-shrink:0; }
+.program-action .btn:disabled{ background:var(--surface-3); color:var(--text-faint); cursor:not-allowed; border-color:var(--border); }
+
+/* Sección de pago dividida (sin señal / con señal) */
+.pay-options-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); margin:18px 0 10px; }
+.pay-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:420px){ .pay-grid{ grid-template-columns:1fr; } }
+.pay-card{ background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:14px 15px; display:flex; flex-direction:column; gap:10px; }
+.pay-card .pay-title{ font-size:12.5px; font-weight:700; }
+.pay-card .pay-price{ font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--ok); font-weight:700; }
+.pay-card .pay-note{ font-size:10.5px; color:var(--text-faint); line-height:1.4; }
+.pay-card .btn{ width:100%; justify-content:center; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0d0f13" stroke-width="2" stroke-linecap="round"><path d="M6 10V7a6 6 0 0112 0v3"/><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M12 14v3"/></svg>
+    </div>
+    <div class="brand-text"><b>F3RN4N</b><span>Panel de registro y liberación</span></div>
+  </div>
+  <button class="hamburger" id="hamburgerBtn" onclick="openDrawer()" aria-label="Abrir menú de sesión">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <span class="dot" id="hamburgerDot"></span>
+  </button>
+</nav>
+
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Mi cuenta</h3>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div id="view-logged" style="display:none;">
+    <div class="account-card">
+      <div class="avatar" id="avatar">–</div>
+      <div class="account-info">
+        <b id="account-name">—</b>
+        <span id="account-email">—</span>
+      </div>
+    </div>
+    <div class="balance-card-drawer">
+      <div><div class="k">Saldo actual</div><div class="v" id="drawerBalanceValue">$0.00 USD</div></div>
+    </div>
+  </div>
+
+  <div id="view-guest">
+    <div class="auth-tabs">
+      <button id="tab-login" class="active" onclick="switchAuthTab('login')">Iniciar sesión</button>
+      <button id="tab-register" onclick="switchAuthTab('register')">Registrarse</button>
+    </div>
+
+    <button class="google-btn" onclick="doGoogleAuth()">
+      <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 013.68 9c0-.59.1-1.17.27-1.7V4.97H.98A9 9 0 000 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 00.98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Continuar con Google
+    </button>
+
+    <div class="auth-divider">o con tu correo</div>
+
+    <form class="auth-form visible" id="form-login" onsubmit="doEmailLogin(event)">
+      <div class="field">
+        <label for="login-email">Correo</label>
+        <input id="login-email" type="email" placeholder="tu@correo.com" required>
+      </div>
+      <div class="field">
+        <label for="login-pass">Contraseña</label>
+        <input id="login-pass" type="password" placeholder="••••••••" required>
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <button type="submit" class="btn btn-primary" style="justify-content:center;">Entrar</button>
+    </form>
+
+    <form class="auth-form" id="form-register" onsubmit="doEmailRegister(event)">
+      <div class="field">
+        <label for="reg-name">Nombre</label>
+        <input id="reg-name" type="text" placeholder="Tu nombre" required>
+      </div>
+      <div class="field">
+        <label for="reg-email">Correo</label>
+        <input id="reg-email" type="email" placeholder="tu@correo.com" required>
+      </div>
+      <div class="field">
+        <label for="reg-pass">Contraseña</label>
+        <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" required>
+      </div>
+      <div class="auth-error" id="register-error"></div>
+      <button type="submit" class="btn btn-primary" style="justify-content:center;">Crear cuenta</button>
+    </form>
+
+    <div class="guest-note">No necesitas iniciar sesión para registrar clientes ni generar un Check. La cuenta es solo para acceder al Dashboard, tu historial y tu saldo.</div>
+  </div>
+
+  <a class="btn btn-ghost drawer-action" id="dash-link" style="display:none;" href="dashboard.html">
+    <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+    Dashboard
+  </a>
+
+  <button class="btn btn-ghost drawer-action programs-btn" onclick="closeDrawer(); openAllProgramsModal();">
+    <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+    Programas
+  </button>
+
+  <button class="btn btn-ghost drawer-action recharge-btn" id="recharge-link" style="display:none;" onclick="closeDrawer(); openRechargeModal();">
+    <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5a2.5 2.5 0 012.5-1.5h1a2 2 0 010 4h-1a2 2 0 000 4h1a2.5 2.5 0 002.5-1.5"/></svg></span>
+    Recargar saldo
+  </button>
+
+  <button class="btn btn-ghost drawer-action" id="logout-link" style="display:none;" onclick="doLogout()">
+    <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
+    Cerrar sesión
+  </button>
+</aside>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Check de compatibilidad</h1>
+    <p>Esto es lo que puedes hacer con el equipo, según el dispositivo y el bloqueo que registraste en Index.</p>
+  </div>
+
+  <!-- ECID / SERIE (arriba de todo, bloqueado, solo lectura) -->
+  <div class="ecid-banner" id="ecid-banner" style="display:none;">
+    <span class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+    </span>
+    <div class="texts">
+      <div class="k" id="ecid-banner-label">Identificador</div>
+      <div class="v" id="ecid-banner-value">—</div>
+    </div>
+  </div>
+
+  <!-- ORDER STRIP -->
+  <div class="order-strip" id="order-strip" style="display:none;">
+    <div class="order-strip-item">
+      <span class="k">Dispositivo</span>
+      <span class="v" id="strip-device">—</span>
+    </div>
+    <div class="order-strip-item">
+      <span class="k">Bloqueo</span>
+      <span class="v" id="strip-lock">—</span>
+    </div>
+    <div class="order-strip-item">
+      <span class="k">Cliente</span>
+      <span class="v mono" id="strip-client">—</span>
+    </div>
+    <div class="order-actions">
+      <button class="btn btn-ghost" onclick="window.location.href='index.html'">Editar en Index</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-zone"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-card" id="empty-state" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+    <h3>Todavía no hay una orden</h3>
+    <p>Registra un equipo en Index para ver aquí qué se puede hacer con él.</p>
+    <button class="btn btn-primary" onclick="window.location.href='index.html'">Ir a Index</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+<script>
+/* ---------------- FIREBASE (compartido con Index) ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2zk1jEQJcyTfEb7RsmsNtFAp3J5sSnI",
+  authDomain: "f3rn4n.firebaseapp.com",
+  projectId: "f3rn4n",
+  storageBucket: "f3rn4n.firebasestorage.app",
+  messagingSenderId: "156609223149",
+  appId: "1:156609223149:web:b1d92517932610696cafe4",
+  measurementId: "G-5SME8LS1V2"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const functionsApi = firebase.functions();
+
+/* ---------------- SALDO DEL TÉCNICO ----------------
+   Se guarda en Firestore en technicians/{uid}.balance (USD).
+   Solo existe / se muestra si el técnico inició sesión.       */
+const ADMIN_EMAILS = ['fernando8aparra@gmail.com'];
+function isAdminUser(user){ return !!(user && user.email && ADMIN_EMAILS.includes(user.email.toLowerCase())); }
+function technicianRef(uid){ return db.collection('technicians').doc(uid); }
+
+async function refreshBalanceUI(){
+  const drawerValueEl = document.getElementById('drawerBalanceValue');
+  if(!auth.currentUser){
+    if(drawerValueEl) drawerValueEl.textContent = '$0.00 USD';
+    return 0;
+  }
+  try{
+    const email = (auth.currentUser.email || '').toLowerCase();
+    let total = 0;
+    if(email){
+      // Suma el saldo de TODAS las cuentas registradas con este correo
+      // (cubre el caso de alguien que inició sesión alguna vez con Google
+      // y otra vez con correo/contraseña, generando dos UIDs distintos
+      // para la misma persona — igual que en index.html y admin.html).
+      const snap = await db.collection('technicians').where('email', '==', email).get();
+      snap.forEach(doc => { total += (doc.data().balance || 0); });
+    } else {
+      const doc = await technicianRef(auth.currentUser.uid).get();
+      total = doc.exists ? (doc.data().balance || 0) : 0;
+    }
+    if(drawerValueEl) drawerValueEl.textContent = '$' + total.toFixed(2) + ' USD';
+    return total;
+  }catch(e){
+    console.error('refreshBalanceUI error:', e);
+    if(drawerValueEl) drawerValueEl.textContent = 'Error';
+    return 0;
+  }
+}
+
+/* Descuenta `amount` del saldo del técnico de forma segura (transacción).
+   Lanza un error con message 'INSUFFICIENT_FUNDS' si no alcanza. */
+async function deductTechnicianBalance(uid, amount){
+  const ref = technicianRef(uid);
+  const newBalance = await db.runTransaction(async (tx)=>{
+    const doc = await tx.get(ref);
+    const current = doc.exists ? (doc.data().balance || 0) : 0;
+    if(current < amount){
+      const err = new Error('INSUFFICIENT_FUNDS');
+      err.current = current;
+      throw err;
+    }
+    const next = +(current - amount).toFixed(2);
+    tx.set(ref, { balance: next }, { merge:true });
+    return next;
+  });
+  return newBalance;
+}
+
+/* Suma `amount` al saldo del técnico de forma segura (transacción). */
+async function addTechnicianBalance(uid, amount){
+  const ref = technicianRef(uid);
+  const newBalance = await db.runTransaction(async (tx)=>{
+    const doc = await tx.get(ref);
+    const current = doc.exists ? (doc.data().balance || 0) : 0;
+    const next = +(current + amount).toFixed(2);
+    tx.set(ref, { balance: next }, { merge:true });
+    return next;
+  });
+  return newBalance;
+}
+
+/* ---------------- PANEL DE RECARGA (solo admin) ---------------- */
+window.__rechargeFound = null;
+function openRechargeModal(){
+  window.__rechargeFound = null;
+  const body = `
+    <div class="field" style="margin-bottom:14px;">
+      <label for="recharge-email">Correo del técnico</label>
+      <input id="recharge-email" type="email" placeholder="tecnico@correo.com">
+    </div>
+    <button class="btn btn-ghost" style="margin-bottom:16px;" onclick="searchTechnicianForRecharge()">Buscar técnico</button>
+    <div id="recharge-result"></div>
+  `;
+  openModal('Recargar saldo', 'Busca al técnico por su correo y agrega el monto que quieras a su saldo.', body);
+}
+async function searchTechnicianForRecharge(){
+  const email = document.getElementById('recharge-email').value.trim().toLowerCase();
+  const resultEl = document.getElementById('recharge-result');
+  if(!email){ resultEl.innerHTML = '<div class="auth-error show">Escribe un correo</div>'; return; }
+  resultEl.innerHTML = '<div style="font-size:12.5px;color:var(--text-muted);">Buscando…</div>';
+  try{
+    const snap = await db.collection('technicians').where('email', '==', email).limit(1).get();
+    if(snap.empty){
+      resultEl.innerHTML = '<div class="auth-error show">No se encontró un técnico con ese correo. Debe haber iniciado sesión al menos una vez.</div>';
+      window.__rechargeFound = null;
+      return;
+    }
+    const docSnap = snap.docs[0];
+    const data = docSnap.data();
+    window.__rechargeFound = { uid: docSnap.id, email: data.email, name: data.name || data.email };
+    const bal = (data.balance || 0).toFixed(2);
+    resultEl.innerHTML = `
+      <div class="summary-card" style="margin-bottom:0;">
+        <div class="summary-row">
+          <div class="k">Técnico</div>
+          <div class="v">${window.__rechargeFound.name}</div>
+        </div>
+        <div class="summary-row">
+          <div class="k">Saldo actual</div>
+          <div class="v" id="recharge-current-balance">$${bal} USD</div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px;">
+        <label for="recharge-amount">Monto a agregar (USD)</label>
+        <input id="recharge-amount" type="number" min="0.01" step="0.01" placeholder="Ej. 20.00">
+      </div>
+      <div class="auth-error" id="recharge-error"></div>
+      <button class="btn btn-primary" style="margin-top:14px; width:100%; justify-content:center;" onclick="confirmRecharge()">Agregar saldo</button>
+    `;
+  }catch(e){
+    resultEl.innerHTML = '<div class="auth-error show">Error al buscar: ' + e.message + '</div>';
+  }
+}
+async function confirmRecharge(){
+  const found = window.__rechargeFound;
+  const amountInput = document.getElementById('recharge-amount');
+  const errEl = document.getElementById('recharge-error');
+  errEl.classList.remove('show');
+  if(!found){ return; }
+  const amount = parseFloat(amountInput.value);
+  if(!amount || amount <= 0){
+    errEl.textContent = 'Escribe un monto válido mayor a 0';
+    errEl.classList.add('show');
+    return;
+  }
+  try{
+    const newBalance = await addTechnicianBalance(found.uid, amount);
+    document.getElementById('recharge-current-balance').textContent = '$' + newBalance.toFixed(2) + ' USD';
+    amountInput.value = '';
+    showToast(`Saldo agregado ✔ — ${found.name}: $${newBalance.toFixed(2)} USD`);
+    if(auth.currentUser && auth.currentUser.uid === found.uid) refreshBalanceUI();
+  }catch(e){
+    errEl.textContent = 'Error al agregar saldo: ' + e.message;
+    errEl.classList.add('show');
+  }
+}
+
+function switchAuthTab(tab){
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('form-login').classList.toggle('visible', tab==='login');
+  document.getElementById('form-register').classList.toggle('visible', tab==='register');
+  hideAuthErrors();
+}
+function hideAuthErrors(){
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('register-error').classList.remove('show');
+}
+function showAuthError(id, message){
+  const el = document.getElementById(id);
+  el.textContent = friendlyAuthError(message);
+  el.classList.add('show');
+}
+function friendlyAuthError(code){
+  const map = {
+    'auth/invalid-email':'Correo inválido.',
+    'auth/user-not-found':'No existe una cuenta con ese correo.',
+    'auth/wrong-password':'Contraseña incorrecta.',
+    'auth/invalid-credential':'Correo o contraseña incorrectos.',
+    'auth/email-already-in-use':'Ya existe una cuenta con ese correo.',
+    'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
+    'auth/popup-closed-by-user':'Se cerró la ventana de Google antes de terminar.',
+  };
+  return map[code] || 'Ocurrió un error. Intenta de nuevo.';
+}
+function doGoogleAuth(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(()=>{ closeDrawer(); showToast('Sesión iniciada ✔'); }).catch(err=> showAuthError('login-error', err.code));
+}
+function doEmailLogin(e){
+  e.preventDefault(); hideAuthErrors();
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  auth.signInWithEmailAndPassword(email, pass).then(()=>{ closeDrawer(); showToast('Sesión iniciada ✔'); }).catch(err=> showAuthError('login-error', err.code));
+}
+function doEmailRegister(e){
+  e.preventDefault(); hideAuthErrors();
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  auth.createUserWithEmailAndPassword(email, pass).then(cred => cred.user.updateProfile({ displayName: name })).then(()=>{ closeDrawer(); showToast('Cuenta creada ✔'); }).catch(err=> showAuthError('register-error', err.code));
+}
+function doLogout(){ auth.signOut().then(()=> showToast('Sesión cerrada')); }
+auth.onAuthStateChanged(async user=>{
+  const loggedView = document.getElementById('view-logged');
+  const guestView = document.getElementById('view-guest');
+  const hamburger = document.getElementById('hamburgerBtn');
+  const dashLink = document.getElementById('dash-link');
+  const logoutLink = document.getElementById('logout-link');
+  const rechargeLink = document.getElementById('recharge-link');
+  if(user){
+    loggedView.style.display = 'block'; guestView.style.display = 'none'; hamburger.classList.add('logged');
+    dashLink.style.display = 'flex'; logoutLink.style.display = 'flex';
+    rechargeLink.style.display = isAdminUser(user) ? 'flex' : 'none';
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Usuario');
+    document.getElementById('account-name').textContent = name;
+    document.getElementById('account-email').textContent = user.email || '';
+    const avatar = document.getElementById('avatar');
+    avatar.innerHTML = user.photoURL ? `<img src="${user.photoURL}" alt="">` : '';
+    if(!user.photoURL) avatar.textContent = name.charAt(0).toUpperCase();
+    // Se espera a que el documento del técnico exista/actualice ANTES de
+    // leer su saldo, para evitar que se muestre $0.00 por una carrera
+    // entre la creación del documento y la lectura del saldo.
+    try{
+      await technicianRef(user.uid).set({
+        email: user.email ? user.email.toLowerCase() : null,
+        name: name
+      }, { merge:true });
+    }catch(e){ console.error('No se pudo crear/actualizar el documento del técnico:', e); }
+  } else {
+    loggedView.style.display = 'none'; guestView.style.display = 'block'; hamburger.classList.remove('logged');
+    dashLink.style.display = 'none'; logoutLink.style.display = 'none'; rechargeLink.style.display = 'none';
+  }
+  refreshBalanceUI();
+});
+function openDrawer(){ document.getElementById('drawer').classList.add('show'); document.getElementById('overlay').classList.add('show'); }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
+function showToast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=> t.classList.remove('show'), 2600); }
+
+/* ---------------- MODAL GENÉRICO (sobrepuesto) ---------------- */
+function openModal(titleHtml, subHtml, bodyHtml){
+  let overlay = document.getElementById('modal-overlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'modal-overlay';
+    overlay.onclick = (e)=>{ if(e.target === overlay) closeModal(); };
+    overlay.innerHTML = `
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3 id="modal-title"></h3>
+          <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <div class="modal-sub" id="modal-sub"></div>
+        <div id="modal-body"></div>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+  }
+  document.getElementById('modal-title').innerHTML = titleHtml || '';
+  const subEl = document.getElementById('modal-sub');
+  subEl.innerHTML = subHtml || '';
+  subEl.style.display = subHtml ? 'block' : 'none';
+  document.getElementById('modal-body').innerHTML = bodyHtml || '';
+  overlay.classList.add('show');
+}
+function closeModal(){
+  const overlay = document.getElementById('modal-overlay');
+  if(overlay) overlay.classList.remove('show');
+}
+
+/* ---------------- MODAL: PLACAS RP2350 ---------------- */
+const RP2350_BOARDS = [
+  { name:'Waveshare RP2350 USB-A Board', note:'Placa recomendada' },
+  { name:'Raspberry Pi Pico 2 RP2350', note:'Alternativa compatible' },
+];
+const RP2350_USB_TOOL_URL = 'https://mega.nz/file/BDcWxKiB#NcJVBRUfRDfrNMb5e3QKtVgaTnAVOnnBBfkVbx8l6W8';
+function openBoardOptionsModal(){
+  const boardsHtml = RP2350_BOARDS.map(b => `
+    <div class="board-option">
+      <div><b>${b.name}</b><span>${b.note}</span></div>
+      <button class="btn board-search-btn" onclick="searchBoard('${b.name.replace(/'/g,"\\'")}')">Buscar</button>
+    </div>
+  `).join('');
+  const usbHtml = `
+    <div class="program-action">
+      <div><b>Programar placa</b><span>Herramienta USB para flashear el RP2350</span></div>
+      <a class="btn dl-btn" href="${RP2350_USB_TOOL_URL}" target="_blank" rel="noopener">Descargar</a>
+    </div>
+  `;
+  openModal('Placas compatibles con RP2350', 'Busca la placa exacta en Google, o descarga la herramienta para programarla.', boardsHtml + usbHtml);
+}
+function searchBoard(name){
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(name), '_blank');
+}
+
+/* ---------------- MODAL: TODOS LOS PROGRAMAS (menú) ---------------- */
+function openAllProgramsModal(){
+  const items = [];
+  Object.values(UNLOCK_PROGRAMS).forEach(p => items.push({ name: p.name, url: p.downloadUrl }));
+  Object.values(CHECKM8_PROGRAMS).forEach(p => items.push({ name: p.name, url: p.downloadUrl }));
+  items.push({ name: '3uTools (verificación de versión de iOS)', url: 'https://www.3u.com/productsWin' });
+  items.push({ name: 'Herramienta USB para programar placa RP2350', url: RP2350_USB_TOOL_URL });
+
+  const body = items.map(it => `
+    <div class="program-action">
+      <div><b>${it.name}</b></div>
+      <a class="btn dl-btn" href="${it.url}" target="_blank" rel="noopener">Abrir</a>
+    </div>
+  `).join('');
+  openModal('Programas', 'Todos los programas y herramientas de verificación que se utilizan.', body);
+}
+
+/* ---------------- ICONS ---------------- */
+const ICONS = {
+  warn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>`,
+  chip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg>`,
+  cost: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 15.2c.5.8 1.4 1.3 2.5 1.3 1.5 0 2.7-.9 2.7-2 0-1.3-1.2-1.8-2.7-2.2-1.5-.4-2.7-.9-2.7-2.2 0-1.1 1.2-2 2.7-2 1.1 0 2 .5 2.5 1.3M12 7.5v1M12 15.5v1"/></svg>`,
+};
+
+/* ---------------- DEVICE TIER RULES ---------------- */
+const TIER1 = ['iPhone 6s','iPhone 6s Plus','iPhone 7','iPhone 7 Plus','iPhone 8','iPhone 8 Plus','iPhone X','iPhone SE (1.ª gen)'];
+const TIER2 = ['iPhone XR','iPhone XS','iPhone XS Max','iPhone 11','iPhone 11 Pro','iPhone 11 Pro Max','iPhone SE (2.ª gen)'];
+// Todo lo demás (12 en adelante, incluida SE 3.ª gen) cae en tier 3.
+
+function getAppleTier(deviceName){
+  if(!deviceName) return null;
+  if(TIER1.includes(deviceName)) return 1;
+  if(TIER2.includes(deviceName)) return 2;
+  return 3;
+}
+
+function parseIOS(str){
+  const m = (str||'').match(/(\d+)(?:\.(\d+))?/);
+  if(!m) return null;
+  return parseFloat(m[1] + '.' + (m[2] || '0'));
+}
+
+/* ---------------- LOAD ORDER ---------------- */
+let order = null;
+try{ order = JSON.parse(localStorage.getItem('f3rn4n_pending_check')); }catch(e){}
+
+function persistOrder(){
+  try{ localStorage.setItem('f3rn4n_pending_check', JSON.stringify(order)); }catch(e){}
+}
+
+function init(){
+  if(!order || !order.lockKey){
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  document.body.className = order.os === 'apple' ? 'os-apple' : 'os-android';
+  document.getElementById('order-strip').style.display = 'flex';
+  document.getElementById('strip-device').textContent = order.device || '—';
+  document.getElementById('strip-lock').textContent = order.lockLabel || '—';
+  document.getElementById('strip-client').textContent = (order.client && order.client.name) ? order.client.name : 'Sin datos';
+
+  // El ECID / número de serie llega ya capturado desde Index y se muestra
+  // arriba de todo, bloqueado (solo lectura). Solo aparece si además se
+  // registró un cliente con teléfono en Index — si no hay cliente, no hay
+  // nada que mostrar como "bloqueado" todavía.
+  const hasClientPhone = !!(order.client && order.client.name && order.client.phone);
+  if(order.deviceId && order.deviceId.value && hasClientPhone){
+    document.getElementById('ecid-banner').style.display = 'flex';
+    document.getElementById('ecid-banner-label').textContent = order.deviceId.type === 'ecid' ? 'ECID bloqueado' : 'Número de serie bloqueado';
+    document.getElementById('ecid-banner-value').textContent = order.deviceId.value;
+  }
+
+  renderResult();
+}
+
+function renderResult(){
+  const zone = document.getElementById('result-zone');
+  zone.innerHTML = '';
+
+  if(order.os === 'apple'){
+    const tier = getAppleTier(order.device);
+    if(order.lockKey === 'icloud') return zone.appendChild(buildIcloudResult(tier));
+    if(order.lockKey === 'pin') return zone.appendChild(buildPinResult(tier));
+    if(order.lockKey === 'mdm') return zone.appendChild(buildMdmResult());
+    if(order.lockKey === 'carrier') return zone.appendChild(buildCarrierResult());
+  } else {
+    // Android: solo MDM y compañía tienen reglas definidas por ahora.
+    if(order.lockKey === 'mdm') return zone.appendChild(buildMdmResult());
+    if(order.lockKey === 'carrier') return zone.appendChild(buildCarrierResult());
+    return zone.appendChild(buildPendingRulesResult());
+  }
+}
+
+/* ---------------- CARD BUILDER ----------------
+   Si showDownload es true, el botón de descarga se coloca hasta arriba
+   de la tarjeta (antes del pill de estado), no al final. */
+function card({ pillClass, pillText, title, desc, warnHtml, reqHtml, showDownload, downloadPlaceholder }){
+  const el = document.createElement('div');
+  el.className = 'result-card';
+
+  const downloadHtml = showDownload ? `
+    <div class="result-actions top">
+      <a class="btn dl-btn placeholder" href="#" id="download-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        Descargar software
+      </a>
+      <span class="dl-note">${downloadPlaceholder || 'Enlace pendiente de configurar'}</span>
+    </div>
+  ` : '';
+
+  el.innerHTML = `
+    ${downloadHtml}
+    <span class="status-pill ${pillClass}"><span class="dot"></span>${pillText}</span>
+    <div class="result-title">${title}</div>
+    <div class="result-desc">${desc}</div>
+    ${warnHtml || ''}
+    ${reqHtml || ''}
+  `;
+  return el;
+}
+
+/* ---------------- ICLOUD ---------------- */
+function buildIcloudResult(tier){
+  if(tier === 1){
+    const el = card({
+      pillClass:'status-ok', pillText:'Compatible',
+      title:'Se puede desbloquear',
+      desc:'Este modelo se libera de iCloud sin importar la versión de iOS instalada.',
+      warnHtml:`<div class="callout callout-warn">${ICONS.warn}<div>Este equipo <b>suele quedar sin señal</b> después del proceso. Avísale al cliente antes de continuar.</div></div>`,
+      showDownload:false
+    });
+    el.appendChild(buildFlatProgramOptions(CHECKM8_PROGRAMS, order.device));
+    return el;
+  }
+  if(tier === 2){
+    const el = card({
+      pillClass:'status-ok', pillText:'Compatible',
+      title:'Se puede desbloquear',
+      desc:'Este modelo se libera de iCloud sin importar la versión de iOS instalada.',
+      warnHtml:`<div class="callout callout-warn">${ICONS.warn}<div>Puede quedar <b>sin señal solo si el equipo está pidiendo el iCloud</b> activamente. Si no lo está pidiendo, normalmente conserva la señal.</div></div>`,
+      reqHtml:`<div class="callout callout-req">${ICONS.chip}<div>Requiere <b>placa RP2350</b> para hacer el proceso.<br><button class="req-more-btn" onclick="openBoardOptionsModal()">Ver más opciones →</button></div></div>`,
+      showDownload:false
+    });
+    el.appendChild(buildUnlockOptions(order.device));
+    return el;
+  }
+  const el = card({
+    pillClass:'status-warn', pillText:'Depende de la versión de iOS',
+    title:'Solo se puede desbloquear sin señal',
+    desc:'Este modelo (iPhone 12 al 17 Pro Max) solo se puede desbloquear de iCloud sin señal, y únicamente si el equipo tiene instalada una versión de iOS entre 26.0 y 26.1. Verifica la versión antes de continuar.',
+    showDownload:false
+  });
+  const checker = document.createElement('div');
+  checker.className = 'ios-check';
+  checker.innerHTML = `
+    <div class="label">Versión de iOS instalada en el equipo</div>
+    <div class="ios-check-row">
+      <input type="text" id="ios-version-input" placeholder="Ej. 26.0.1">
+      <button class="btn btn-primary" onclick="checkIosVersion()">Verificar</button>
+    </div>
+    <div class="ios-result" id="ios-result"></div>
+    <div class="ios-tool-row">
+      <span>¿No sabes la versión? Verifícala con 3uTools</span>
+      <a class="btn btn-ghost" href="https://www.3u.com/productsWin" target="_blank" rel="noopener">Descargar aquí</a>
+    </div>
+  `;
+  el.appendChild(checker);
+  el.appendChild(buildFlatProgramOptions(CHECKM8_PROGRAMS, order.device));
+  return el;
+}
+
+function checkIosVersion(inputId, resultId){
+  inputId = inputId || 'ios-version-input';
+  resultId = resultId || 'ios-result';
+  const raw = document.getElementById(inputId).value;
+  const v = parseIOS(raw);
+  const resultEl = document.getElementById(resultId);
+  resultEl.classList.add('show');
+  if(v === null){
+    resultEl.className = 'ios-result show bad';
+    resultEl.textContent = 'Escribe una versión válida, ej. 26.0';
+    return;
+  }
+  if(v >= 26.0 && v <= 26.1){
+    resultEl.className = 'ios-result show ok';
+    resultEl.textContent = `iOS ${raw} es compatible — puedes continuar con el desbloqueo.`;
+  } else {
+    resultEl.className = 'ios-result show bad';
+    resultEl.textContent = `iOS ${raw} no es compatible. Se requiere una versión entre 26.0 y 26.1.`;
+  }
+}
+
+/* ---------------- OPCIONES DE DESBLOQUEO (A12/A13) ---------------- */
+const UNLOCK_PROGRAMS = {
+  iberry: {
+    name: 'iBerry Passcode Bypass',
+    tag: 'iB',
+    color: 'var(--ios)',
+    platform: 'Windows',
+    time: '1–10 min',
+    downloadUrl: 'https://mega.nz/folder/j6ZSSJyB#nQnIMWLhUi_cT9NFfNIXeQ',
+    prices: {
+      'iPhone XR': 13.5,
+      'iPhone XS Max': 13.5,
+      'iPhone 11': 14.5,
+      'iPhone 11 Pro': 15,
+      'iPhone 11 Pro Max': 15.5,
+      'iPhone SE (2.ª gen)': 13.5,
+    }
+  },
+  ihello: {
+    name: 'iHello HFZ (Hello / Passcode)',
+    tag: 'iH',
+    color: '#B27CFF',
+    platform: 'Windows',
+    time: 'Minutos',
+    downloadUrl: 'https://mega.nz/folder/JBEQSBaK#P-MMA1LGZergdz2-3vec6A',
+    prices: {
+      'iPhone XS': [{label:'Sin señal', price:16.5},{label:'Con señal (Passcode Bypass)', price:18.5}],
+      'iPhone XR': [{label:'Sin señal', price:16.5},{label:'Con señal (Passcode Bypass)', price:18.5}],
+      'iPhone XS Max': [{label:'Sin señal', price:16.5},{label:'Con señal (Passcode Bypass)', price:18.07}],
+      'iPhone 11': [{label:'Sin señal', price:21.5},{label:'Con señal (Passcode Bypass)', price:23.5}],
+      'iPhone 11 Pro': [{label:'Sin señal', price:21.5},{label:'Con señal (Passcode Bypass)', price:23.5}],
+      'iPhone 11 Pro Max': [{label:'Sin señal', price:21.5},{label:'Con señal (Passcode Bypass)', price:23.5}],
+      'iPhone SE (2.ª gen)': [{label:'Estándar', price:18.5}],
+    }
+  },
+  aldaz: {
+    name: 'Aldaz R Activator Bypass Passcode',
+    tag: 'Al',
+    color: 'var(--android)',
+    platform: 'Mac',
+    time: 'Minutos',
+    downloadUrl: 'https://www.mediafire.com/file/0bmxhbyv6k2bg2e/AldazRActivator_Bypass_Passcode_%2526_Hello_A12_macOS.pkg/file',
+    prices: {
+      'iPhone XS': 9.5,
+      'iPhone XR': 8.5,
+      'iPhone XS Max': 10.5,
+      'iPhone 11': 9.5,
+      'iPhone 11 Pro': 11.5,
+      'iPhone 11 Pro Max': 13.49,
+      'iPhone SE (2.ª gen)': 10.5,
+    }
+  }
+};
+
+/* Programas de precio fijo ($ USD, sin importar el modelo) para 6s–X y 12–17 */
+const CHECKM8_PROGRAMS = {
+  f3arra1n: {
+    name: 'F3arRa1n',
+    tag: 'F3',
+    color: 'var(--ios)',
+    platform: 'Windows y Mac',
+    time: 'Minutos',
+    price: 5,
+    downloadUrl: 'https://f3arra1n.com/Docs/#Windows',
+  },
+  rex: {
+    name: 'REX Activator',
+    tag: 'RX',
+    color: 'var(--amber)',
+    platform: '—',
+    time: 'Minutos',
+    price: 5,
+    downloadUrl: 'https://www.mediafire.com/folder/9nrd4x17fay10/Rex_activator',
+  },
+  unlock: {
+    name: 'Unlock',
+    tag: 'Un',
+    color: 'var(--android)',
+    platform: '—',
+    time: 'Minutos',
+    price: 3,
+    downloadUrl: 'https://mega.nz/file/gns1CTYA#Qq4PigKzpZ2INjLMZAbY-7nC26i0Q-7tmTKYRoMfhzU',
+  }
+};
+
+function formatUnlockPrice(entry){
+  if(entry === undefined) return `<span class="price-na">No disponible para este modelo</span>`;
+  if(Array.isArray(entry)){
+    return entry.map(o => `<div class="price-line"><span>${o.label}</span><b>$${o.price} USD</b></div>`).join('');
+  }
+  return `<div class="price-line"><span>Precio</span><b>$${entry} USD</b></div>`;
+}
+
+function buildUnlockOptions(deviceName){
+  const wrap = document.createElement('div');
+  wrap.className = 'unlock-options';
+  wrap.innerHTML = `<div class="unlock-options-label">Opciones de desbloqueo para <b>${deviceName || 'este modelo'}</b></div>`;
+  const grid = document.createElement('div');
+  grid.className = 'program-grid';
+  Object.values(UNLOCK_PROGRAMS).forEach(p=>{
+    const priceEntry = p.prices[deviceName];
+    const c = document.createElement('div');
+    c.className = 'program-card';
+    c.innerHTML = `
+      <div class="program-head">
+        <span class="program-tag" style="background:${p.color}22; color:${p.color};">${p.tag}</span>
+        <div>
+          <b>${p.name}</b>
+          <span class="program-meta">${p.platform} · ${p.time}</span>
+        </div>
+      </div>
+      <div class="program-prices">${formatUnlockPrice(priceEntry)}</div>
+    `;
+    c.onclick = ()=> openProgramActionModal(p, deviceName);
+    grid.appendChild(c);
+  });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+/* Programas de precio fijo, sin importar el modelo (6s–X y 12–17) */
+function buildFlatProgramOptions(programs, deviceName){
+  const wrap = document.createElement('div');
+  wrap.className = 'unlock-options';
+  wrap.innerHTML = `<div class="unlock-options-label">Opciones de desbloqueo para <b>${deviceName || 'este modelo'}</b></div>`;
+  const grid = document.createElement('div');
+  grid.className = 'program-grid';
+  Object.values(programs).forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'program-card';
+    c.innerHTML = `
+      <div class="program-head">
+        <span class="program-tag" style="background:${p.color}22; color:${p.color};">${p.tag}</span>
+        <div>
+          <b>${p.name}</b>
+          <span class="program-meta">${p.platform} · ${p.time}</span>
+        </div>
+      </div>
+      <div class="program-prices"><div class="price-line"><span>Precio</span><b>$${p.price} USD</b></div></div>
+    `;
+    c.onclick = ()=> openProgramActionModal(p, deviceName);
+    grid.appendChild(c);
+  });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+/* ---------------- MODAL: ACCIONES DE UN PROGRAMA ----------------
+   - Siempre se puede descargar el programa.
+   - "Registrar en el servidor" se muestra como uno o dos contenedores de
+     pago (solo dos cuando el programa distingue sin señal / con señal,
+     como iHello). Cada contenedor descuenta su propio precio del saldo
+     del técnico al presionar "Pagar y registrar".                       */
+function getProgramPriceOptions(program, deviceName){
+  if(program.price !== undefined) return [{ label:'Estándar', price: program.price }];
+  const entry = program.prices ? program.prices[deviceName] : undefined;
+  if(entry === undefined) return [];
+  if(Array.isArray(entry)) return entry;
+  return [{ label:'Estándar', price: entry }];
+}
+
+function openProgramActionModal(program, deviceName){
+  const downloadHtml = program.downloadUrl
+    ? `<a class="btn dl-btn" href="${program.downloadUrl}" target="_blank" rel="noopener">Descargar</a>`
+    : `<a class="btn dl-btn placeholder" href="#" onclick="return false;">Descargar</a>`;
+
+  const hasIdValue = !!(order.deviceId && order.deviceId.value);
+  const idLine = hasIdValue
+    ? `${order.deviceId.type === 'ecid' ? 'ECID' : 'N. de serie'}: ${order.deviceId.value}`
+    : 'Sin capturar';
+  const hasClient = !!(order.client && order.client.name && order.client.phone);
+  const registerNote = hasClient ? `${idLine} · incluye datos del cliente` : `${idLine} · sin cliente registrado`;
+
+  const priceOptions = getProgramPriceOptions(program, deviceName);
+
+  let costNoteHtml = `
+    <div class="modal-cost-note">${ICONS.cost}<div>Al registrar este equipo con este programa, <b>se descontará el costo de tu saldo de técnico</b>. Necesitas sesión iniciada y saldo suficiente.</div></div>
+  `;
+
+  let payHtml = '';
+  if(order.registered){
+    payHtml = `<div class="program-action"><div><b>Registro</b><span>${registerNote}</span></div><button class="btn btn-ghost" disabled>Ya registrado ✔</button></div>`;
+  } else if(priceOptions.length === 0){
+    payHtml = `<div class="program-action"><div><b>Registro</b><span>No hay precio definido para este modelo</span></div><button class="btn btn-ghost" disabled>Registrar</button></div>`;
+  } else if(priceOptions.length === 1){
+    const opt = priceOptions[0];
+    const btnId = 'pay-btn-0';
+    const disabled = !hasIdValue ? 'disabled title="Falta el ECID/número de serie"' : '';
+    payHtml = `
+      <div class="program-action">
+        <div><b>Registrar en el servidor</b><span>${registerNote} · se descontarán $${opt.price.toFixed(2)} USD</span></div>
+        <button class="btn btn-primary" id="${btnId}" ${disabled} onclick="payAndRegister(0)">Pagar y registrar</button>
+      </div>
+    `;
+  } else {
+    payHtml = `<div class="pay-options-label">Elige cómo vas a registrar y pagar</div><div class="pay-grid">` +
+      priceOptions.map((opt, i)=>{
+        const btnId = 'pay-btn-' + i;
+        const disabled = !hasIdValue ? 'disabled title="Falta el ECID/número de serie"' : '';
+        return `
+          <div class="pay-card">
+            <div class="pay-title">${opt.label}</div>
+            <div class="pay-price">$${opt.price.toFixed(2)} USD</div>
+            <div class="pay-note">${registerNote}</div>
+            <button class="btn btn-primary" id="${btnId}" ${disabled} onclick="payAndRegister(${i})">Pagar y registrar</button>
+          </div>
+        `;
+      }).join('') + `</div>`;
+  }
+
+  window.__currentProgram = program;
+  window.__currentDevice = deviceName;
+  window.__currentPriceOptions = priceOptions;
+
+  const body = `
+    <div class="program-action">
+      <div><b>Descarga el programa aquí</b><span>${program.name} · ${program.platform}</span></div>
+      ${downloadHtml}
+    </div>
+    ${costNoteHtml}
+    ${payHtml}
+  `;
+  openModal(
+    `${program.name}${deviceName ? ' · ' + deviceName : ''}`,
+    '',
+    body
+  );
+}
+
+/* Pagar (descontar saldo del técnico) y registrar en Firestore.
+   El ECID/serie siempre se guarda; los datos extra del cliente (nombre,
+   teléfono, monto) se guardan junto solo si se capturaron en Index.     */
+async function payAndRegister(optionIndex){
+  const program = window.__currentProgram;
+  const deviceName = window.__currentDevice;
+  const opt = (window.__currentPriceOptions || [])[optionIndex];
+  if(!program || !opt || !order || !order.deviceId || !order.deviceId.value){
+    showToast('No hay ECID/serie para registrar');
+    return;
+  }
+  if(!auth.currentUser){
+    showToast('Inicia sesión para registrar y pagar');
+    openDrawer();
+    return;
+  }
+
+  const btn = document.getElementById('pay-btn-' + optionIndex);
+  const originalLabel = btn ? btn.textContent : 'Pagar y registrar';
+  if(btn){ btn.disabled = true; btn.textContent = 'Procesando...'; }
+
+  try{
+    const newBalance = await deductTechnicianBalance(auth.currentUser.uid, opt.price);
+
+    const hasClient = !!(order.client && order.client.name && order.client.phone);
+    const payload = {
+      ownerUid: auth.currentUser.uid,
+      os: order.os || null,
+      device: order.device || null,
+      lockLabel: order.lockLabel || null,
+      deviceIdType: order.deviceId.type,
+      deviceIdValue: order.deviceId.value,
+      program: program.name,
+      payOption: opt.label,
+      amountCharged: opt.price,
+      client: hasClient ? order.client.name : null,
+      phone: hasClient ? order.client.phone : null,
+      amount: hasClient ? (order.client.amount || null) : null,
+      createdAt: new Date().toISOString()
+    };
+    const orderRef = await db.collection('orders').add(payload);
+
+    order.registered = true;
+    persistOrder();
+    refreshBalanceUI();
+    showToast(`Registrado ✔ — se descontaron $${opt.price.toFixed(2)} USD (saldo: $${newBalance.toFixed(2)})`);
+
+    // Envía la orden (N/S + ECID) a la API de DHRU (territorioremoto.com).
+    // Si DHRU la rechaza, la Cloud Function reembolsa el saldo automáticamente.
+    try{
+      const registerDhruOrder = functionsApi.httpsCallable('registerDhruOrder');
+      await registerDhruOrder({
+        programName: program.name,
+        deviceIdType: order.deviceId.type,
+        deviceIdValue: order.deviceId.value,
+        orderId: orderRef.id,
+        price: opt.price
+      });
+      showToast('Enviado al proveedor ✔');
+    }catch(dhruErr){
+      console.error('Error registrando en DHRU:', dhruErr);
+      showToast('Aviso: no se pudo enviar al proveedor (' + (dhruErr.message || 'error') + '). Tu saldo fue reembolsado si aplica.');
+      refreshBalanceUI();
+    }
+    closeModal();
+  }catch(err){
+    if(err.message === 'INSUFFICIENT_FUNDS'){
+      const totalMostrado = await refreshBalanceUI();
+      const hint = (totalMostrado > (err.current||0))
+        ? ' (Si el saldo mostrado arriba es mayor, es porque está repartido en otra cuenta con el mismo correo — pide al admin que lo mueva a esta cuenta.)'
+        : '';
+      showToast(`Saldo insuficiente en esta cuenta. Tienes $${(err.current||0).toFixed(2)} USD y se requieren $${opt.price.toFixed(2)} USD.${hint}`);
+    } else {
+      showToast('Error al registrar: ' + err.message);
+    }
+    if(btn){ btn.disabled = false; btn.textContent = originalLabel; }
+  }
+}
+
+/* ---------------- PIN ---------------- */
+function buildPinResult(tier){
+  if(tier === 1){
+    const el = card({
+      pillClass:'status-ok', pillText:'Compatible',
+      title:'Se puede desbloquear',
+      desc:'Este modelo se libera del bloqueo de PIN sin importar la versión de iOS instalada.',
+      warnHtml:`<div class="callout callout-warn">${ICONS.warn}<div>El resultado de señal <b>no está garantizado</b>: el equipo puede quedar con o sin señal después del proceso.</div></div>`,
+      showDownload:false
+    });
+    el.appendChild(buildFlatProgramOptions(CHECKM8_PROGRAMS, order.device));
+    return el;
+  }
+  if(tier === 2){
+    const el = card({
+      pillClass:'status-ok', pillText:'Compatible',
+      title:'Se puede desbloquear',
+      desc:'Aplica para XS, XS Max, XR al 11 Pro Max, y en general cualquier modelo con procesador A12/A13.',
+      warnHtml:`<div class="callout callout-warn">${ICONS.warn}<div>Si el equipo <b>ya tiene señal</b> antes del proceso, la conserva después de desbloquearlo.</div></div>`,
+      reqHtml:`<div class="callout callout-req">${ICONS.chip}<div>Requiere <b>placa RP2350</b> para hacer el proceso.<br><button class="req-more-btn" onclick="openBoardOptionsModal()">Ver placas y cómo programarlas →</button></div></div>`,
+      showDownload:false
+    });
+    el.appendChild(buildUnlockOptions(order.device));
+    return el;
+  }
+  return card({
+    pillClass:'status-bad', pillText:'No disponible',
+    title:'Por el momento no se puede desbloquear',
+    desc:'Los modelos iPhone 12 al 17 Pro Max no tienen, por ahora, un método disponible para liberar el bloqueo de PIN.',
+    showDownload:false
+  });
+}
+
+/* ---------------- MDM ---------------- */
+function buildMdmResult(){
+  return card({
+    pillClass:'status-ok', pillText:'Compatible',
+    title:'Se puede desbloquear',
+    desc:'El bloqueo MDM se libera en todos los modelos, sin importar la versión de sistema operativo instalada.',
+    showDownload:true
+  });
+}
+
+/* ---------------- CARRIER ---------------- */
+function buildCarrierResult(){
+  const el = document.createElement('div');
+  el.className = 'result-card';
+  el.innerHTML = `
+    <span class="status-pill status-manual"><span class="dot"></span>Requiere revisión</span>
+    <div class="result-title">Selecciona la compañía del equipo</div>
+    <div class="result-desc">Estas son las compañías que manejamos por ahora. Todas requieren revisión de IMEI antes de continuar.</div>
+    <div class="carrier-grid" id="carrier-grid"></div>
+    <div class="callout callout-req carrier-note" id="carrier-note">
+      ${ICONS.chip}<div><b id="carrier-selected-name"></b> requiere <b>revisión de IMEI</b>. Por ahora este paso se hace de forma manual — lo automatizamos más adelante.</div>
+    </div>
+  `;
+  const grid = el.querySelector('#carrier-grid');
+  ['Telcel','Movistar','AT&T','T-Mobile'].forEach(name=>{
+    const b = document.createElement('button');
+    b.className = 'carrier-chip';
+    b.textContent = name;
+    b.onclick = ()=>{
+      [...grid.children].forEach(c=>c.classList.remove('selected'));
+      b.classList.add('selected');
+      el.querySelector('#carrier-selected-name').textContent = name;
+      el.querySelector('#carrier-note').classList.add('show');
+    };
+    grid.appendChild(b);
+  });
+  return el;
+}
+
+/* ---------------- FALLBACK (Android sin reglas aún) ---------------- */
+function buildPendingRulesResult(){
+  return card({
+    pillClass:'status-manual', pillText:'Reglas pendientes',
+    title:'Aún no configuramos este flujo para Android',
+    desc:'Las reglas de compatibilidad para este tipo de bloqueo en Android todavía no están definidas. Por ahora, revisa el equipo manualmente.',
+    showDownload:false
+  });
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · F3RN4N</title>
+<link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E11;
+  --surface:#1B1F24;
+  --surface-2:#22262B;
+  --surface-3:#2B3036;
+  --border:#333840;
+  --border-soft:#33384020;
+  --text:#FFFFFF;
+  --text-muted:#848E9C;
+  --text-faint:#5E6673;
+  --gold:#F0B90B;
+  --gold-soft:#F0B90B1F;
+  --danger:#F6465D;
+  --danger-soft:#F6465D1A;
+  --success:#0ECB81;
+  --accent:var(--gold);
+  --accent-soft:var(--gold-soft);
+  font-family:'Inter',sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, #1c1a10 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, #14171a 0%, transparent 40%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button{ font-family:inherit; cursor:pointer; }
+
+.topnav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 32px; border-bottom:1px solid var(--border);
+  background:#0B0E11cc; backdrop-filter:blur(10px); position:sticky; top:0; z-index:10;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+  width:30px; height:30px; border-radius:8px; overflow:hidden;
+  background:linear-gradient(135deg, var(--gold), #C99400);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.brand-mark img{ width:100%; height:100%; object-fit:cover; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.15; }
+.brand-text b{ font-weight:800; font-size:15px; letter-spacing:.2px; }
+.brand-text span{ font-size:11px; color:var(--text-muted); }
+.back-link{
+  display:inline-flex; align-items:center; gap:7px; color:var(--text-muted);
+  text-decoration:none; font-size:13px; font-weight:600; padding:9px 16px;
+  border:1px solid var(--border); border-radius:8px; transition:all .15s;
+}
+.back-link:hover{ color:var(--text); border-color:var(--text-faint); }
+.back-link svg{ width:15px; height:15px; }
+
+.wrap{ max-width:1100px; margin:0 auto; padding:36px 24px 80px; }
+
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.fade-in{ animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both; }
+.fade-in.d1{ animation-delay:.05s; }
+.fade-in.d2{ animation-delay:.1s; }
+.fade-in.d3{ animation-delay:.15s; }
+.fade-in.d4{ animation-delay:.2s; }
+.fade-in.d5{ animation-delay:.25s; }
+
+.greeting{ font-size:20px; font-weight:800; letter-spacing:-.3px; margin-bottom:4px; }
+.greeting-sub{ font-size:13px; color:var(--text-muted); margin-bottom:22px; }
+
+.gate{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; gap:16px; padding:24px; }
+.spinner{ width:32px; height:32px; border-radius:50%; border:2.5px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.gate .txt{ font-size:13.5px; color:var(--text-muted); }
+.gate .btn{ margin-top:6px; }
+
+.account-header{
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  background:linear-gradient(135deg, var(--surface-2), var(--surface-3));
+  border:1px solid var(--border); border-radius:16px; padding:24px;
+  margin-bottom:24px; box-shadow:0 1px 0 #ffffff08 inset, 0 12px 32px -18px #000000c0;
+}
+.avatar{
+  width:58px; height:58px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg, var(--gold), #C99400);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:22px; color:#0d0f13;
+  box-shadow:0 0 0 3px var(--surface-2), 0 0 0 4px var(--accent-soft);
+}
+.account-info{ flex:1; min-width:160px; }
+.account-info b{ display:block; font-size:17px; font-weight:800; }
+.account-info span{ display:block; font-size:12.5px; color:var(--text-muted); margin-top:2px; }
+span.phone-badge{
+  display:inline-flex; align-items:center; gap:4px; font-size:9px; font-weight:800;
+  padding:2px 7px; border-radius:999px; margin-top:8px; line-height:1.6;
+  width:fit-content; max-width:fit-content; align-self:flex-start;
+}
+.phone-badge.ok{ background:#0ECB8122; color:var(--success); }
+.phone-badge.pending{ background:#F6465D22; color:var(--danger); }
+.balance-block{ text-align:right; }
+.balance-block .k{ font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; }
+.balance-block .v{ font-family:'JetBrains Mono','Inter',monospace; font-size:28px; font-weight:800; color:var(--success); margin-top:2px; }
+.balance-block .btn{ margin-top:10px; }
+
+.btn{
+  border-radius:9px; padding:10px 20px; font-size:13px; font-weight:700; border:1px solid transparent;
+  display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:all .15s;
+}
+.btn-primary{ background:var(--gold); color:#0B0E11; box-shadow:0 4px 14px -6px #F0B90B66; }
+.btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+.btn-ghost{ background:var(--surface-2); border-color:var(--border); color:var(--text-muted); }
+.btn-ghost:hover{ color:var(--text); border-color:var(--text-faint); }
+.btn svg{ width:14px; height:14px; }
+
+.stats-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:24px; }
+@media (max-width:980px){ .stats-grid{ grid-template-columns:repeat(3, 1fr); } }
+@media (max-width:620px){ .stats-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:400px){ .stats-grid{ grid-template-columns:1fr; } }
+.stat-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:18px;
+  display:flex; flex-direction:column; gap:6px; transition:transform .18s, border-color .18s, box-shadow .18s;
+}
+.stat-card:hover{ transform:translateY(-2px); border-color:var(--text-faint); box-shadow:0 10px 26px -16px #000000c0; }
+.stat-card .icon{ width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+.stat-card .icon svg{ width:16px; height:16px; }
+.stat-card .v{ font-family:'JetBrains Mono','Inter',monospace; font-size:22px; font-weight:800; }
+.stat-card .k{ font-size:11.5px; color:var(--text-muted); }
+
+.section{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:20px; margin-bottom:20px; box-shadow:0 10px 28px -20px #000000b0;
+}
+.section-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:10px; flex-wrap:wrap; }
+.section-head h2{ font-size:14.5px; font-weight:800; display:flex; align-items:center; gap:8px; }
+.section-head h2 svg{ width:15px; height:15px; color:var(--text-faint); }
+.section-badge{
+  font-size:10.5px; font-weight:800; padding:3px 10px; border-radius:999px;
+  background:#0ECB8122; color:var(--success);
+}
+
+.mini-spinner{ width:20px; height:20px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite; margin:20px auto; }
+.empty-mini-icon{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:22px 0; }
+.empty-mini-icon svg{ width:26px; height:26px; color:var(--text-faint); }
+.empty-mini-icon .txt{ font-size:12px; color:var(--text-faint); }
+
+.chart-wrap{ display:flex; align-items:flex-end; gap:10px; height:140px; padding:0 4px; }
+.chart-bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; height:100%; justify-content:flex-end; }
+.chart-bar{
+  width:100%; max-width:38px; border-radius:6px 6px 2px 2px;
+  background:linear-gradient(180deg, var(--gold), #C99400);
+  min-height:3px; transition:height .4s ease;
+}
+.chart-bar-label{ font-size:10px; color:var(--text-faint); text-transform:uppercase; }
+.chart-bar-amount{ font-size:9.5px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; }
+
+.mini-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:11px 4px; border-bottom:1px solid var(--border); border-radius:8px;
+  margin:0 -4px; transition:background .12s;
+}
+.mini-row:hover{ background:var(--surface-2); }
+.mini-row:last-child{ border-bottom:none; }
+.mini-row .l{ min-width:0; }
+.mini-row .l b{ font-size:13px; display:block; }
+.mini-row .l span{ font-size:11px; color:var(--text-faint); display:block; margin-top:2px; }
+.mini-row .r{ font-family:'JetBrains Mono','Inter',monospace; font-weight:700; font-size:13px; text-align:right; flex-shrink:0; }
+.order-status{ padding:2px 9px; border-radius:999px; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-left:8px; }
+.order-status.completado{ background:#0ECB8122; color:var(--success); }
+.order-status.procesando{ background:#60A5FA22; color:#60A5FA; }
+.order-status.error{ background:#F6465D22; color:var(--danger); }
+.order-status.pendiente{ background:#F0B90B22; color:var(--gold); }
+
+.empty-mini{ font-size:12.5px; color:var(--text-faint); padding:20px 0; text-align:center; }
+
+.quick-actions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+@media (max-width:600px){ .quick-actions{ grid-template-columns:1fr; } }
+.quick-action{
+  display:flex; align-items:center; gap:12px; background:var(--surface-2); border:1px solid var(--border);
+  border-radius:12px; padding:15px; text-decoration:none; color:var(--text); transition:all .15s;
+}
+.quick-action:hover{ border-color:var(--gold); transform:translateY(-1px); }
+.quick-action .qi{ width:36px; height:36px; border-radius:9px; background:var(--accent-soft); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.quick-action .qi svg{ width:17px; height:17px; }
+.quick-action b{ font-size:13px; display:block; }
+.quick-action span{ font-size:11px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark">
+      <img src="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e" alt="F3RN4N">
+    </div>
+    <div class="brand-text"><b>F3RN4N</b><span>Dashboard</span></div>
+  </div>
+  <a class="back-link" href="tec/index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<div class="wrap">
+  <div id="gate-loading" class="gate">
+    <div class="spinner"></div>
+    <div class="txt">Cargando tu dashboard…</div>
+  </div>
+
+  <div id="gate-login" class="gate" style="display:none;">
+    <div class="txt">Necesitas iniciar sesión para ver tu dashboard.</div>
+    <a class="btn btn-primary" href="tec/index.html">Ir a iniciar sesión</a>
+  </div>
+
+  <div id="dashboard-content" style="display:none;">
+
+    <div class="greeting" id="greeting-text">Bienvenido</div>
+    <div class="greeting-sub" id="greeting-sub">Aquí está el resumen de tu cuenta.</div>
+
+    <div class="account-header fade-in d1">
+      <div class="avatar" id="avatar">–</div>
+      <div class="account-info">
+        <b id="account-name">—</b>
+        <span id="account-email">—</span>
+        <span class="phone-badge" id="phone-badge"></span>
+      </div>
+      <div class="balance-block">
+        <div class="k">Saldo actual</div>
+        <div class="v" id="balance-value">$0.00 USD</div>
+        <a class="btn btn-primary" href="tec/index.html" onclick="sessionStorage.setItem('f3rn4n_open_topup','1')">Recargar saldo</a>
+      </div>
+    </div>
+
+    <div class="stats-grid fade-in d2">
+      <div class="stat-card">
+        <div class="icon" style="background:#F0B90B22; color:var(--gold);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div class="v" id="stat-spent">$0.00</div>
+        <div class="k">Gastado en total</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon" style="background:#60A5FA22; color:#60A5FA;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="v" id="stat-total-orders">0</div>
+        <div class="k">Pedidos totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon" style="background:#0ECB8122; color:var(--success);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="v" id="stat-completed">0</div>
+        <div class="k">Completados</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon" style="background:#F6465D22; color:var(--danger);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div class="v" id="stat-pending">0</div>
+        <div class="k">En proceso</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon" style="background:#A855F722; color:#A855F7;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="v" id="stat-success-rate">—</div>
+        <div class="k">Tasa de éxito</div>
+      </div>
+    </div>
+
+    <div class="section fade-in d3">
+      <div class="section-head">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+          Gasto de los últimos 6 meses
+        </h2>
+      </div>
+      <div class="chart-wrap" id="spending-chart"></div>
+    </div>
+
+    <div class="section fade-in d3">
+      <div class="section-head">
+        <h2>Accesos rápidos</h2>
+      </div>
+      <div class="quick-actions">
+        <a class="quick-action" href="tec/index.html" onclick="sessionStorage.setItem('f3rn4n_open_topup','1')">
+          <span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M3 8h14a2 2 0 012 2v2h-4a2 2 0 000 4h4v2a2 2 0 01-2 2H5"/></svg></span>
+          <div><b>Recargar saldo</b><span>Stripe, Mercado Pago…</span></div>
+        </a>
+        <a class="quick-action" href="tec/index.html" onclick="sessionStorage.setItem('f3rn4n_open_imei_search','1')">
+          <span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <div><b>Buscar IMEI / SN</b><span>Ver historial de un equipo</span></div>
+        </a>
+        <a class="quick-action" href="tec/pedidos.html">
+          <span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><path d="M9 14l2 2 4-4"/></svg></span>
+          <div><b>Ver todos mis pedidos</b><span>Detalle completo</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section fade-in d4">
+      <div class="section-head">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><path d="M9 14l2 2 4-4"/></svg>
+          Pedidos recientes
+        </h2>
+      </div>
+      <div id="recent-orders"><div class="mini-spinner"></div></div>
+    </div>
+
+    <div class="section fade-in d5">
+      <div class="section-head">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M3 8h14a2 2 0 012 2v2h-4a2 2 0 000 4h4v2a2 2 0 01-2 2H5"/></svg>
+          Recargas recientes
+        </h2>
+      </div>
+      <div id="recent-recharges"><div class="mini-spinner"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2zk1jEQJcyTfEb7RsmsNtFAp3J5sSnI",
+  authDomain: "f3rn4n.firebaseapp.com",
+  projectId: "f3rn4n",
+  storageBucket: "f3rn4n.firebasestorage.app",
+  messagingSenderId: "156609223149",
+  appId: "1:156609223149:web:b1d92517932610696cafe4",
+  measurementId: "G-5SME8LS1V2"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function orderAmount(o){
+  return Number(o.amount ?? o.amountCharged ?? 0) || 0;
+}
+function orderLabel(o){
+  return o.serviceLabel || o.device || o.program || o.service || 'Servicio';
+}
+
+const ORDER_STATUS_LABELS = {
+  pendiente: 'Pendiente', procesando: 'Procesando', completado: 'Completado', error: 'Error'
+};
+
+auth.onAuthStateChanged(async user => {
+  if(!user){
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('gate-login').style.display = 'flex';
+    return;
+  }
+  try{
+    await loadDashboard(user);
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+  }catch(e){
+    console.error('Error cargando dashboard:', e);
+    document.getElementById('gate-loading').innerHTML = `<div class="txt" style="color:var(--danger);">No se pudo cargar tu dashboard: ${escapeHtml(e.message)}</div>`;
+  }
+});
+
+async function loadDashboard(user){
+  const techDoc = await db.collection('technicians').doc(user.uid).get();
+  const tech = techDoc.exists ? techDoc.data() : {};
+  const name = [tech.firstName, tech.lastName].filter(Boolean).join(' ') || tech.name || user.displayName || (user.email ? user.email.split('@')[0] : 'Usuario');
+  const firstName = (tech.firstName || name.split(' ')[0] || 'Técnico');
+
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('greeting-text').textContent = `${timeGreeting}, ${firstName}`;
+  document.getElementById('greeting-sub').textContent = 'Aquí está el resumen de tu cuenta.';
+
+  document.getElementById('account-name').textContent = name;
+  document.getElementById('account-email').textContent = user.email || '';
+  document.getElementById('avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('balance-value').textContent = '$' + (Number(tech.balance) || 0).toFixed(2) + ' USD';
+
+  const phoneVerified = !!user.phoneNumber;
+  const phoneBadge = document.getElementById('phone-badge');
+  phoneBadge.className = 'phone-badge ' + (phoneVerified ? 'ok' : 'pending');
+  phoneBadge.textContent = phoneVerified ? '✔ Teléfono verificado' : '⚠ Teléfono no verificado';
+
+  const ordersSnap = await db.collection('orders')
+    .where('ownerUid', '==', user.uid)
+    .orderBy('createdAt', 'desc')
+    .limit(200)
+    .get();
+  const orders = ordersSnap.docs.map(d => d.data());
+
+  const spent = orders.reduce((s, o) => s + orderAmount(o), 0);
+  const completed = orders.filter(o => o.status === 'completado').length;
+  const pending = orders.filter(o => o.status === 'procesando' || o.status === 'pendiente').length;
+  const finished = orders.filter(o => o.status === 'completado' || o.status === 'error').length;
+  const successRate = finished > 0 ? Math.round((completed / finished) * 100) : null;
+
+  document.getElementById('stat-spent').textContent = '$' + spent.toFixed(2);
+  document.getElementById('stat-total-orders').textContent = orders.length;
+  document.getElementById('stat-completed').textContent = completed;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-success-rate').textContent = successRate === null ? '—' : successRate + '%';
+
+  renderRecentOrders(orders.slice(0, 8));
+  renderSpendingChart(orders);
+
+  const [paymentsSnap, movimientosSnap] = await Promise.all([
+    db.collection('payments').where('uid', '==', user.uid).get(),
+    db.collection('technicians').doc(user.uid).collection('movimientos').where('tipo', '==', 'recarga').get(),
+  ]);
+  const PROVIDER_LABELS = { stripe: 'Stripe', mercadopago: 'Mercado Pago', paypal: 'PayPal', binance: 'Binance Pay' };
+  const recharges = [];
+  paymentsSnap.forEach(d => {
+    const p = d.data();
+    recharges.push({ amount: Number(p.amount) || 0, date: p.createdAt, label: PROVIDER_LABELS[p.provider] || p.provider || 'Pasarela de pago' });
+  });
+  movimientosSnap.forEach(d => {
+    const m = d.data();
+    recharges.push({ amount: Number(m.monto) || 0, date: m.createdAt, label: 'Recarga manual (admin)' });
+  });
+  recharges.sort((a, b) => toDate(b.date) - toDate(a.date));
+  renderRecentRecharges(recharges.slice(0, 8));
+}
+
+function toDate(v){
+  if(!v) return new Date(0);
+  if(v.toDate) return v.toDate();
+  return new Date(v);
+}
+function fmtDate(v){
+  const d = toDate(v);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+// Tiempo relativo ("Hace 2 horas", "Ayer") para que las listas se
+// sientan vivas -- si ya pasó más de una semana, mejor mostrar la
+// fecha exacta en vez de "hace 12 días".
+function fmtRelative(v){
+  const d = toDate(v);
+  if(isNaN(d.getTime())) return '—';
+  const diffMs = Date.now() - d.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  if(mins < 1) return 'Justo ahora';
+  if(mins < 60) return `Hace ${mins} min`;
+  const hours = Math.floor(mins / 60);
+  if(hours < 24) return `Hace ${hours} h`;
+  const days = Math.floor(hours / 24);
+  if(days === 1) return 'Ayer';
+  if(days < 7) return `Hace ${days} días`;
+  return fmtDate(v);
+}
+
+function renderRecentOrders(orders){
+  const el = document.getElementById('recent-orders');
+  if(!orders.length){
+    el.innerHTML = `<div class="empty-mini-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg>
+      <div class="txt">Todavía no tienes pedidos.</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = orders.map(o => `
+    <div class="mini-row">
+      <div class="l">
+        <b>${escapeHtml(orderLabel(o))}<span class="order-status ${o.status || 'pendiente'}">${ORDER_STATUS_LABELS[o.status] || o.status || '—'}</span></b>
+        <span>${fmtRelative(o.createdAt)}</span>
+      </div>
+      <div class="r">$${orderAmount(o).toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+
+function renderRecentRecharges(recharges){
+  const el = document.getElementById('recent-recharges');
+  if(!recharges.length){
+    el.innerHTML = `<div class="empty-mini-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M3 8h14a2 2 0 012 2v2h-4a2 2 0 000 4h4v2a2 2 0 01-2 2H5"/></svg>
+      <div class="txt">Todavía no tienes recargas registradas.</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = recharges.map(r => `
+    <div class="mini-row">
+      <div class="l"><b>${escapeHtml(r.label)}</b><span>${fmtRelative(r.date)}</span></div>
+      <div class="r" style="color:var(--success);">+$${r.amount.toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+
+function renderSpendingChart(orders){
+  const el = document.getElementById('spending-chart');
+  const now = new Date();
+  const months = [];
+  for(let i = 5; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth(), total: 0 });
+  }
+  orders.forEach(o => {
+    const d = toDate(o.createdAt);
+    if(isNaN(d.getTime())) return;
+    const m = months.find(m => m.year === d.getFullYear() && m.month === d.getMonth());
+    if(m) m.total += orderAmount(o);
+  });
+  const max = Math.max(...months.map(m => m.total), 1);
+  const MONTH_LABELS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  if(months.every(m => m.total === 0)){
+    el.innerHTML = `<div class="empty-mini-icon" style="width:100%;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+      <div class="txt">Todavía no hay gastos para graficar.</div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = months.map((m, i) => {
+    const heightPct = Math.max((m.total / max) * 100, 2);
+    const isCurrent = i === months.length - 1;
+    return `
+      <div class="chart-bar-col">
+        <div class="chart-bar-amount">$${m.total.toFixed(0)}</div>
+        <div class="chart-bar" style="height:${heightPct}%; ${isCurrent ? '' : 'opacity:.55;'}"></div>
+        <div class="chart-bar-label" style="${isCurrent ? 'color:var(--gold); font-weight:700;' : ''}">${MONTH_LABELS[m.month]}</div>
+      </div>
+    `;
+  }).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tumerchmo | Desbloqueos y servicios para celulares</title>
+<meta name="description" content="Encuentra servicios y desbloqueos para tu celular en Tumerchmo. Consulta precios, requisitos y tiempos de entrega. Pide en línea y sigue tu pedido.">
+<meta name="theme-color" content="#18204a">
+<link rel="canonical" href="https://tumerchmo.com/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_MX">
+<meta property="og:site_name" content="Tumerchmo">
+<meta property="og:title" content="Tumerchmo | Servicios para tu celular">
+<meta property="og:description" content="Consulta precios y requisitos, elige tu servicio y sigue tu pedido en línea.">
+<meta property="og:url" content="https://tumerchmo.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS — tumerchmo (tienda pública). Blanco + acentos suaves.
+   Deliberadamente distinto del panel admin (oscuro/ámbar):
+   aquí todo es claro, aireado, con un índigo suave como acento
+   principal, verde-menta para "entrega" y rosa para "rebaja".
+   ============================================================ */
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F6F7FB;
+  --bg-soft-2:#F0F1F9;
+  --surface:#FFFFFF;
+  --border:#E7E8F2;
+  --border-soft:#EFF0F7;
+  --text:#15171F;
+  --text-muted:#6B7080;
+  --text-faint:#A0A4B4;
+  --accent:#4C5FE0;
+  --accent-dark:#3D4EC4;
+  --accent-soft:#4C5FE013;
+  --accent-soft-2:#4C5FE00A;
+  --teal:#0EA394;
+  --teal-soft:#0EA39414;
+  --rose:#E14C74;
+  --rose-soft:#E14C7414;
+  --radius-lg:20px;
+  --radius:14px;
+  --radius-sm:10px;
+  --shadow-sm:0 1px 2px rgba(21,23,31,.05), 0 1px 1px rgba(21,23,31,.03);
+  --shadow-md:0 14px 34px -14px rgba(30,34,70,.20);
+  --shadow-lg:0 30px 70px -22px rgba(30,34,70,.30);
+  font-family:'Inter',sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+::selection{ background:var(--accent-soft); color:var(--accent-dark); }
+button{ font-family:inherit; cursor:pointer; background:none; border:none; }
+input{ font-family:inherit; }
+img{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3,.jakarta{ font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:-.01em; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+/* ---------------- TOPNAV ---------------- */
+.topnav{
+  position:sticky; top:0; z-index:80;
+  display:flex; align-items:center; gap:14px;
+  padding:14px 24px;
+  background:#FFFFFFE6; backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);
+}
+.icon-btn{
+  width:40px; height:40px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--text); transition:background .15s;
+}
+.icon-btn:hover{ background:var(--bg-soft); }
+.icon-btn svg{ width:20px; height:20px; }
+.brand{ display:flex; align-items:center; gap:9px; margin-right:auto; }
+.brand-dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--teal)); flex-shrink:0; }
+.brand b{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:19px; letter-spacing:-.02em; }
+.nav-search{
+  display:none; align-items:center; gap:9px; background:var(--bg-soft);
+  border:1px solid transparent; border-radius:999px; padding:9px 16px;
+  width:100%; max-width:340px; transition:border-color .15s, background .15s;
+}
+.nav-search:focus-within{ border-color:var(--accent); background:var(--surface); }
+.nav-search svg{ width:16px; height:16px; color:var(--text-faint); flex-shrink:0; }
+.nav-search input{ border:none; outline:none; background:none; font-size:13.5px; width:100%; color:var(--text); }
+.nav-search input::placeholder{ color:var(--text-faint); }
+@media (min-width:760px){ .nav-search{ display:flex; } }
+.nav-right{ display:flex; align-items:center; gap:6px; }
+.nav-avatar{
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg, var(--accent), #7B8AFF);
+  color:#fff; font-weight:700; font-size:13.5px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Mobile search overlay */
+.mobile-search{
+  display:none; align-items:center; gap:10px; padding:10px 16px 14px;
+  border-bottom:1px solid var(--border-soft);
+}
+.mobile-search.open{ display:flex; }
+.mobile-search .nav-search{ display:flex; max-width:none; }
+@media (min-width:760px){ .mobile-search{ display:none !important; } }
+
+/* ---------------- HAMBURGER DRAWER ---------------- */
+.scrim{
+  position:fixed; inset:0; background:#12131De0; opacity:0; pointer-events:none;
+  transition:opacity .25s ease; z-index:150;
+}
+.scrim.show{ opacity:1; pointer-events:auto; }
+.drawer{
+  position:fixed; top:0; left:0; height:100%; width:300px; max-width:86vw;
+  background:var(--surface); z-index:160; padding:22px 20px;
+  transform:translateX(-100%); transition:transform .3s cubic-bezier(.2,.9,.3,1);
+  display:flex; flex-direction:column; box-shadow:var(--shadow-lg);
+}
+.drawer.open{ transform:translateX(0); }
+.drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.drawer-account{
+  display:flex; align-items:center; gap:12px; padding:14px; border-radius:var(--radius);
+  background:var(--bg-soft); margin-bottom:18px;
+}
+.drawer-account .av{ width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, var(--accent), #7B8AFF); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.drawer-account .info b{ display:block; font-size:13.5px; }
+.drawer-account .info span{ display:block; font-size:11.5px; color:var(--text-muted); }
+.drawer-nav{ display:flex; flex-direction:column; gap:2px; }
+.drawer-link{
+  display:flex; align-items:center; gap:12px; padding:12px 10px; border-radius:var(--radius-sm);
+  font-size:14px; font-weight:600; color:var(--text); transition:background .15s;
+}
+.drawer-link:hover{ background:var(--bg-soft); }
+.drawer-link svg{ width:18px; height:18px; color:var(--text-muted); flex-shrink:0; }
+.drawer-link .badge{ margin-left:auto; background:var(--accent-soft); color:var(--accent); font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; }
+.drawer-foot{ margin-top:auto; padding-top:16px; border-top:1px solid var(--border-soft); }
+
+/* ---------------- BUTTONS / FIELDS ---------------- */
+.btn{ border-radius:11px; padding:12px 20px; font-size:13.5px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+.btn-primary{ background:var(--accent); color:#fff; box-shadow:0 10px 24px -10px #4C5FE080; }
+.btn-primary:hover{ background:var(--accent-dark); }
+.btn:active{ transform:scale(.97); }
+.btn-primary:disabled{ background:var(--border); color:var(--text-faint); box-shadow:none; cursor:not-allowed; }
+.btn-ghost{ background:var(--bg-soft); color:var(--text); }
+.btn-ghost:hover{ background:var(--bg-soft-2); }
+.btn-outline{ background:transparent; border:1.5px solid var(--border); color:var(--text); }
+.btn-outline:hover{ border-color:var(--accent); color:var(--accent); }
+.btn-block{ width:100%; }
+.btn-sm{ padding:9px 14px; font-size:12.5px; }
+.field label{ display:block; font-size:12.5px; font-weight:600; color:var(--text-muted); margin-bottom:7px; }
+.field input{
+  width:100%; background:var(--bg-soft); border:1.5px solid transparent; color:var(--text);
+  border-radius:var(--radius-sm); padding:12px 14px; font-size:14px; outline:none; transition:border-color .15s, background .15s;
+}
+.field input:focus{ border-color:var(--accent); background:var(--surface); }
+.field input::placeholder{ color:var(--text-faint); }
+.field-err{ font-size:11.5px; color:var(--rose); margin-top:6px; display:none; }
+.field-err.show{ display:block; }
+.field input.invalid{ border-color:var(--rose); }
+
+/* ---------------- WRAP / SECTIONS ---------------- */
+.wrap{ max-width:1180px; margin:0 auto; padding:0 24px; }
+@media (max-width:640px){ .wrap{ padding:0 16px; } }
+.section-pad{ padding:28px 0; }
+.section-title{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:16px; }
+.section-title h2{ font-size:20px; font-weight:800; }
+.section-title span{ font-size:12.5px; color:var(--text-muted); }
+
+/* ---------------- SLIDER (eventos slider — carrusel de anuncios) ----------------
+   La imagen ya NO ocupa todo el espacio: vive en un panel propio, más
+   chica y con esquinas redondeadas, para que siempre quede un lugar
+   fijo y legible para el texto — tanto en escritorio (dos columnas)
+   como en teléfono (apilado: texto arriba, imagen abajo). */
+.slider-wrap{ padding:20px 0 6px; }
+.slider{
+  position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm);
+  background:linear-gradient(120deg, var(--accent-soft), var(--teal-soft));
+  height:230px;
+}
+@media (min-width:900px){ .slider{ height:270px; } }
+@media (max-width:640px){ .slider{ height:auto; min-height:380px; } }
+
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  transition:opacity .5s ease, transform .5s ease; transform:translateX(10px);
+  display:grid; grid-template-columns:1.15fr 1fr; align-items:stretch;
+}
+.slide.active{ opacity:1; transform:none; pointer-events:auto; }
+@media (max-width:640px){ .slide{ grid-template-columns:1fr; grid-template-rows:auto 1fr; position:static; opacity:1 !important; transform:none !important; display:none; } .slide.active{ display:grid; } }
+
+.slide-text{ padding:24px 8px 24px 30px; display:flex; flex-direction:column; justify-content:center; gap:6px; min-width:0; }
+@media (max-width:640px){ .slide-text{ padding:22px 22px 10px; } }
+.slide-text h3{ font-size:21px; font-weight:800; color:var(--text); line-height:1.28; }
+.slide-text p{ font-size:13px; color:var(--text-muted); line-height:1.5; }
+.slide-text.profesional h3{ font-size:16.5px; font-weight:700; letter-spacing:0; }
+.slide-text.profesional p{ font-size:12.5px; }
+.slide-media{ padding:16px 16px 16px 6px; min-width:0; }
+@media (max-width:640px){ .slide-media{ padding:0 22px 22px; aspect-ratio:16/9; height:auto; } }
+.slide.no-text .slide-media{ padding:20px; grid-column:1/-1; }
+.slide.no-text{ grid-template-columns:1fr; }
+.slide-media .img-box{
+  width:100%; height:100%; border-radius:16px; overflow:hidden; box-shadow:var(--shadow-md);
+  background:var(--bg-soft-2);
+}
+.slide-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.slider-dots{ position:absolute; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:5; }
+.slider-dots button{ width:7px; height:7px; border-radius:999px; background:#15171F30; transition:all .2s; }
+.slider-dots button.active{ width:20px; background:var(--accent); }
+.slider-empty{ display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-faint); font-size:13px; }
+
+/* ---------------- CHIPS DE SECCIÓN ---------------- */
+.chip-row{ display:flex; gap:8px; overflow-x:auto; padding:4px 0 2px; scrollbar-width:none; }
+.chip-row::-webkit-scrollbar{ display:none; }
+.chip{
+  flex-shrink:0; display:flex; align-items:center; gap:7px; padding:9px 16px;
+  border-radius:999px; background:var(--bg-soft); font-size:13px; font-weight:600; color:var(--text-muted);
+  transition:all .15s; border:1.5px solid transparent;
+}
+.chip .dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.chip:hover{ background:var(--bg-soft-2); }
+.chip.active{ background:var(--accent-soft); color:var(--accent-dark); border-color:var(--accent); }
+.chip:active{ transform:scale(.96); }
+
+/* ---------------- EVENTOS CONTENEDOR — tarjetas de producto ---------------- */
+.products-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; }
+
+/* ---------------- Filas por sección (scroll horizontal) ---------------- */
+.section-row{ margin-bottom:30px; }
+.section-row .section-title h2{ display:flex; align-items:center; gap:9px; }
+.section-row .section-title .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.products-scroller{
+  display:flex; gap:14px; overflow-x:auto; padding:2px 2px 10px;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.products-scroller::-webkit-scrollbar{ display:none; }
+.products-scroller .product-card{ width:208px; flex-shrink:0; scroll-snap-align:start; }
+@media (max-width:480px){ .products-scroller .product-card{ width:172px; } }
+.product-card{
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius-lg);
+  overflow:hidden; display:flex; flex-direction:column; text-align:left; width:100%;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.product-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--border); }
+.product-card:active{ transform:translateY(-1px) scale(.985); }
+/* Entrada escalonada — solo se aplica la primera vez que se pintan
+   los productos (clase "card-in"), para que buscar/filtrar no
+   repita la animación en cada tecla. */
+.product-card.card-in{ opacity:0; animation:cardIn .45s ease forwards; animation-delay:calc(var(--i, 0) * 45ms); }
+@keyframes cardIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.product-media{ position:relative; aspect-ratio:1/0.82; background:var(--bg-soft); overflow:hidden; }
+.product-media img{ width:100%; height:100%; object-fit:cover; }
+.product-media .fallback{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.product-media .fallback svg{ width:34px; height:34px; opacity:.35; }
+.product-badges{ position:absolute; top:10px; left:10px; right:10px; display:flex; justify-content:space-between; gap:6px; pointer-events:none; }
+.badge-pill{ font-size:10px; font-weight:800; padding:4px 9px; border-radius:999px; letter-spacing:.01em; }
+.badge-new{ background:var(--teal); color:#fff; }
+.badge-sale{ background:var(--rose); color:#fff; animation:badgePulse 2.4s ease-in-out infinite; }
+@keyframes badgePulse{ 0%,100%{ box-shadow:0 0 0 0 #E14C7455; } 50%{ box-shadow:0 0 0 5px #E14C7400; } }
+.product-body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:7px; flex:1; }
+.product-cat{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+.product-name{ font-size:14px; font-weight:700; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.product-delivery{ display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--teal); font-weight:600; }
+.product-delivery svg{ width:12px; height:12px; }
+.product-price-row{ margin-top:auto; padding-top:6px; display:flex; align-items:baseline; gap:8px; }
+.product-price{ font-family:'Plus Jakarta Sans',sans-serif; font-size:17px; font-weight:800; color:var(--text); }
+.product-price-old{ font-size:12px; color:var(--text-faint); text-decoration:line-through; }
+.products-empty{ grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--text-faint); font-size:13.5px; }
+
+/* ---------------- MODAL DE PRODUCTO (resultado del evento contenedor) ---------------- */
+.pmodal-scrim{ position:fixed; inset:0; background:#12131Dd8; opacity:0; pointer-events:none; transition:opacity .25s; z-index:200; }
+.pmodal-scrim.show{ opacity:1; pointer-events:auto; }
+.pmodal{
+  position:fixed; z-index:210; background:var(--surface); overflow-y:auto;
+  left:50%; top:50%; width:100%; max-width:520px; max-height:88vh; border-radius:var(--radius-lg);
+  transform:translate(-50%,-46%) scale(.97); opacity:0; pointer-events:none;
+  transition:transform .28s cubic-bezier(.2,.9,.3,1), opacity .22s ease; box-shadow:var(--shadow-lg);
+}
+.pmodal.show{ transform:translate(-50%,-50%) scale(1); opacity:1; pointer-events:auto; }
+@media (max-width:640px){
+  .pmodal{ left:0; top:auto; bottom:0; width:100%; max-width:none; max-height:92vh; border-radius:22px 22px 0 0; transform:translateY(100%); }
+  .pmodal.show{ transform:translateY(0); }
+}
+.pmodal-handle{ display:none; }
+@media (max-width:640px){ .pmodal-handle{ display:block; width:36px; height:4px; border-radius:999px; background:var(--border); margin:12px auto 0; } }
+.pmodal-media{ position:relative; aspect-ratio:16/9; background:var(--bg-soft); }
+.pmodal-media img{ width:100%; height:100%; object-fit:cover; }
+.pmodal-close{
+  position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%;
+  background:#ffffffe8; backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:5;
+  box-shadow:var(--shadow-sm);
+}
+.pmodal-close svg{ width:15px; height:15px; }
+.share-menu{
+  position:absolute; top:56px; right:14px; z-index:20;
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:12px;
+  box-shadow:var(--shadow-md); padding:6px; min-width:190px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.share-menu.hidden{ display:none; }
+.share-menu button{ display:flex; align-items:center; gap:10px; padding:10px 11px; border-radius:8px; font-size:13px; font-weight:600; color:var(--text); text-align:left; transition:background .15s; }
+.share-menu button:hover{ background:var(--bg-soft); }
+.share-menu button svg{ width:16px; height:16px; color:var(--text-muted); flex-shrink:0; }
+.pmodal-body{ padding:22px 24px 26px; }
+.pmodal-cat{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+.pmodal-body h2{ font-size:21px; font-weight:800; line-height:1.25; }
+.pmodal-meta{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px; }
+.pmodal-desc{ margin-top:16px; font-size:13.5px; line-height:1.65; color:var(--text-muted); position:relative; }
+.pmodal-desc.clamped{ max-height:5.7em; overflow:hidden; }
+.pmodal-desc.clamped::after{ content:''; position:absolute; bottom:0; left:0; right:0; height:2.6em; background:linear-gradient(0deg, var(--surface), transparent); }
+.desc-toggle{ margin-top:8px; font-size:12.5px; font-weight:700; color:var(--accent); }
+.pmodal-note{ margin-top:12px; background:var(--bg-soft); border-radius:var(--radius-sm); padding:11px 13px; font-size:12.5px; color:var(--text-muted); }
+.pmodal-price-row{ display:flex; align-items:baseline; gap:10px; margin-top:18px; }
+.pmodal-price{ font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; }
+.pmodal-price-old{ font-size:14px; color:var(--text-faint); text-decoration:line-through; }
+.pmodal-sale-timer{ font-size:11.5px; color:var(--rose); font-weight:700; margin-top:2px; }
+.pmodal-form{ margin-top:20px; border-top:1px solid var(--border-soft); padding-top:18px; display:flex; flex-direction:column; gap:14px; }
+.pmodal-form-title{ font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); }
+.trust-line{ display:flex; align-items:center; gap:8px; margin-top:14px; font-size:11.5px; color:var(--text-faint); }
+.trust-line svg{ width:14px; height:14px; flex-shrink:0; color:var(--teal); }
+
+/* ---------------- LOGIN MODAL ---------------- */
+.auth-modal{ max-width:380px; padding:0; }
+.auth-modal .pmodal-body{ padding:28px 26px 26px; }
+.auth-modal h2{ font-size:19px; }
+.auth-modal p.sub{ font-size:13px; color:var(--text-muted); margin-top:4px; margin-bottom:22px; }
+.google-btn{
+  display:flex; align-items:center; justify-content:center; gap:10px; background:var(--surface); border:1.5px solid var(--border);
+  color:var(--text); border-radius:11px; padding:11px; font-size:13.5px; font-weight:700; width:100%; margin-bottom:14px; transition:border-color .15s;
+}
+.google-btn:hover{ border-color:var(--text-faint); }
+.google-btn svg{ width:17px; height:17px; }
+.auth-divider{ display:flex; align-items:center; gap:10px; color:var(--text-faint); font-size:11.5px; margin:0 0 14px; }
+.auth-divider::before, .auth-divider::after{ content:''; flex:1; height:1px; background:var(--border-soft); }
+.auth-form{ display:flex; flex-direction:column; gap:12px; }
+.auth-switch{ text-align:center; font-size:12.5px; color:var(--text-muted); margin-top:16px; }
+.auth-switch button{ color:var(--accent); font-weight:700; }
+/* El login SIEMPRE queda centrado, incluso en teléfono — no debe
+   heredar el comportamiento de "hoja inferior" de .pmodal en móvil
+   (eso era lo que lo mandaba a una esquina abajo). Especificidad
+   .pmodal.auth-modal para ganarle sin depender del orden en el CSS. */
+@media (max-width:640px){
+  .pmodal.auth-modal{ left:50%; top:50%; bottom:auto; right:auto; width:90vw; max-width:380px; border-radius:var(--radius-lg); transform:translate(-50%,-46%) scale(.97); }
+  .pmodal.auth-modal.show{ transform:translate(-50%,-50%) scale(1); }
+  .auth-modal .pmodal-handle{ display:none; }
+}
+
+/* ---------------- MIS PEDIDOS ---------------- */
+.orders-list{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.order-row{ background:var(--bg-soft); border-radius:var(--radius); padding:13px 15px; display:flex; align-items:center; gap:12px; }
+.order-row .oi{ flex:1; min-width:0; }
+.order-row .oi b{ display:block; font-size:13.5px; }
+.order-row .oi span{ display:block; font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+.status-pill{ font-size:10.5px; font-weight:800; padding:5px 10px; border-radius:999px; flex-shrink:0; white-space:nowrap; }
+.status-pendiente_pago{ background:#F5A6231A; color:#B5780F; }
+.status-pagado{ background:var(--accent-soft); color:var(--accent-dark); }
+.status-procesando{ background:var(--accent-soft); color:var(--accent-dark); }
+.status-completado{ background:var(--teal-soft); color:var(--teal); }
+.status-fallido, .status-cancelado{ background:var(--rose-soft); color:var(--rose); }
+.orders-empty{ text-align:center; padding:36px 10px; color:var(--text-faint); font-size:13px; }
+
+/* ---------------- FOOTER (animación de entrada suave, una sola vez) ---------------- */
+footer{ background:var(--bg-soft); margin-top:52px; border-top:1px solid var(--border-soft); }
+.footer-inner{
+  max-width:1180px; margin:0 auto; padding:48px 24px 30px; display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px;
+  opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;
+}
+.footer-inner.reveal{ opacity:1; transform:none; }
+@media (max-width:760px){ .footer-inner{ grid-template-columns:1fr 1fr; } }
+@media (max-width:480px){ .footer-inner{ grid-template-columns:1fr; } }
+.footer-brand p{ font-size:13px; color:var(--text-muted); margin-top:10px; max-width:260px; line-height:1.6; }
+.footer-col h4{ font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:12px; }
+.footer-col a{ display:block; font-size:13.5px; color:var(--text-muted); margin-bottom:9px; transition:color .15s; }
+.footer-col a:hover{ color:var(--accent); }
+.footer-bottom{ border-top:1px solid var(--border-soft); padding:18px 24px; text-align:center; font-size:11.5px; color:var(--text-faint); }
+
+/* ---------------- TOAST ---------------- */
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(16px); z-index:300;
+  background:var(--text); color:#fff; padding:13px 20px; border-radius:11px; font-size:13px; font-weight:600;
+  opacity:0; pointer-events:none; transition:all .25s; max-width:90vw; box-shadow:var(--shadow-md);
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.hidden{ display:none !important; }
+.skeleton{ background:linear-gradient(90deg, var(--bg-soft) 25%, var(--bg-soft-2) 50%, var(--bg-soft) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+@keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+/* Mejora comercial: conserva las conexiones y el catálogo existentes. */
+:root{--text-muted:#596173;--text-faint:#6c7385;--accent:#4557d9;--accent-dark:#3444b8;--teal:#087d73;--radius-lg:18px}
+body{font-size:16px;line-height:1.5}
+.topnav{padding:14px max(20px,calc((100vw - 1180px)/2));gap:18px}
+.topnav .brand b{font-size:22px}.nav-search{max-width:350px}.nav-search input{font-size:14px}
+.nav-help{font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap}
+.announcement{background:#18204a;color:#fff;text-align:center;padding:9px 16px;font-size:13px}
+.hero{padding:48px 0 28px;display:grid;grid-template-columns:1.1fr 1fr;gap:44px;align-items:center}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.hero h1{font-size:clamp(34px,4vw,53px);line-height:1.1;letter-spacing:-.045em;max-width:620px}
+.hero h1 span{color:var(--accent)}
+.hero-copy>p{margin-top:20px;color:var(--text-muted);max-width:480px;line-height:1.7}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.hero-actions .btn{padding:14px 21px;font-size:15px}
+.hero .slider-wrap{padding:0;min-width:0}.hero .slider{height:340px;border:1px solid var(--border);background:#f1f3fb}
+.hero .slide{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+.hero .slide-text{padding:24px 24px 10px}.hero .slide-text h3{font-size:22px}.hero .slide-text p{font-size:14px}
+.hero .slide-media{padding:10px 24px 40px;min-height:0}.hero .slide.no-text{grid-template-rows:1fr}.hero .slide.no-text .slide-media{padding:20px 20px 40px}
+.hero .slide-media .img-box{box-shadow:none}.hero .slide-media img{object-fit:contain}
+.slider-empty{padding:32px;flex-direction:column;align-items:flex-start;gap:16px;color:var(--text);font-size:16px}
+.slider-empty strong{font-family:'Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.2}.slider-empty p{color:var(--text-muted)}
+.slider-dots{bottom:8px;gap:2px}.slider-dots button{width:28px;height:26px;background:transparent;position:relative}
+.slider-dots button:after{content:'';width:7px;height:7px;background:#9da4c1;border-radius:20px;position:absolute;top:10px;left:10px}
+.slider-dots button.active{width:28px;background:transparent}.slider-dots button.active:after{background:var(--accent);width:18px;left:5px}
+.slider-pause{position:absolute;right:12px;bottom:9px;z-index:6;color:var(--accent-dark);font-size:12px;padding:5px 8px;background:#fff;border-radius:6px}
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);border-block:1px solid var(--border);padding:19px 0;gap:22px;margin-bottom:16px}
+.benefits b{display:block;font-size:14px}.benefits span{display:block;font-size:13px;color:var(--text-muted);margin-top:3px}
+.catalog-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin:12px 0 23px}.catalog-heading h2{font-size:29px;letter-spacing:-.035em}.catalog-heading p{color:var(--text-muted);font-size:15px;margin-top:5px}
+.chip{font-size:14px;min-height:44px}.chip-row{padding-bottom:10px}.section-row,#catalogo{scroll-margin-top:100px}
+.section-title h2{font-size:21px}.section-title span{font-size:13px}
+.products-scroller{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;overflow:visible;padding:0}
+.products-scroller .product-card{width:100%;min-width:0}.product-card{border-color:var(--border);border-radius:16px;box-shadow:0 3px 12px #18204a04}
+.product-media{aspect-ratio:1.2;background:#f4f5fa}.product-media img{object-fit:contain;padding:10px}
+.product-body{padding:18px;gap:10px}.product-name{font-size:16px;line-height:1.4}.product-cat{font-size:12px}.product-delivery{font-size:13px}.product-price{font-size:21px}.product-price-old{font-size:13px}.badge-pill{font-size:12px}.badge-sale{animation:none}
+.card-action{margin-top:5px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;color:var(--accent);border-top:1px solid var(--border-soft);padding-top:13px}
+.products-empty{background:var(--bg-soft);border-radius:16px;color:var(--text-muted);font-size:16px}.products-empty .btn{margin:15px 5px 0}
+.pmodal-body h2{font-size:25px}.pmodal-desc{font-size:16px;white-space:pre-line}.pmodal-note{font-size:14px}.field label{font-size:14px}.field input{font-size:16px}.btn{min-height:44px}.product-card{cursor:pointer}
+
+.footer-inner{opacity:1;transform:none}.footer-brand p,.footer-col a{font-size:14px}.footer-bottom{font-size:12px}
+.skip-link{position:fixed;left:15px;top:-100px;z-index:400;background:white;padding:12px}.skip-link:focus{top:12px}
+@media(min-width:760px){#mobile-search-btn{display:none}}
+@media(max-width:960px){.hero{gap:24px}.products-scroller{grid-template-columns:repeat(3,minmax(0,1fr))}.nav-help{display:none}}
+@media(max-width:640px){.topnav{padding:12px 16px;gap:10px}.hero{grid-template-columns:1fr;padding:28px 0 20px;gap:24px}.hero h1{font-size:38px}.hero-copy>p{margin-top:15px}.hero .slider{height:auto;min-height:0}.hero .slide-media{height:210px;aspect-ratio:auto}.hero .slide.no-text .slide-media{height:260px}.slider-empty{min-height:200px;padding:24px}.slider-empty strong{font-size:25px}.hero-actions .btn{flex:1;font-size:14px;padding:13px 12px}.benefits{gap:12px}.benefits b{font-size:13px}.benefits span{font-size:12px}.catalog-heading{display:block}.catalog-heading h2{font-size:26px}.products-scroller{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.product-body{padding:12px}.product-name{font-size:14px}.product-price{font-size:18px}.product-price-row{flex-wrap:wrap;gap:4px}.product-cat{font-size:12px}.card-action{font-size:13px}.section-title{align-items:center}.section-title h2{font-size:19px}.pmodal-body{padding:20px}.announcement{font-size:12px}}
+@media(max-width:360px){.products-scroller{grid-template-columns:1fr}.hero h1{font-size:33px}.benefits{grid-template-columns:1fr}.hero-actions{flex-direction:column}}
+
+
+/* Storefront: compact campaign, real product spotlight, prominent purchase controls. */
+:root{--accent:#324dd8;--accent-dark:#253cb5;--rose:#be3155}
+.announcement{background:#111a38;font-size:12px;letter-spacing:.04em}
+#top{padding-top:22px}.shop-hero{background:#151f43;color:white;border-radius:22px;padding:30px 34px;gap:35px;grid-template-columns:1.05fr 1fr;min-height:250px}
+.shop-hero .eyebrow{color:#aebcff;font-size:12px}.shop-hero h1{font-size:clamp(30px,3.1vw,43px);line-height:1.12;letter-spacing:-.035em}.shop-hero h1 span{color:#b2c0ff}
+.shop-hero .hero-copy>p{color:#d0d7ed;font-size:15px;line-height:1.6;margin-top:14px;max-width:450px}
+.shop-hero .hero-actions{gap:15px;margin-top:20px;align-items:center}.shop-hero .hero-actions .btn{padding:12px 17px;font-size:14px;min-height:46px}
+.shop-hero .btn-primary{background:#fff;color:#172b94;box-shadow:none}.shop-hero .btn-outline{border:0;padding-inline:0;color:white;text-decoration:underline;text-underline-offset:5px;font-size:13px}
+.shop-hero:has(.hero-product.hidden){grid-template-columns:1fr}.shop-hero:has(.hero-product.hidden) .hero-copy{max-width:700px}
+.spotlight-label{font-size:12px;color:#ccd6fb;text-transform:uppercase;letter-spacing:.09em;font-weight:700;margin-bottom:10px}
+.spotlight-product{display:flex;align-items:center;gap:20px;background:#fff;color:var(--text);width:100%;padding:20px;border-radius:15px;text-align:left;min-height:215px;transition:transform .2s}
+.spotlight-product:hover{transform:translateY(-3px)}.spotlight-image{width:125px;flex:0 0 125px;align-self:stretch;display:flex;align-items:center;background:#f3f5fb;border-radius:10px;padding:8px}.spotlight-image img{width:100%;max-height:170px;object-fit:contain}.spotlight-info{min-width:0;flex:1}.spotlight-category{display:block;color:var(--accent);font-size:12px;font-weight:700;margin-bottom:7px}.spotlight-info h2{font-size:18px;line-height:1.3;overflow-wrap:anywhere}.spotlight-delivery{display:block;font-size:12px;color:var(--teal);margin-top:6px}.spotlight-prices{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:11px}.spotlight-prices strong{font-size:25px;letter-spacing:-.03em}.spotlight-prices small{font-size:11px;letter-spacing:0;color:var(--text-muted)}.spotlight-prices del{color:var(--text-muted);font-size:12px}.spotlight-saving{display:block;color:#08744c;font-size:12px;font-weight:700;margin:3px 0 8px}.spotlight-buy{display:flex;justify-content:space-between;gap:10px;color:var(--accent);font-size:13px;font-weight:800;margin-top:11px}
+.benefits{margin:0;padding:16px 0;border-top:0}.benefits b{font-size:13px}.benefits span{font-size:12px}
+#catalogo{padding-top:23px;padding-bottom:12px}.catalog-heading{margin:0 0 18px}.catalog-heading .eyebrow{margin-bottom:6px;font-size:11px}.catalog-heading h2{font-size:29px}.catalog-heading p{font-size:13px}
+.catalog-tools{display:flex;gap:18px;align-items:center}.sort-label{font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px}.sort-label select{font:600 13px Inter,sans-serif;border:1px solid var(--border);background:white;padding:10px;border-radius:8px;color:var(--text);min-height:44px;max-width:180px}.offer-filter{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;white-space:nowrap}.offer-filter input{accent-color:var(--accent);width:17px;height:17px}
+.product-card:hover{border-color:#9aa9f6;box-shadow:0 12px 25px #14214f12}.product-media{aspect-ratio:1.25}.product-name{min-height:2.8em}.product-price-row{padding-top:5px}.product-price{font-size:25px}.product-body{gap:7px}.product-price-old{color:#737887}.card-saving{font-size:12px;color:#08744c;font-weight:700;display:block}.card-action{background:var(--accent);color:white;border:0;min-height:44px;padding:12px 14px;border-radius:9px;margin-top:7px;font-size:14px}.product-card:hover .card-action{background:var(--accent-dark)}.card-caption{font-size:12px;text-align:center;color:var(--text-muted)}
+.campaign-section{margin-top:20px}.campaign-layout{display:block;padding:0}.campaign-layout .slider{height:230px}.campaign-layout .slide{grid-template-columns:1fr 1fr;grid-template-rows:1fr}.campaign-layout .slide.no-text{grid-template-columns:1fr}.campaign-layout .slide-media{padding:18px 22px 35px}.campaign-layout .slide-text{padding:24px}
+.modal-saving{background:#eaf8f0;color:#08633f;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:700;margin-top:12px}.checkout-guidance{font-size:14px;color:var(--text-muted);line-height:1.5}.checkout-help{font-size:13px;color:var(--accent);text-align:center;text-decoration:underline;text-underline-offset:3px}.pmodal-buy-btn,#pmodal-buy-btn{font-size:16px;min-height:50px}
+@media(max-width:1000px){.spotlight-image{width:90px;flex-basis:90px}.shop-hero{gap:24px;padding:26px}.spotlight-product{gap:12px;padding:16px}.catalog-tools{gap:12px}}
+@media(max-width:760px){.shop-hero{grid-template-columns:1fr}.hero-product{max-width:none}.spotlight-product{min-height:0}.spotlight-image{width:100px;flex-basis:100px}.catalog-heading{align-items:flex-start;flex-direction:column;gap:15px}.catalog-tools{width:100%;justify-content:space-between}.sort-label{flex-direction:row;align-items:center;gap:8px}}
+@media(max-width:640px){#top{padding-top:14px}.shop-hero{padding:22px;gap:20px;border-radius:16px}.shop-hero h1{font-size:31px}.shop-hero .hero-copy>p{font-size:14px;margin-top:10px}.shop-hero .hero-actions{margin-top:14px;gap:10px}.shop-hero .hero-actions .btn{font-size:13px;padding:10px 12px}.shop-hero .hero-actions .btn-outline{font-size:12px}.spotlight-label{margin-bottom:8px;font-size:11px}.spotlight-info h2{font-size:16px}.spotlight-prices strong{font-size:23px}.spotlight-product{padding:13px}.spotlight-image{width:86px;flex-basis:86px}.benefits{padding:12px 0;gap:10px}.benefits b{font-size:12px}.benefits span{display:none}.catalog-heading h2{font-size:26px}.product-body{padding:12px}.product-price{font-size:21px}.card-action{font-size:13px;padding:11px 10px}.product-media{aspect-ratio:1.15}.campaign-layout .slider{height:auto}.campaign-layout .slide{grid-template-columns:1fr;grid-template-rows:auto 1fr}.campaign-layout .slide-media{height:190px}.sort-label select{max-width:150px}}
+@media(max-width:360px){.hero-actions{flex-direction:column;align-items:stretch!important}.benefits{grid-template-columns:repeat(3,1fr)}.sort-label{font-size:11px}.catalog-tools{flex-wrap:wrap}.shop-hero h1{font-size:28px}}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#catalogo">Ir a los servicios</a>
+<div class="announcement">Elige tu servicio · Paga en línea · Sigue tu pedido</div>
+
+<!-- ---------------- TOPNAV ---------------- -->
+<nav class="topnav">
+  <button class="icon-btn" onclick="openDrawer()" aria-label="Menú">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <div class="brand"><span class="brand-dot"></span><b>tumerchmo</b></div>
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="search-input-desktop" type="search" aria-label="Buscar un servicio" placeholder="Buscar un servicio…" oninput="onSearchInput(this.value)">
+  </div>
+  <a class="nav-help" href="https://wa.me/526624639310" target="_blank" rel="noopener">¿Necesitas ayuda?</a>
+  <div class="nav-right">
+    <button class="icon-btn" id="mobile-search-btn" onclick="toggleMobileSearch()" aria-label="Buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </button>
+    <button class="icon-btn" id="nav-account-btn" onclick="onAccountBtnClick()" aria-label="Cuenta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mobile-search" id="mobile-search">
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="search-input-mobile" type="search" aria-label="Buscar un servicio" placeholder="Buscar un servicio…" oninput="onSearchInput(this.value)">
+  </div>
+</div>
+
+<!-- ---------------- DRAWER (hamburguesa) ---------------- -->
+<div class="scrim" id="drawer-scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="brand"><span class="brand-dot"></span><b>tumerchmo</b></div>
+    <button class="icon-btn" onclick="closeDrawer()" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div id="drawer-account-logged" class="drawer-account hidden">
+    <div class="av" id="drawer-av"></div>
+    <div class="info"><b id="drawer-name"></b><span id="drawer-email"></span></div>
+    <span id="drawer-balance-pill" class="hidden" style="margin-left:auto; background:var(--teal-soft); color:var(--teal); font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; white-space:nowrap;"></span>
+  </div>
+  <button id="drawer-verify-banner" class="hidden" onclick="closeDrawer(); openVerifyModal();" style="display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:#E14C7414; border:1px solid #E14C7433; color:var(--rose); border-radius:12px; padding:11px 13px; font-size:12px; font-weight:600; margin-bottom:18px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
+    Tu correo no está verificado — no podrás comprar hasta confirmarlo. Toca aquí.
+  </button>
+  <button id="drawer-account-guest" class="btn btn-primary btn-block" style="margin-bottom:18px;" onclick="closeDrawer(); openAuthModal();">Iniciar sesión</button>
+
+  <nav class="drawer-nav">
+    <a class="drawer-link" href="#top" onclick="closeDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7"/><path d="M5 9v11h14V9"/></svg>
+      Inicio
+    </a>
+    <a class="drawer-link" href="#catalogo" onclick="closeDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Servicios
+    </a>
+    <button class="drawer-link" onclick="closeDrawer(); openOrdersModal();" style="width:100%; text-align:left;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v5H4z"/><path d="M4 9v11h16V9"/><path d="M9 13h6"/></svg>
+      Mis pedidos
+      <span class="badge" id="drawer-orders-badge" style="display:none;"></span>
+    </button>
+    <button class="drawer-link" onclick="closeDrawer(); openProgramsModal();" style="width:100%; text-align:left;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9 9l-2 3 2 3M15 9l2 3-2 3"/></svg>
+      Programas
+    </button>
+    <a class="drawer-link" href="https://wa.me/526624639310" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.5L4 20l1.1-4.5A8.5 8.5 0 1121 11.5z"/></svg>
+      Ayuda por WhatsApp
+    </a>
+  </nav>
+
+  <div class="drawer-foot hidden" id="drawer-logout-wrap">
+    <button class="btn btn-outline btn-block" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- ---------------- HERO / SLIDER (eventos slider) ---------------- -->
+<main id="main-content">
+<section class="wrap" id="top" aria-labelledby="hero-title">
+  <div class="hero shop-hero">
+    <div class="hero-copy">
+      <div class="eyebrow">Tumerchmo / Tienda en línea</div>
+      <h1 id="hero-title">Desbloqueos y servicios.<br><span>Elige el tuyo.</span></h1>
+      <p>Compara opciones para tu celular, consulta el precio y compra el servicio que necesitas en un solo lugar.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#catalogo">Comprar ahora <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline" href="https://wa.me/526624639310?text=Hola%2C%20quiero%20saber%20qu%C3%A9%20servicio%20necesita%20mi%20equipo." target="_blank" rel="noopener">Consultar compatibilidad</a>
+      </div>
+    </div>
+    <div id="hero-product" class="hero-product hidden" aria-label="Servicio destacado"></div>
+  </div>
+  <div class="benefits">
+    <div><b>Elige con información</b><span>Precio y requisitos por servicio</span></div>
+    <div><b>Paga en línea</b><span>Pago procesado por Stripe</span></div>
+    <div><b>Sigue tu pedido</b><span>Consulta su estado en tu cuenta</span></div>
+  </div>
+</section>
+
+<!-- ---------------- CATÁLOGO ---------------- -->
+<div class="wrap section-pad" id="catalogo">
+  <div class="catalog-heading"><div><div class="eyebrow">Elige. Revisa. Compra.</div><h2>Compra por categoría</h2><p id="catalog-count" role="status">Encuentra el servicio indicado para tu equipo.</p></div>
+    <div class="catalog-tools"><label class="offer-filter hidden" id="offer-filter"><input type="checkbox" id="offers-only" onchange="renderProducts()"> Solo ofertas</label><label class="sort-label" for="catalog-sort">Ordenar por<select id="catalog-sort" onchange="renderProducts()"><option value="recent">Más recientes</option><option value="price-asc">Menor precio</option><option value="price-desc">Mayor precio</option></select></label></div></div>
+  <div class="chip-row" id="chip-row" aria-label="Categorías de servicios"></div>
+</div>
+
+<div class="wrap" style="padding-bottom:40px;" id="sections-wrap">
+  <div class="section-row">
+    <div class="section-title"><h2>Cargando…</h2></div>
+    <div class="products-scroller">
+      <div class="skeleton" style="border-radius:20px; width:200px; aspect-ratio:0.8; flex-shrink:0;"></div>
+      <div class="skeleton" style="border-radius:20px; width:200px; aspect-ratio:0.8; flex-shrink:0;"></div>
+      <div class="skeleton" style="border-radius:20px; width:200px; aspect-ratio:0.8; flex-shrink:0;"></div>
+    </div>
+  </div>
+</div>
+
+<section class="wrap campaign-section hidden" id="campaign-section" aria-label="Novedades"><div class="hero campaign-layout">    <div class="slider-wrap">
+      <div class="slider" id="slider" role="region" aria-label="Anuncios de Tumerchmo" aria-roledescription="carrusel">
+        <div class="slider-empty" id="slider-empty"><span class="eyebrow">¿Primera vez en Tumerchmo?</span><strong>Elige con confianza.</strong><p>Consulta los requisitos del servicio antes de hacer tu pedido. Si tienes dudas, te orientamos por WhatsApp.</p><a class="btn btn-primary" href="https://wa.me/526624639310" target="_blank" rel="noopener">Consultar mi equipo</a></div>
+        <div class="slider-dots" id="slider-dots"></div>
+        <button class="slider-pause hidden" id="slider-pause" onclick="toggleSliderPause()" aria-label="Pausar anuncios">Pausar</button>
+      </div>
+    </div></div></section>
+</main>
+
+<!-- ---------------- MODAL DE PRODUCTO ---------------- -->
+<div class="pmodal-scrim" id="pmodal-scrim" onclick="closeProductModal()"></div>
+<div class="pmodal" id="pmodal" aria-label="Detalles del servicio" role="dialog" aria-modal="true">
+  <div class="pmodal-handle"></div>
+  <div id="pmodal-media-wrap"></div>
+  <button class="pmodal-close" id="pmodal-share-btn" style="right:58px;" onclick="toggleShareMenu(event)" aria-label="Compartir">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-3.9M8.6 13.4l6.8 3.9"/></svg>
+  </button>
+  <div class="share-menu hidden" id="share-menu">
+    <button onclick="shareViaWhatsapp()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.5L4 20l1.1-4.5A8.5 8.5 0 1121 11.5z"/></svg>
+      Enviar por WhatsApp
+    </button>
+    <button onclick="copyProductLink()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+      Copiar enlace
+    </button>
+  </div>
+  <button class="pmodal-close" onclick="closeProductModal()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="pmodal-body" id="pmodal-body"></div>
+</div>
+
+<!-- ---------------- LOGIN MODAL ---------------- -->
+<div class="pmodal-scrim" id="auth-scrim" onclick="closeAuthModal()"></div>
+<div class="pmodal auth-modal" id="auth-modal" aria-label="Acceso a tu cuenta" role="dialog" aria-modal="true">
+  <button class="pmodal-close" onclick="closeAuthModal()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="pmodal-body">
+    <h2 id="auth-title">Inicia sesión</h2>
+    <p class="sub" id="auth-sub">Necesitas una cuenta para hacer pedidos y ver su estado.</p>
+    <button class="google-btn" onclick="doGoogleAuth()">
+      <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 013.68 9c0-.59.1-1.17.27-1.7V4.97H.98A9 9 0 000 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 00.98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Continuar con Google
+    </button>
+    <div class="auth-divider">o con tu correo</div>
+    <form class="auth-form" id="auth-form" onsubmit="submitAuthForm(event)">
+      <div class="field"><label for="auth-email">Correo</label><input id="auth-email" autocomplete="email" type="email" placeholder="tu@correo.com" required></div>
+      <div class="field"><label for="auth-pass">Contraseña</label><input id="auth-pass" autocomplete="current-password" type="password" placeholder="••••••••" required></div>
+      <div class="field-err" id="auth-error"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="auth-submit-btn">Entrar</button>
+    </form>
+    <div class="auth-switch">
+      <span id="auth-switch-text">¿No tienes cuenta?</span> <button onclick="toggleAuthMode()" id="auth-switch-btn">Crear una</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- VERIFICAR CORREO MODAL ---------------- -->
+<div class="pmodal-scrim" id="verify-scrim" onclick="closeVerifyModal()"></div>
+<div class="pmodal auth-modal" id="verify-modal" aria-label="Verifica tu correo" role="dialog" aria-modal="true">
+  <button class="pmodal-close" onclick="closeVerifyModal()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="pmodal-body">
+    <h2>Verifica tu correo</h2>
+    <p class="sub">Por seguridad, necesitas confirmar tu correo antes de poder comprar. Te mandamos un enlace a <b id="verify-email-target"></b> — ábrelo y luego regresa aquí.</p>
+    <button class="btn btn-primary btn-block" onclick="checkEmailVerifiedNow()">Ya lo verifiqué</button>
+    <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resendVerificationEmail()">Reenviar correo</button>
+    <div style="margin-top:12px; font-size:12px; color:var(--text-muted); min-height:16px;" id="verify-status"></div>
+  </div>
+</div>
+
+<!-- ---------------- MIS PEDIDOS MODAL ---------------- -->
+<div class="pmodal-scrim" id="orders-scrim" onclick="closeOrdersModal()"></div>
+<div class="pmodal" id="orders-modal" aria-label="Mis pedidos" role="dialog" aria-modal="true">
+  <div class="pmodal-handle"></div>
+  <button class="pmodal-close" onclick="closeOrdersModal()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="pmodal-body">
+    <h2>Mis pedidos</h2>
+    <p class="sub" style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">Aquí ves el estado de cada servicio que has pedido.</p>
+    <div id="orders-content"></div>
+  </div>
+</div>
+
+<!-- ---------------- PROGRAMAS MODAL ---------------- -->
+<div class="pmodal-scrim" id="programs-scrim" onclick="closeProgramsModal()"></div>
+<div class="pmodal" id="programs-modal" aria-label="Programas" role="dialog" aria-modal="true">
+  <div class="pmodal-handle"></div>
+  <button class="pmodal-close" onclick="closeProgramsModal()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="pmodal-body">
+    <h2>Programas</h2>
+    <p class="sub" style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">Herramientas y software usados en nuestros servicios, por si necesitas descargarlos.</p>
+    <div id="programs-content"></div>
+  </div>
+</div>
+
+<!-- ---------------- FOOTER ---------------- -->
+<footer>
+  <div class="footer-inner" id="footer-inner">
+    <div class="footer-brand">
+      <div class="brand"><span class="brand-dot"></span><b>tumerchmo</b></div>
+      <p>Desbloqueos y servicios para equipos móviles, hechos por técnicos verificados. Pide en línea y sigue tu servicio paso a paso.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="#catalogo">Servicios</a>
+      <a href="javascript:void(0)" onclick="openOrdersModal()">Mis pedidos</a>
+      <a href="javascript:void(0)" onclick="openProgramsModal()">Programas</a>
+      <a href="javascript:void(0)" onclick="openDrawer()">Mi cuenta</a>
+    </div>
+    <div class="footer-col">
+      <h4>Ayuda</h4>
+      <a href="https://wa.me/526624639310" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:soporte@tumerchmo.com">soporte@tumerchmo.com</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="terminos.html">Términos y condiciones</a>
+      <a href="tec/index.html">Acceso a técnicos</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© <span id="footer-year"></span> tumerchmo · Todos los derechos reservados · <a href="terminos.html" style="color:inherit;">Términos y condiciones</a></div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ============================================================
+   FIREBASE — mismo proyecto que el admin (f3rn4n)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2zk1jEQJcyTfEb7RsmsNtFAp3J5sSnI",
+  authDomain: "f3rn4n.firebaseapp.com",
+  projectId: "f3rn4n",
+  storageBucket: "f3rn4n.firebasestorage.app",
+  messagingSenderId: "156609223149",
+  appId: "1:156609223149:web:b1d92517932610696cafe4",
+  measurementId: "G-5SME8LS1V2"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+/* Firebase tarda un instante (milisegundos, pero instante al fin) en
+   restaurar la sesión guardada al cargar la página. Si el botón de
+   cuenta se toca ANTES de que eso termine, auth.currentUser todavía
+   sale null aunque sí haya sesión -- y por eso se abría el login de
+   por gusto. __authReady resuelve justo cuando Firebase ya sabe la
+   verdad, y todo lo que decide "¿está logueado o no?" espera a eso. */
+let __resolveAuthReady;
+const __authReady = new Promise(res=> { __resolveAuthReady = res; });
+const db = firebase.firestore();
+
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+/* ---------------- HELPERS ---------------- */
+function escapeHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function safeWebUrl(value){
+  try{const url=new URL(value,location.href);return ['https:','http:'].includes(url.protocol)?url.href:'#';}catch{return '#';}
+}
+function money(n){ return '$' + (Number(n)||0).toFixed(2) + ' USD'; }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 3000);
+}
+const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+function isRecentlyAdded(createdAt){
+  if(!createdAt) return false;
+  const ms = createdAt.toMillis ? createdAt.toMillis() : (createdAt.seconds ? createdAt.seconds*1000 : 0);
+  return ms && (Date.now() - ms) < TWO_DAYS_MS;
+}
+
+/* ---------------- DRAWER ---------------- */
+function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawer-scrim').classList.add('show'); }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawer-scrim').classList.remove('show'); }
+
+function toggleMobileSearch(){ document.getElementById('mobile-search').classList.toggle('open'); }
+
+async function onAccountBtnClick(){
+  await __authReady;
+  if(auth.currentUser) openDrawer(); else openAuthModal();
+}
+
+/* ---------------- AUTH ---------------- */
+let authMode = 'login'; // 'login' | 'signup'
+let __currentCustomer = null;
+
+function friendlyAuthError(code){
+  const map = {
+    'auth/invalid-email':'Correo inválido.',
+    'auth/user-not-found':'No existe una cuenta con ese correo.',
+    'auth/wrong-password':'Contraseña incorrecta.',
+    'auth/invalid-credential':'Correo o contraseña incorrectos.',
+    'auth/email-already-in-use':'Ya existe una cuenta con ese correo — intenta iniciar sesión.',
+    'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
+    'auth/popup-closed-by-user':'Se cerró la ventana de Google antes de terminar.',
+  };
+  return map[code] || 'Ocurrió un error. Intenta de nuevo.';
+}
+function toggleAuthMode(){
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  document.getElementById('auth-title').textContent = authMode === 'login' ? 'Inicia sesión' : 'Crea tu cuenta';
+  document.getElementById('auth-pass').autocomplete = authMode === 'login' ? 'current-password' : 'new-password';
+  document.getElementById('auth-submit-btn').textContent = authMode === 'login' ? 'Entrar' : 'Crear cuenta';
+  document.getElementById('auth-switch-text').textContent = authMode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?';
+  document.getElementById('auth-switch-btn').textContent = authMode === 'login' ? 'Crear una' : 'Iniciar sesión';
+}
+function openAuthModal(){
+  document.getElementById('auth-modal').classList.add('show');
+  document.getElementById('auth-scrim').classList.add('show');
+}
+function closeAuthModal(){
+  document.getElementById('auth-modal').classList.remove('show');
+  document.getElementById('auth-scrim').classList.remove('show');
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+/* ---------------- VERIFICAR CORREO ----------------
+   Cuenta creada por correo/contraseña empieza sin verificar. Bloqueamos
+   la compra (aquí y también en el servidor, en create_cm_checkout.php)
+   hasta que confirme el enlace que le mandamos por correo. Las cuentas
+   de Google ya llegan verificadas, así que nunca ven esto. */
+function openVerifyModal(){
+  document.getElementById('verify-email-target').textContent = auth.currentUser?.email || 'tu correo';
+  document.getElementById('verify-status').textContent = '';
+  document.getElementById('verify-scrim').classList.add('show');
+  document.getElementById('verify-modal').classList.add('show');
+}
+function closeVerifyModal(){
+  document.getElementById('verify-scrim').classList.remove('show');
+  document.getElementById('verify-modal').classList.remove('show');
+}
+async function resendVerificationEmail(){
+  const statusEl = document.getElementById('verify-status');
+  if(!auth.currentUser) return;
+  statusEl.textContent = 'Enviando…';
+  try{
+    await auth.currentUser.sendEmailVerification();
+    statusEl.textContent = '✔ Correo reenviado. Si no lo ves, revisa spam.';
+  }catch(e){
+    statusEl.textContent = e.code === 'auth/too-many-requests'
+      ? 'Ya mandamos uno hace poco -- espera un momento antes de pedir otro.'
+      : 'Error al reenviar: ' + e.message;
+  }
+}
+async function checkEmailVerifiedNow(){
+  const statusEl = document.getElementById('verify-status');
+  if(!auth.currentUser) return;
+  statusEl.textContent = 'Revisando…';
+  try{
+    await auth.currentUser.reload();
+  }catch(e){ /* seguimos con lo que ya sabíamos */ }
+  if(auth.currentUser.emailVerified){
+    showToast('¡Correo verificado! Ya puedes continuar con tu compra.');
+    closeVerifyModal();
+    await auth.currentUser.getIdToken(true);
+    updateVerifyBanner();
+    resumePurchase();
+  } else {
+    statusEl.textContent = 'Todavía no lo detectamos verificado. Abre el enlace del correo y vuelve a intentar.';
+  }
+}
+function updateVerifyBanner(){
+  const banner = document.getElementById('drawer-verify-banner');
+  if(!banner) return;
+  const show = !!(auth.currentUser && !auth.currentUser.emailVerified);
+  banner.classList.toggle('hidden', !show);
+}
+
+function doGoogleAuth(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(async cred=>{renderBalancePill(await ensureCustomerDoc(cred.user)); closeAuthModal(); resumePurchase();}).catch(err=>{
+    const el = document.getElementById('auth-error');
+    el.textContent = friendlyAuthError(err.code); el.classList.add('show');
+  });
+}
+function submitAuthForm(e){
+  e.preventDefault();
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const el = document.getElementById('auth-error');
+  el.classList.remove('show');
+  const wasSignup = authMode === 'signup';
+  const action = authMode === 'login'
+    ? auth.signInWithEmailAndPassword(email, pass)
+    : auth.createUserWithEmailAndPassword(email, pass);
+  action.then(async (cred)=>{
+    renderBalancePill(await ensureCustomerDoc(cred.user));
+    closeAuthModal();
+    resumePurchase();
+    if(wasSignup && cred.user && !cred.user.emailVerified){
+      // Cuenta nueva por correo -- mandamos el correo de verificación
+      // de una vez, así no tiene que pedirlo aparte.
+      try{ await cred.user.sendEmailVerification(); }catch(err){ console.error('sendEmailVerification error:', err); }
+      showToast('Cuenta creada ✔ Te mandamos un correo para verificarla.');
+    }
+  }).catch(err=>{
+    el.textContent = friendlyAuthError(err.code); el.classList.add('show');
+  });
+}
+function doLogout(){ auth.signOut(); closeDrawer(); }
+
+async function ensureCustomerDoc(user){
+  try{
+    const ref = db.collection('customers').doc(user.uid);
+    const doc = await ref.get();
+    if(!doc.exists){
+      await ref.set({
+        email: user.email || null,
+        name: user.displayName || null,
+        balance: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      return 0;
+    }
+    return Number(doc.data().balance) || 0;
+  }catch(e){ console.error('ensureCustomerDoc error:', e); return 0; }
+}
+
+let __customerBalance = 0;
+function renderBalancePill(balance){
+  __customerBalance = balance || 0;
+  const pill = document.getElementById('drawer-balance-pill');
+  if(balance > 0){
+    pill.textContent = `Saldo: ${money(balance)}`;
+    pill.classList.remove('hidden');
+  } else {
+    pill.classList.add('hidden');
+  }
+}
+
+auth.onAuthStateChanged(async user=>{
+  __resolveAuthReady();
+  const guestBtn = document.getElementById('drawer-account-guest');
+  const loggedBox = document.getElementById('drawer-account-logged');
+  const logoutWrap = document.getElementById('drawer-logout-wrap');
+  const navBtn = document.getElementById('nav-account-btn');
+  if(user){
+    __currentCustomer = user;
+    const balance = await ensureCustomerDoc(user);
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Cliente');
+    guestBtn.classList.add('hidden');
+    loggedBox.classList.remove('hidden');
+    logoutWrap.classList.remove('hidden');
+    document.getElementById('drawer-name').textContent = name;
+    document.getElementById('drawer-email').textContent = user.email || '';
+    document.getElementById('drawer-av').textContent = name.charAt(0).toUpperCase();
+    renderBalancePill(balance);
+    updateVerifyBanner();
+    navBtn.innerHTML = `<div class="nav-avatar">${escapeHtml(name.charAt(0).toUpperCase())}</div>`;
+    refreshOrdersBadge();
+  } else {
+    __currentCustomer = null;
+    __customerBalance = 0;
+    __programsLoaded = false;
+    __programs = [];
+    guestBtn.classList.remove('hidden');
+    loggedBox.classList.add('hidden');
+    logoutWrap.classList.add('hidden');
+    navBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>`;
+    document.getElementById('drawer-orders-badge').style.display = 'none';
+  }
+});
+
+/* ============================================================
+   EVENTOS SLIDER — carrusel de anuncios (colección "ads")
+   Autoplay, puntos de navegación y click-to-link. Se pausa el
+   autoplay cuando el usuario interactúa con los puntos.
+   ============================================================ */
+let __ads = [];
+let __slideIdx = 0;
+let __sliderTimer = null;
+let __sliderPaused = false;
+
+async function loadAds(){
+  try{
+    const snap = await db.collection('ads').orderBy('order','asc').get();
+    __ads = snap.docs.map(d=> d.data()).filter(a=> a.enabled !== false);
+    renderSlider();
+  }catch(e){
+    console.error('loadAds error:', e);
+    // Keep useful welcome content when ads cannot load.
+  }
+}
+
+function renderSlider(){
+  const slider = document.getElementById('slider');
+  document.getElementById('campaign-section').classList.toggle('hidden', !__ads.length);
+  const dotsEl = document.getElementById('slider-dots');
+  const empty = document.getElementById('slider-empty');
+  slider.querySelectorAll('.slide').forEach(s=> s.remove());
+  if(!__ads.length){ empty.style.display = 'flex'; dotsEl.innerHTML = ''; return; }
+  empty.style.display = 'none';
+
+  __ads.forEach((ad, i)=>{
+    const hasText = !!(ad.title || ad.subtitle);
+    const el = document.createElement(ad.link ? 'a' : 'div');
+    el.className = 'slide' + (i === 0 ? ' active' : '') + (hasText ? '' : ' no-text');
+    el.inert = i !== 0;
+    el.setAttribute('aria-hidden', String(i !== 0));
+    if(ad.link){ el.href = safeWebUrl(ad.link); el.target = '_blank'; el.rel = 'noopener'; }
+    const textHtml = hasText ? `
+      <div class="slide-text ${ad.style === 'profesional' ? 'profesional' : ''}">
+        ${ad.title ? `<h3>${escapeHtml(ad.title)}</h3>` : ''}
+        ${ad.subtitle ? `<p>${escapeHtml(ad.subtitle)}</p>` : ''}
+      </div>` : '';
+    el.innerHTML = `
+      ${textHtml}
+      <div class="slide-media">
+        <div class="img-box">
+          <img src="${escapeHtml(ad.imageUrl)}" alt="${escapeHtml(ad.title||'')}" loading="${i === 0 ? 'eager' : 'lazy'}" onerror="this.style.display='none'">
+        </div>
+      </div>
+    `;
+    slider.insertBefore(el, dotsEl);
+  });
+
+  dotsEl.innerHTML = __ads.map((_, i)=> `<button aria-label="Anuncio ${i+1}" class="${i===0?'active':''}" onclick="goToSlide(${i}, true)"></button>`).join('');
+  __slideIdx = 0;
+  document.getElementById('slider-pause').classList.toggle('hidden', __ads.length < 2);
+  startSliderAutoplay();
+}
+
+function goToSlide(i, userInitiated){
+  if(!__ads.length) return;
+  __slideIdx = (i + __ads.length) % __ads.length;
+  document.querySelectorAll('.slide').forEach((s, idx)=> {const active=idx === __slideIdx;s.classList.toggle('active',active);s.inert=!active;s.setAttribute('aria-hidden',String(!active));});
+  document.querySelectorAll('.slider-dots button').forEach((d, idx)=> d.classList.toggle('active', idx === __slideIdx));
+  if(userInitiated) restartSliderAutoplay();
+}
+function startSliderAutoplay(){
+  clearInterval(__sliderTimer);
+  if(__ads.length < 2 || __sliderPaused || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  __sliderTimer = setInterval(()=> goToSlide(__slideIdx + 1, false), 5200);
+}
+function restartSliderAutoplay(){ startSliderAutoplay(); }
+function toggleSliderPause(){
+  __sliderPaused=!__sliderPaused;
+  const btn=document.getElementById('slider-pause');
+  btn.textContent=__sliderPaused?'Reanudar':'Pausar';
+  btn.setAttribute('aria-label',__sliderPaused?'Reanudar anuncios':'Pausar anuncios');
+  startSliderAutoplay();
+}
+document.addEventListener('visibilitychange',startSliderAutoplay);
+document.getElementById('slider').addEventListener('mouseenter',()=>clearInterval(__sliderTimer));
+document.getElementById('slider').addEventListener('mouseleave',startSliderAutoplay);
+document.getElementById('slider').addEventListener('focusin',()=>clearInterval(__sliderTimer));
+document.getElementById('slider').addEventListener('focusout',e=>{if(!e.currentTarget.contains(e.relatedTarget))startSliderAutoplay();});
+
+/* Swipe táctil simple sobre el slider */
+(function initSliderSwipe(){
+  const slider = document.getElementById('slider');
+  let startX = null;
+  slider.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, { passive:true });
+  slider.addEventListener('touchend', e=>{
+    if(startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx) > 40) goToSlide(__slideIdx + (dx < 0 ? 1 : -1), true);
+    startX = null;
+  }, { passive:true });
+})();
+
+/* ============================================================
+   CATÁLOGO — secciones + productos (colecciones "sections" y "catalog")
+   ============================================================ */
+let __sections = [];
+let __products = [];
+let __activeSection = '';
+let __searchQuery = '';
+
+const SECTION_COLOR_FALLBACK = '#4C5FE0';
+function sectionColor(name){
+  const s = __sections.find(x=> x.name === name);
+  return s && /^#[0-9a-f]{6}$/i.test(s.color) ? s.color : SECTION_COLOR_FALLBACK;
+}
+
+async function loadSections(){
+  try{
+    const snap = await db.collection('sections').orderBy('name').get();
+    __sections = snap.docs.map(d=> ({ id:d.id, ...d.data() }));
+  }catch(e){ console.error('loadSections error:', e); }
+}
+
+/* IMPORTANTE: esta tienda pública lee de "cm_products", NUNCA de
+   "catalog". "catalog" son los servicios con precio de técnico
+   (solo comprables desde /tec/ con saldo) y jamás deben mostrarse
+   ni venderse aquí a precio de técnico. */
+async function loadCatalog(){
+  try{
+    const snap = await db.collection('cm_products').orderBy('name').get();
+    __products = snap.docs.map(d=> ({ ...d.data(), id: d.data().id ?? d.id })).filter(p=> p.enabled !== false);
+  }catch(e){
+    console.error('loadCatalog error:', e);
+    document.getElementById('sections-wrap').innerHTML = '<div class="products-empty">No se pudo cargar el catálogo. Intenta recargar la página.</div>';
+    return;
+  }
+  renderChips();
+  renderProducts();
+  renderShopHighlight();
+  openProductFromUrlIfAny();
+}
+
+/* Si alguien llega con un enlace compartido (?producto=ID), le abrimos
+   ese producto directo, sin que tenga que buscarlo. */
+function openProductFromUrlIfAny(){
+  const wantedId = new URLSearchParams(window.location.search).get('producto');
+  if(!wantedId) return;
+  const p = __products.find(x=> String(x.id) === String(wantedId));
+  if(p) setTimeout(()=> openProductModal(p.id), 200);
+}
+
+function renderChips(){
+  const row = document.getElementById('chip-row');
+  row.replaceChildren();
+  const groups = [{name:'', label:'Todos'}, ...groupProductsBySection(__products).map(g=>({name:g.name,label:g.name}))];
+  groups.forEach(g=>{
+    const button = document.createElement('button');
+    button.className = 'chip' + (__activeSection === g.name ? ' active' : '');
+    button.textContent = g.label;
+    button.setAttribute('aria-pressed', String(__activeSection === g.name));
+    button.addEventListener('click', ()=>setActiveSection(g.name));
+    row.appendChild(button);
+  });
+}
+function clearCatalogFilters(){ __activeSection=''; document.getElementById('offers-only').checked=false; document.getElementById('catalog-sort').value='recent'; onSearchInput(''); renderChips(); }
+document.getElementById('sections-wrap').addEventListener('click', e=>{
+  const card = e.target.closest('[data-product-id]');
+  if(card) openProductModal(card.dataset.productId);
+});
+function setActiveSection(name){
+  __activeSection = name;
+  renderChips();
+  renderProducts();
+  if(name){
+    // Al elegir un chip, nos vamos directo a esa fila -- así el chip
+    // sirve de acceso rápido en vez de solo filtrar en el sitio.
+    setTimeout(()=>{
+      document.getElementById('section-row-' + slugify(name))?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 30);
+  }
+}
+function onSearchInput(v){
+  __searchQuery = v.toLowerCase().trim();
+  document.getElementById('search-input-desktop').value = v;
+  document.getElementById('search-input-mobile').value = v;
+  renderProducts();
+}
+function slugify(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+function getCreatedMs(p){
+  const c = p.createdAt;
+  if(!c) return 0;
+  if(c.toMillis) return c.toMillis();
+  if(c.seconds) return c.seconds * 1000;
+  return 0;
+}
+
+/* Agrupa por sección y ORDENA:
+   - Los productos DENTRO de cada sección, del más reciente al más viejo.
+   - Las secciones entre sí, según cuál tenga el producto más reciente
+     -- así una sección con algo recién agregado sube al principio,
+     manteniendo la página con sensación de "recién actualizada". */
+function groupProductsBySection(products){
+  const map = new Map();
+  products.forEach(p=>{
+    const name = p.category || 'Otros servicios';
+    if(!map.has(name)) map.set(name, []);
+    map.get(name).push(p);
+  });
+  const groups = Array.from(map.entries()).map(([name, items])=>{
+    items.sort((a,b)=> getCreatedMs(b) - getCreatedMs(a));
+    return { name, color: sectionColor(name) || SECTION_COLOR_FALLBACK, items, newestMs: getCreatedMs(items[0]) };
+  });
+  groups.sort((a,b)=> b.newestMs - a.newestMs);
+  return groups;
+}
+
+/* ---------------- EVENTOS CONTENEDOR — una fila con scroll horizontal por sección ---------------- */
+let __productsRenderedOnce = false;
+function productCardHtml(p, animateIn, i){
+  const color = sectionColor(p.category);
+  const isNew = isRecentlyAdded(p.createdAt);
+  const sale = saleInfo(p);
+  const isSale = !!sale;
+  const mediaHtml = p.imageUrl
+    ? `<img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="fallback" style="background:${escapeHtml(color)}12;"><svg viewBox="0 0 24 24" fill="none" stroke="${escapeHtml(color)}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>`;
+  return `
+    <button class="product-card ${animateIn ? 'card-in' : ''}" style="--i:${i}" data-product-id="${escapeHtml(String(p.id))}">
+      <div class="product-media">
+        ${mediaHtml}
+        <div class="product-badges">
+          <span>${isNew ? '<span class="badge-pill badge-new">Nuevo</span>' : ''}</span>
+          <span>${isSale ? `<span class="badge-pill badge-sale">−${sale.percent}%</span>` : ''}</span>
+        </div>
+      </div>
+      <div class="product-body">
+        ${p.category ? `<span class="product-cat" style="color:${escapeHtml(color)};">${escapeHtml(p.category)}</span>` : ''}
+        <span class="product-name">${escapeHtml(p.name)}</span>
+        ${p.deliveryTime ? `<span class="product-delivery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${escapeHtml(p.deliveryTime)}</span>` : ''}
+        <div class="product-price-row">
+          <span class="product-price">${money(p.price)}</span>
+          ${isSale ? `<span class="product-price-old">${money(p.previousPrice)}</span>` : ''}
+        </div>
+        ${isSale ? `<span class="card-saving">Ahorras ${money(sale.saving)}</span>` : ''}
+        <span class="card-action">Comprar ahora <span aria-hidden="true">↗</span></span>
+        <span class="card-caption">Ver detalles y requisitos</span>
+      </div>
+    </button>
+  `;
+}
+
+function renderProducts(){
+  const wrap = document.getElementById('sections-wrap');
+  let pool = __products;
+  if(__activeSection) pool = pool.filter(p=> (p.category || 'Otros servicios') === __activeSection);
+  if(document.getElementById('offers-only').checked) pool = pool.filter(p=>saleInfo(p)!==null);
+  if(__searchQuery) pool = pool.filter(p=> (p.name||'').toLowerCase().includes(__searchQuery) || (p.description||'').toLowerCase().includes(__searchQuery));
+
+  document.getElementById('catalog-count').textContent = `${pool.length} servicio${pool.length===1?'':'s'} disponible${pool.length===1?'':'s'} · Precios en USD`;
+  if(!pool.length){
+    wrap.innerHTML = '<div class="products-empty">' + (__products.length ? 'No encontramos servicios con esos filtros.' : 'Por ahora no hay servicios publicados.') + '<br><button class="btn btn-outline" onclick="clearCatalogFilters()">Ver todos los servicios</button><a class="btn btn-primary" href="https://wa.me/526624639310" target="_blank" rel="noopener">Consultar por WhatsApp</a></div>';
+    return;
+  }
+
+  const sort=document.getElementById('catalog-sort').value;
+  const groups = sort==='recent' ? groupProductsBySection(pool) : [{name:__activeSection || 'Todos los servicios',color:SECTION_COLOR_FALLBACK,items:[...pool].sort((a,b)=>sort==='price-asc'?Number(a.price)-Number(b.price):Number(b.price)-Number(a.price))}];
+  const animateIn = !__productsRenderedOnce;
+
+  wrap.innerHTML = groups.map(g=>`
+    <div class="section-row" id="section-row-${slugify(g.name)}">
+      <div class="section-title">
+        <h2><span class="dot" style="background:${escapeHtml(g.color)};"></span>${escapeHtml(g.name)}</h2>
+        <span>${g.items.length} disponible${g.items.length===1?'':'s'}</span>
+      </div>
+      <div class="products-scroller">
+        ${g.items.map((p,i)=> productCardHtml(p, animateIn, i)).join('')}
+      </div>
+    </div>
+  `).join('');
+  __productsRenderedOnce = true;
+}
+
+/* ============================================================
+   MODAL DE PRODUCTO — resultado del evento contenedor.
+   Muestra nombre, imagen, descripción adaptativa (ver más/menos),
+   tiempo de entrega, y un formulario dinámico según identifierType.
+   ============================================================ */
+const IDENTIFIER_FIELDS = {
+  NONE: [],
+  IMEI: [{ key:'imei', label:'IMEI del equipo', placeholder:'Ej. 356789104561234' }],
+  SN: [{ key:'sn', label:'Número de serie (S/N)', placeholder:'Ej. C7XJXXXXXXXX' }],
+  BOTH: [
+    { key:'imei', label:'IMEI del equipo', placeholder:'Ej. 356789104561234' },
+    { key:'sn', label:'Número de serie (S/N)', placeholder:'Ej. C7XJXXXXXXXX' },
+  ],
+  USER_EMAIL: [
+    { key:'accountUser', label:'Usuario de la cuenta', placeholder:'Ej. usuario123' },
+    { key:'accountEmail', label:'Correo de la cuenta', placeholder:'Ej. cuenta@icloud.com', type:'email' },
+  ],
+  ECID: [{ key:'ecid', label:'ECID', placeholder:'Ej. 0x1A2B3C4D5E' }],
+  PHONE: [{ key:'ownerPhone', label:'Número de teléfono', placeholder:'Ej. 6621234567', type:'tel' }],
+};
+const DESC_CLAMP_CHARS = 220;
+let __activeProduct = null;
+let __pendingPurchase = null;
+function rememberPurchase(){
+  if(!__activeProduct) return;
+  __pendingPurchase = {id:__activeProduct.id, values:{}};
+  document.querySelectorAll('#pmodal-body input').forEach(input=>{__pendingPurchase.values[input.id]=input.value;});
+}
+function resumePurchase(){
+  if(!__pendingPurchase) return;
+  const saved=__pendingPurchase; __pendingPurchase=null;
+  openProductModal(saved.id);
+  Object.entries(saved.values).forEach(([id,value])=>{const el=document.getElementById(id);if(el && value) el.value=value;});
+  validatePmodalForm();
+}
+
+
+function openProductModal(id){
+  const p = __products.find(x=> String(x.id) === String(id));
+  if(!p) return;
+  __activeProduct = p;
+  const color = sectionColor(p.category);
+  const sale = saleInfo(p);
+  const isSale = !!sale;
+  const balanceApplied = Math.min(__customerBalance || 0, Number(p.price));
+  const amountDue = Math.max(0, Number(p.price) - balanceApplied);
+
+  const mediaWrap = document.getElementById('pmodal-media-wrap');
+  mediaWrap.innerHTML = p.imageUrl
+    ? `<div class="pmodal-media"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}"></div>`
+    : `<div class="pmodal-media" style="background:${escapeHtml(color)}12; display:flex; align-items:center; justify-content:center;"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="${escapeHtml(color)}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5;"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>`;
+
+  const desc = (p.description || '').trim();
+  const needsClamp = desc.length > DESC_CLAMP_CHARS;
+  const notesHtml = p.notes ? `<div class="pmodal-note">${escapeHtml(p.notes)}</div>` : '';
+  const saleTimerHtml = (isSale && p.saleEndsAt) ? `<div class="pmodal-sale-timer" id="pmodal-sale-timer"></div>` : '';
+
+  const fields = IDENTIFIER_FIELDS[p.identifierType] || [];
+  const fieldsHtml = fields.map(f => `
+    <div class="field">
+      <label for="pf-${f.key}">${escapeHtml(f.label)}</label>
+      <input id="pf-${f.key}" type="${f.type||'text'}" placeholder="${escapeHtml(f.placeholder||'')}" oninput="validatePmodalForm()">
+      <div class="field-err" id="pf-${f.key}-err">Este dato es obligatorio.</div>
+    </div>
+  `).join('');
+
+  document.getElementById('pmodal-body').innerHTML = `
+    ${p.category ? `<div class="pmodal-cat" style="color:${escapeHtml(color)};">${escapeHtml(p.category)}</div>` : ''}
+    <h2>${escapeHtml(p.name)}</h2>
+    <div class="pmodal-meta">
+      ${p.deliveryTime ? `<span class="product-delivery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${escapeHtml(p.deliveryTime)}</span>` : ''}
+    </div>
+    ${desc ? `
+      <div class="pmodal-desc ${needsClamp ? 'clamped' : ''}" id="pmodal-desc">${escapeHtml(desc)}</div>
+      ${needsClamp ? `<button class="desc-toggle" id="desc-toggle-btn" onclick="toggleDescClamp()">Ver más</button>` : ''}
+    ` : ''}
+    ${notesHtml}
+    <div class="pmodal-price-row">
+      <span class="pmodal-price">${money(p.price)}</span>
+      ${isSale ? `<span class="pmodal-price-old">${money(p.previousPrice)}</span>` : ''}
+    </div>
+    ${isSale ? `<div class="modal-saving">Ahorras ${money(sale.saving)} en este servicio</div>` : ''}
+    ${saleTimerHtml}
+    ${balanceApplied > 0 ? `
+      <div class="trust-line" style="color:var(--teal); margin-top:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Saldo aplicado: -${money(balanceApplied)} · Pagas ${money(amountDue)}
+      </div>
+    ` : ''}
+    <div class="pmodal-form">
+      <div class="pmodal-form-title">Completa tu compra</div>
+      <p class="checkout-guidance">Revisa que el servicio corresponda a tu equipo y completa los datos del pedido.</p>
+      <div class="field">
+        <label for="pf-contactEmail">Correo de contacto</label>
+        <input id="pf-contactEmail" type="email" placeholder="Para tu comprobante y avisos del pedido" value="${escapeHtml(auth.currentUser?.email || '')}" oninput="validatePmodalForm()">
+        <div class="field-err" id="pf-contactEmail-err">Escribe un correo válido.</div>
+      </div>
+      ${fieldsHtml}
+      <button class="btn btn-primary btn-block" id="pmodal-buy-btn" disabled onclick="goToCheckout()">${amountDue <= 0 ? 'Confirmar pedido (cubierto con tu saldo)' : `Continuar al pago · ${money(amountDue)}`}</button>
+      <a class="checkout-help" href="https://wa.me/526624639310?text=${encodeURIComponent('Hola, quiero confirmar si mi equipo es compatible con: '+p.name+' '+buildProductShareUrl(p.id))}" target="_blank" rel="noopener">¿Es compatible con mi equipo? Consultar por WhatsApp</a>
+      <div class="trust-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+        Pago seguro procesado por Stripe
+      </div>
+    </div>
+  `;
+
+  if(isSale && p.saleEndsAt) startSaleTimer(p.saleEndsAt);
+  document.getElementById('pmodal-scrim').classList.add('show');
+  document.getElementById('pmodal').classList.add('show');
+  validatePmodalForm();
+}
+
+function toggleDescClamp(){
+  const desc = document.getElementById('pmodal-desc');
+  const btn = document.getElementById('desc-toggle-btn');
+  const collapsed = desc.classList.toggle('clamped');
+  btn.textContent = collapsed ? 'Ver más' : 'Ver menos';
+}
+
+let __saleTimerInterval = null;
+function startSaleTimer(saleEndsAtIso){
+  clearInterval(__saleTimerInterval);
+  const el = document.getElementById('pmodal-sale-timer');
+  function tick(){
+    const diff = new Date(saleEndsAtIso).getTime() - Date.now();
+    if(diff <= 0){ el.textContent = 'La rebaja ha terminado'; clearInterval(__saleTimerInterval); return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    el.textContent = `Termina en ${d>0? d+'d ' : ''}${h}h ${m}m`;
+  }
+  tick();
+  __saleTimerInterval = setInterval(tick, 30000);
+}
+
+function closeProductModal(){
+  document.getElementById('pmodal-scrim').classList.remove('show');
+  document.getElementById('pmodal').classList.remove('show');
+  document.getElementById('share-menu').classList.add('hidden');
+  clearInterval(__saleTimerInterval);
+  __activeProduct = null;
+}
+
+/* ---------------- Compartir producto (WhatsApp / copiar enlace) ---------------- */
+function buildProductShareUrl(id){
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.searchParams.set('producto', id);
+  return url.toString();
+}
+function toggleShareMenu(e){
+  e.stopPropagation();
+  document.getElementById('share-menu').classList.toggle('hidden');
+}
+function shareViaWhatsapp(){
+  if(!__activeProduct) return;
+  const url = buildProductShareUrl(__activeProduct.id);
+  const text = `Mira este servicio en tumerchmo: ${__activeProduct.name} — ${money(__activeProduct.price)}\n${url}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  document.getElementById('share-menu').classList.add('hidden');
+}
+async function copyProductLink(){
+  if(!__activeProduct) return;
+  const url = buildProductShareUrl(__activeProduct.id);
+  try{
+    await navigator.clipboard.writeText(url);
+  }catch(e){
+    // Respaldo para navegadores que no dan permiso de portapapeles.
+    const tmp = document.createElement('input');
+    tmp.value = url; tmp.style.position = 'fixed'; tmp.style.opacity = '0';
+    document.body.appendChild(tmp); tmp.select();
+    document.execCommand('copy'); document.body.removeChild(tmp);
+  }
+  showToast('Enlace copiado ✔');
+  document.getElementById('share-menu').classList.add('hidden');
+}
+document.addEventListener('click', (e)=>{
+  const menu = document.getElementById('share-menu');
+  if(menu && !menu.classList.contains('hidden') && !e.target.closest('#share-menu') && !e.target.closest('#pmodal-share-btn')){
+    menu.classList.add('hidden');
+  }
+});
+
+function validatePmodalForm(){
+  if(!__activeProduct) return;
+  const emailInput = document.getElementById('pf-contactEmail');
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+  document.getElementById('pf-contactEmail-err').classList.toggle('show', emailInput.value.length > 0 && !emailOk);
+
+  const fields = IDENTIFIER_FIELDS[__activeProduct.identifierType] || [];
+  let allOk = emailOk;
+  fields.forEach(f=>{
+    const input = document.getElementById('pf-'+f.key);
+    const value = input.value.trim();
+    const ok = f.key === 'imei' ? /^\d{15}$/.test(value) : (f.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) : value.length > 1);
+    document.getElementById('pf-'+f.key+'-err').textContent = f.key === 'imei' ? 'El IMEI debe contener 15 dígitos.' : f.type === 'email' ? 'Escribe un correo válido.' : 'Este dato es obligatorio.';
+    document.getElementById('pf-'+f.key+'-err').classList.toggle('show', input.value.length > 0 && !ok);
+    if(!ok) allOk = false;
+  });
+  document.getElementById('pmodal-buy-btn').disabled = !allOk;
+}
+
+/* ============================================================
+   CHECKOUT — el pedido NO existe todavía en este punto. Solo se
+   manda al servidor (create_cm_checkout.php) el token de sesión (en
+   el header Authorization, igual que create_product_checkout.php) y
+   los datos del pedido; el servidor arma la sesión de Stripe y
+   esconde esos datos en su metadata. El pedido se crea completo -- ya
+   como "pagado" -- únicamente dentro de stripe_webhook.php, cuando
+   Stripe confirma el cobro de verdad con firma criptográfica.
+   ============================================================ */
+async function goToCheckout(){
+  if(!__activeProduct) return;
+  await __authReady;
+  if(!auth.currentUser){
+    rememberPurchase();
+    closeProductModal();
+    document.getElementById('auth-sub').textContent = 'Inicia sesión para continuar con tu pedido — así puedes ver su estado después.';
+    openAuthModal();
+    return;
+  }
+  if(!auth.currentUser.emailVerified){
+    rememberPurchase();
+    closeProductModal();
+    openVerifyModal();
+    return;
+  }
+  const btn = document.getElementById('pmodal-buy-btn');
+  btn.disabled = true; const originalText = btn.textContent; btn.textContent = 'Preparando pago…';
+
+  const p = __activeProduct;
+  const fields = IDENTIFIER_FIELDS[p.identifierType] || [];
+  const details = {};
+  fields.forEach(f=> details[f.key] = document.getElementById('pf-'+f.key).value.trim());
+
+  try{
+    const idToken = await auth.currentUser.getIdToken();
+    const resp = await fetch('api/create_cm_checkout.php', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + idToken },
+      body: JSON.stringify({
+        productId: p.id,
+        details,
+        contactEmail: document.getElementById('pf-contactEmail').value.trim(),
+        origin: window.location.origin,
+      })
+    });
+    const rawText = await resp.text();
+    let data;
+    try{
+      data = JSON.parse(rawText);
+    }catch(parseErr){
+      // El servidor no devolvió JSON -- casi siempre es un error de PHP
+      // (ruta mal puesta, falta algún archivo, etc.). Mostramos el
+      // texto crudo para poder diagnosticarlo, en vez del confuso
+      // "Unexpected token" que da JSON.parse.
+      console.error('Respuesta cruda del servidor:', rawText);
+      throw new Error('El servicio de pago no está disponible en este momento. Intenta de nuevo.');
+    }
+    if(data && data.ok && data.url){
+      window.location.href = data.url;
+    } else {
+      throw new Error((data && data.error) ? data.error : 'No se pudo iniciar el pago.');
+    }
+  }catch(e){
+    console.error('goToCheckout error:', e);
+    showToast('No se pudo iniciar el pago: ' + e.message);
+    btn.disabled = false; btn.textContent = originalText;
+  }
+}
+
+/* ============================================================
+   MIS PEDIDOS
+   ============================================================ */
+const STATUS_LABELS = {
+  pendiente_pago:'Pendiente de pago', pagado:'Pagado', procesando:'En proceso',
+  completado:'Completado', fallido:'Fallido', cancelado:'Cancelado',
+};
+async function refreshOrdersBadge(){
+  if(!auth.currentUser) return;
+  try{
+    const snap = await db.collection('cm_orders').where('buyerUid','==', auth.currentUser.uid).get();
+    const active = snap.docs.filter(d=> ['pagado','procesando'].includes(d.data().status)).length;
+    const badge = document.getElementById('drawer-orders-badge');
+    if(active > 0){ badge.style.display = 'inline-block'; badge.textContent = active; } else { badge.style.display = 'none'; }
+  }catch(e){ /* silencioso */ }
+}
+
+async function openOrdersModal(){
+  await __authReady;
+  document.getElementById('orders-scrim').classList.add('show');
+  document.getElementById('orders-modal').classList.add('show');
+  const content = document.getElementById('orders-content');
+
+  if(!auth.currentUser){
+    content.innerHTML = `
+      <div class="orders-empty">Inicia sesión para ver tus pedidos.</div>
+      <button class="btn btn-primary btn-block" style="margin-top:8px;" onclick="closeOrdersModal(); openAuthModal();">Iniciar sesión</button>
+    `;
+    return;
+  }
+
+  content.innerHTML = '<div class="orders-empty">Cargando…</div>';
+  try{
+    const snap = await db.collection('cm_orders').where('buyerUid','==', auth.currentUser.uid).get();
+    let orders = snap.docs.map(d=> ({ id:d.id, ...d.data() }));
+    orders.sort((a,b)=>{
+      const at = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+      const bt = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+      return bt - at;
+    });
+    if(!orders.length){
+      content.innerHTML = '<div class="orders-empty">Aún no has hecho ningún pedido.</div>';
+      return;
+    }
+    content.innerHTML = '<div class="orders-list">' + orders.map(o=>{
+      const status = o.status || 'pendiente_pago';
+      const d = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate() : null;
+      const dateStr = d ? d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }) : '';
+      return `
+        <div class="order-row">
+          <div class="oi"><b>${escapeHtml(o.serviceName||'Servicio')}</b><span>${dateStr} · ${money(o.price)}</span></div>
+          <span class="status-pill status-${escapeHtml(status)}">${escapeHtml(STATUS_LABELS[status] || status)}</span>
+        </div>
+      `;
+    }).join('') + '</div>';
+  }catch(e){
+    console.error('openOrdersModal error:', e);
+    content.innerHTML = `<div class="orders-empty">Error al cargar tus pedidos: ${escapeHtml(e.message)}</div>`;
+  }
+}
+function closeOrdersModal(){
+  document.getElementById('orders-scrim').classList.remove('show');
+  document.getElementById('orders-modal').classList.remove('show');
+}
+
+/* ============================================================
+   PROGRAMAS — lee la colección "software" (la misma que administras
+   en admin.html → Software/Herramientas). Requiere sesión iniciada
+   porque así están las reglas de esa colección (igual que en el
+   panel de técnicos), no hace falta tocarlas.
+   ============================================================ */
+let __programsLoaded = false;
+let __programs = [];
+
+async function openProgramsModal(){
+  document.getElementById('programs-scrim').classList.add('show');
+  document.getElementById('programs-modal').classList.add('show');
+  await __authReady;
+  const content = document.getElementById('programs-content');
+
+  if(!auth.currentUser){
+    content.innerHTML = `
+      <div class="orders-empty">Inicia sesión para ver los programas.</div>
+      <button class="btn btn-primary btn-block" style="margin-top:8px;" onclick="closeProgramsModal(); openAuthModal();">Iniciar sesión</button>
+    `;
+    return;
+  }
+
+  content.innerHTML = '<div class="orders-empty">Cargando…</div>';
+  try{
+    if(!__programsLoaded){
+      const snap = await db.collection('software').orderBy('name').get();
+      __programs = snap.docs.map(d=> d.data()).filter(s=> s.enabled !== false);
+      __programsLoaded = true;
+    }
+    if(!__programs.length){
+      content.innerHTML = '<div class="orders-empty">Todavía no hay programas publicados.</div>';
+      return;
+    }
+    content.innerHTML = '<div class="orders-list">' + __programs.map(s=> `
+      <div class="order-row">
+        <div class="oi"><b>${escapeHtml(s.name)}</b>${s.link ? `<span style="word-break:break-all;">${escapeHtml(s.link)}</span>` : ''}</div>
+        ${s.link
+          ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(safeWebUrl(s.link))}" target="_blank" rel="noopener" style="flex-shrink:0;">Descargar</a>`
+          : ''}
+      </div>
+    `).join('') + '</div>';
+  }catch(e){
+    console.error('openProgramsModal error:', e);
+    content.innerHTML = `<div class="orders-empty">Error al cargar: ${escapeHtml(e.message)}</div>`;
+  }
+}
+function closeProgramsModal(){
+  document.getElementById('programs-scrim').classList.remove('show');
+  document.getElementById('programs-modal').classList.remove('show');
+}
+
+/* ---------------- Regreso desde Stripe (success_url) ---------------- */
+(function handleCheckoutReturn(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('pago') === 'exito'){
+    showToast('Consulta en Mis pedidos la confirmación y el estado de tu pago.');
+    setTimeout(()=> openOrdersModal(), 600);
+    window.history.replaceState({}, '', window.location.pathname);
+  } else if(params.get('pago') === 'cancelado'){
+    showToast('Saliste del pago. Puedes consultar el estado en Mis pedidos.');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
+
+/* ---------------- Footer: una sola animación de entrada ---------------- */
+(function initFooterReveal(){
+  const el = document.getElementById('footer-inner');
+  if(!('IntersectionObserver' in window)){ el.classList.add('reveal'); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ el.classList.add('reveal'); io.disconnect(); }
+    });
+  }, { threshold:.15 });
+  io.observe(el);
+})();
+
+/* Cerrar modales con Escape */
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  closeProductModal(); closeAuthModal(); closeOrdersModal(); closeProgramsModal(); closeVerifyModal(); closeDrawer();
+});
+
+/* Keep closed panels out of keyboard navigation and contain focus in open dialogs. */
+(function(){
+  const panels=[...document.querySelectorAll('.pmodal, .drawer')];
+  let topPanel=null, returnFocus=null;
+  function sync(){
+    const active=panels.filter(p=>p.classList.contains('show')||p.classList.contains('open'));
+    const next=active[active.length-1]||null;
+    panels.forEach(p=>{p.inert=p!==next;p.setAttribute('aria-hidden',String(p!==next));});
+    if(next!==topPanel){
+      if(!topPanel && next) returnFocus=document.activeElement;
+      topPanel=next;
+      if(next){next.tabIndex=-1;(next.querySelector('button, input, a[href]')||next).focus();}
+      else if(returnFocus?.isConnected) returnFocus.focus();
+    }
+    document.body.style.overflow=next?'hidden':'';
+  }
+  panels.forEach(p=>new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']}));
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Tab'||!topPanel)return;
+    const items=[...topPanel.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]')].filter(el=>el.getClientRects().length && !el.closest('[inert]'));
+    if(!items.length){e.preventDefault();topPanel.focus();return;}
+    if(e.shiftKey && (document.activeElement===items[0] || !items.includes(document.activeElement))){e.preventDefault();items.at(-1).focus();}
+    else if(!e.shiftKey && (document.activeElement===items.at(-1)||!items.includes(document.activeElement))){e.preventDefault();items[0].focus();}
+  });
+  sync();
+})();
+
+/* Promotions use only real prices and published expiration dates. */
+function saleInfo(p){
+  const price=Number(p.price), previous=Number(p.previousPrice);
+  if(!Number.isFinite(price)||price<0||!Number.isFinite(previous)||previous<=price) return null;
+  if(p.saleEndsAt){
+    const end=p.saleEndsAt.toMillis ? p.saleEndsAt.toMillis() : p.saleEndsAt.seconds ? p.saleEndsAt.seconds*1000 : new Date(p.saleEndsAt).getTime();
+    if(!Number.isFinite(end)||end<=Date.now()) return null;
+  }
+  const saving=previous-price;
+  const percent=Math.floor(saving/previous*100);
+  return percent>0 ? {saving,percent} : null;
+}
+function renderShopHighlight(){
+  const target=document.getElementById('hero-product');
+  const offers=__products.filter(p=>saleInfo(p));
+  document.getElementById('offer-filter').classList.toggle('hidden',!offers.length);
+  const pool=offers.length ? [...offers].sort((a,b)=>saleInfo(b).percent-saleInfo(a).percent) : [...__products].sort((a,b)=>getCreatedMs(b)-getCreatedMs(a));
+  const p=pool[0];
+  if(!p){target.classList.add('hidden');return;}
+  const sale=saleInfo(p);
+  target.innerHTML=`<div class="spotlight-label">${sale?'Una oferta para aprovechar':'Descubre este servicio'}</div>
+    <button class="spotlight-product" data-product-id="${escapeHtml(String(p.id))}">
+      ${p.imageUrl?`<div class="spotlight-image"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" fetchpriority="high" onerror="this.parentElement.classList.add('hidden')"></div>`:''}
+      <div class="spotlight-info">
+        <span class="spotlight-category">${escapeHtml(p.category||'Servicios para tu equipo')}</span>
+        <h2>${escapeHtml(p.name)}</h2>
+        ${p.deliveryTime?`<span class="spotlight-delivery">${escapeHtml(p.deliveryTime)}</span>`:''}
+        <div class="spotlight-prices"><strong>${money(p.price)}</strong>${sale?`<del>${money(p.previousPrice)}</del>`:''}</div>
+        ${sale?`<span class="spotlight-saving">Ahorra ${money(sale.saving)} · ${sale.percent}% menos</span>`:''}
+        <span class="spotlight-buy">Comprar este servicio <span aria-hidden="true">↗</span></span>
+      </div>
+    </button>`;
+  target.classList.remove('hidden');
+}
+document.getElementById('hero-product').addEventListener('click',e=>{
+  const button=e.target.closest('[data-product-id]');
+  if(button)openProductModal(button.dataset.productId);
+});
+
+/* ---------------- CARGA INICIAL ---------------- */
+loadAds();
+loadSections().then(loadCatalog);
+</script>
+</body>
+</html>

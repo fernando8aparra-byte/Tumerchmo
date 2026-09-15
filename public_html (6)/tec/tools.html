@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools · F3RN4N</title>
+<link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E11; --surface:#1B1F24; --surface-2:#22262B; --surface-3:#2B3036;
+  --border:#333840; --border-soft:#33384020; --text:#FFFFFF; --text-muted:#848E9C; --text-faint:#5E6673;
+  --gold:#F0B90B; --gold-soft:#F0B90B1F; --danger:#F6465D; --success:#0ECB81; --info:#60A5FA;
+  --accent:var(--gold); --accent-soft:var(--gold-soft);
+  font-family:'Inter',sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{ background:radial-gradient(circle at 15% 0%, #1c1a10 0%, transparent 45%), radial-gradient(circle at 85% 100%, #14171a 0%, transparent 40%), var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
+button{ font-family:inherit; cursor:pointer; }
+input, select{ font-family:inherit; }
+
+.topnav{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--border); background:#0B0E11cc; backdrop-filter:blur(10px); position:sticky; top:0; z-index:20; }
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{ width:30px; height:30px; border-radius:8px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg, var(--gold), #C99400); display:flex; align-items:center; justify-content:center; }
+.brand-mark img{ width:100%; height:100%; object-fit:cover; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.15; }
+.brand-text b{ font-weight:800; font-size:15px; }
+.brand-text span{ font-size:11px; color:var(--text-muted); }
+.back-link{ display:inline-flex; align-items:center; gap:7px; color:var(--text-muted); text-decoration:none; font-size:13px; font-weight:600; padding:9px 16px; border:1px solid var(--border); border-radius:8px; transition:all .15s; flex-shrink:0; }
+.back-link:hover{ color:var(--text); border-color:var(--text-faint); }
+.back-link svg{ width:15px; height:15px; }
+
+.wrap{ max-width:1000px; margin:0 auto; padding:28px 20px 80px; }
+.gate{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; gap:16px; padding:24px; }
+.spinner{ width:30px; height:30px; border-radius:50%; border:2.5px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.gate .txt{ font-size:13.5px; color:var(--text-muted); }
+
+.page-head{ display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+.page-icon{ width:44px; height:44px; border-radius:12px; background:#A855F722; color:#A855F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.page-icon svg{ width:22px; height:22px; }
+.page-title{ font-size:21px; font-weight:800; letter-spacing:-.3px; }
+.page-sub{ font-size:13px; color:var(--text-muted); margin:6px 0 22px; }
+
+.search-bar{ margin-bottom:20px; }
+.search-bar input{ width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:11px 14px; font-size:13.5px; outline:none; }
+.search-bar input:focus{ border-color:var(--accent); }
+
+.svc-group{ margin-bottom:24px; }
+.svc-group-title{ font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.svc-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:10px; }
+.svc-tile{ position:relative; display:flex; gap:10px; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:12px; cursor:pointer; transition:border-color .14s, transform .14s; }
+.svc-tile:hover{ border-color:var(--accent); transform:translateY(-1px); }
+.svc-tile-icon{ width:44px; height:44px; border-radius:9px; flex-shrink:0; overflow:hidden; background:var(--surface-3); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--text-faint); }
+.svc-tile-icon img{ width:100%; height:100%; object-fit:cover; }
+.svc-tile-body{ min-width:0; flex:1; }
+.svc-tile-name{ font-size:12.5px; font-weight:700; line-height:1.3; margin-bottom:3px; }
+.svc-tile-desc{ font-size:10.5px; color:var(--text-faint); line-height:1.4; margin-bottom:7px; }
+.svc-tile-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+.svc-tag{ font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:6px; }
+.svc-tag-price{ background:#0ECB8122; color:var(--success); }
+.svc-tag-time{ background:#F0B90B22; color:var(--accent); }
+.svc-tag-countdown{ background:#F6465D22; color:var(--danger); font-variant-numeric:tabular-nums; }
+.svc-hot-badge{ position:absolute; top:9px; left:-28px; width:110px; text-align:center; transform:rotate(-45deg); background:linear-gradient(135deg, #FF4D4D, #C0392B); color:#fff; font-size:9px; font-weight:800; letter-spacing:.03em; padding:3px 0; display:flex; align-items:center; justify-content:center; gap:3px; box-shadow:0 3px 10px -2px #C0392B90; z-index:2; animation:hotPulse 1.8s ease-in-out infinite; }
+.svc-hot-badge svg{ width:10px; height:10px; flex-shrink:0; }
+@keyframes hotPulse{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.25); } }
+
+.empty-state{ display:flex; flex-direction:column; align-items:center; gap:10px; padding:60px 20px; text-align:center; }
+.empty-state svg{ width:34px; height:34px; color:var(--text-faint); }
+.empty-state .txt{ font-size:13px; color:var(--text-faint); max-width:300px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark"><img src="https://firebasestorage.googleapis.com/v0/b/f3rn4n.firebasestorage.app/o/log%2F622A616E-0D3B-40A5-90F1-D868AA5B799A.png?alt=media&token=a8371598-3770-4621-80db-01142d9ee37e" alt="F3RN4N"></div>
+    <div class="brand-text"><b>F3RN4N</b><span>Tools</span></div>
+  </div>
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<div class="wrap">
+  <div id="gate-loading" class="gate">
+    <div class="spinner"></div>
+    <div class="txt">Cargando tools…</div>
+  </div>
+  <div id="gate-login" class="gate" style="display:none;">
+    <div class="txt">Necesitas iniciar sesión para ver esto.</div>
+    <a class="back-link" href="index.html" style="margin-top:6px;">Ir a iniciar sesión</a>
+  </div>
+
+  <div id="page-content" style="display:none;">
+    <div class="page-head">
+      <div class="page-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+      <div class="page-title">Tools</div>
+    </div>
+    <div class="page-sub">Herramientas y licencias de software. Toca una tarjeta para pedirla.</div>
+
+    <div class="search-bar">
+      <input id="f-search" type="text" placeholder="Buscar por nombre…" oninput="renderList()">
+    </div>
+
+    <div id="services-list"><div class="empty-state"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2zk1jEQJcyTfEb7RsmsNtFAp3J5sSnI",
+  authDomain: "f3rn4n.firebaseapp.com",
+  projectId: "f3rn4n",
+  storageBucket: "f3rn4n.firebasestorage.app",
+  messagingSenderId: "156609223149",
+  appId: "1:156609223149:web:b1d92517932610696cafe4",
+  measurementId: "G-5SME8LS1V2"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// -------- Cuál sección filtra esta página. La otra página (tools.html)
+// es una copia de este archivo con esta única línea cambiada. --------
+const SECTION_NAME = 'Tools';
+
+function escapeHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function technicianRef(uid){ return db.collection('technicians').doc(uid); }
+async function isAdminUser(user){
+  if(!user) return false;
+  try{ const t = await user.getIdTokenResult(); return t.claims.admin === true; }catch(e){ return false; }
+}
+
+function showAccessDeniedAndRedirect(){
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; gap:14px;">
+      <div style="width:56px; height:56px; border-radius:50%; background:var(--danger-soft, #F6465D1A); display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F6465D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:28px; height:28px;"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+      </div>
+      <h2 style="font-size:19px; font-weight:800;">Ups, parece que no tienes permitido estar aquí</h2>
+      <p style="font-size:13px; color:#848E9C; max-width:320px;">Tu cuenta no tiene acceso a la sección de técnicos. Si crees que es un error, contacta a soporte.</p>
+      <p style="font-size:12px; color:#5E6673;">Te vamos a redirigir en <span id="ad-countdown">3</span> segundos…</p>
+    </div>
+  `;
+  let seconds = 3;
+  const el = document.getElementById('ad-countdown');
+  const timer = setInterval(()=>{
+    seconds--; if(el) el.textContent = seconds;
+    if(seconds <= 0){ clearInterval(timer); window.location.href = '../index.html'; }
+  }, 1000);
+}
+
+let allServices = [];
+let allSections = [];
+
+auth.onAuthStateChanged(async user => {
+  if(!user){
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('gate-login').style.display = 'flex';
+    return;
+  }
+  try{
+    const isAdmin = await isAdminUser(user);
+    if(!isAdmin){
+      const profileDoc = await technicianRef(user.uid).get();
+      if(profileDoc.exists && profileDoc.data().enabled === false){
+        showAccessDeniedAndRedirect();
+        return;
+      }
+    }
+
+    const [catalogSnap, sectionsSnap] = await Promise.all([
+      db.collection('catalog').get(),
+      db.collection('sections').get(),
+    ]);
+    allSections = sectionsSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const norm = s => String(s||'').trim().toLowerCase();
+    allServices = catalogSnap.docs.map(d => d.data())
+      .filter(s => s.enabled !== false && norm(s.category) === norm(SECTION_NAME));
+
+    document.getElementById('gate-loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+    renderList();
+  }catch(e){
+    console.error(e);
+    document.getElementById('gate-loading').innerHTML = `<div class="txt" style="color:var(--danger);">Error al cargar: ${escapeHtml(e.message)}</div>`;
+  }
+});
+
+function sectionColor(name){
+  const s = allSections.find(x => x.name === name);
+  return s ? s.color : null;
+}
+function computeHotIds(rows){
+  return new Set(rows.filter(s => (Number(s.purchaseCount)||0) >= 5).sort((a,b)=> (Number(b.purchaseCount)||0)-(Number(a.purchaseCount)||0)).slice(0,3).map(s=>s.id));
+}
+function truncateDesc(text, max){
+  text = String(text||'');
+  return text.length <= max ? text : text.slice(0,max).trim() + '…';
+}
+function saleCountdownHtml(saleEndsAt){
+  if(!saleEndsAt) return '';
+  const end = new Date(saleEndsAt).getTime();
+  if(isNaN(end) || end <= Date.now()) return '';
+  return `<span class="svc-tag svc-tag-countdown" data-ends="${end}">⏳ …</span>`;
+}
+function tickCountdowns(){
+  document.querySelectorAll('.svc-tag-countdown').forEach(el=>{
+    const end = parseInt(el.dataset.ends, 10);
+    const diff = end - Date.now();
+    if(diff <= 0){ el.textContent = 'Rebaja terminada'; return; }
+    const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+    el.textContent = h>0 ? `⏳ Termina en ${h}h ${m}m` : `⏳ Termina en ${m}m ${s}s`;
+  });
+}
+setInterval(tickCountdowns, 1000);
+
+function openService(id){
+  try{ sessionStorage.setItem('f3rn4n_open_service_id', id); }catch(e){}
+  window.location.href = 'index.html';
+}
+
+function renderList(){
+  const el = document.getElementById('services-list');
+  const q = (document.getElementById('f-search').value || '').toLowerCase().trim();
+  const rows = allServices.filter(s => !q || (s.name||'').toLowerCase().includes(q));
+
+  if(!rows.length){
+    el.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <div class="txt">${allServices.length ? 'Sin resultados para tu búsqueda.' : 'Todavía no hay servicios en esta sección. Pídele al admin que agregue alguno con la sección "' + escapeHtml(SECTION_NAME) + '".'}</div>
+    </div>`;
+    return;
+  }
+
+  const hotIds = computeHotIds(allServices);
+  const color = sectionColor(SECTION_NAME);
+
+  el.innerHTML = `<div class="svc-grid">
+    ${rows.map(s => {
+      const isHot = hotIds.has(s.id);
+      return `
+        <div class="svc-tile" style="${color ? `border-top:3px solid ${escapeHtml(color)};` : ''}" onclick="openService('${escapeHtml(s.id)}')">
+          ${isHot ? `<div class="svc-hot-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-2 4-2 7a3 3 0 006 0c1.5 1.5 2 3.5 2 5.5A6.5 6.5 0 0111.5 21 6.5 6.5 0 015 14.5C5 10 8 7 8 4c1.5 1 2 2.5 2 4 .5-2.5 1-4.5 2-6z"/></svg>Hot</div>` : ''}
+          <div class="svc-tile-icon">${s.imageUrl ? `<img src="${escapeHtml(s.imageUrl)}" alt="">` : escapeHtml((s.name||'?').slice(0,2).toUpperCase())}</div>
+          <div class="svc-tile-body">
+            <div class="svc-tile-name">${escapeHtml(s.name)}</div>
+            ${s.description ? `<div class="svc-tile-desc">${escapeHtml(truncateDesc(s.description, 50))}</div>` : ''}
+            <div class="svc-tile-tags">
+              <span class="svc-tag svc-tag-price">$${(parseFloat(s.price)||0).toFixed(2)} USD</span>
+              ${s.deliveryTime ? `<span class="svc-tag svc-tag-time">${escapeHtml(s.deliveryTime)}</span>` : ''}
+              ${saleCountdownHtml(s.saleEndsAt)}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  </div>`;
+}
+</script>
+</body>
+</html>

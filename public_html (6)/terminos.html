@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos y condiciones · tumerchmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg-soft:#F6F7FB; --bg-soft-2:#F0F1F9;
+  --surface:#FFFFFF; --border:#E7E8F2; --border-soft:#EFF0F7;
+  --text:#15171F; --text-muted:#6B7080; --text-faint:#A0A4B4;
+  --accent:#4C5FE0; --accent-dark:#3D4EC4; --accent-soft:#4C5FE013;
+  --teal:#0EA394; --rose:#E14C74;
+  font-family:'Inter',sans-serif;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+a{ color:var(--accent); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+h1,h2,.jakarta{ font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:-.01em; }
+
+.topnav{
+  position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  padding:16px 24px; background:#FFFFFFE6; backdrop-filter:blur(14px); border-bottom:1px solid var(--border-soft);
+}
+.brand{ display:flex; align-items:center; gap:9px; }
+.brand-dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--teal)); }
+.brand b{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:18px; }
+.back-link{ margin-left:auto; font-size:13px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
+.back-link:hover{ color:var(--accent); text-decoration:none; }
+.back-link svg{ width:15px; height:15px; }
+
+.wrap{ max-width:760px; margin:0 auto; padding:44px 24px 90px; }
+.wrap h1{ font-size:28px; font-weight:800; }
+.updated{ font-size:12.5px; color:var(--text-faint); margin-top:8px; margin-bottom:36px; }
+
+.toc{ background:var(--bg-soft); border-radius:16px; padding:18px 22px; margin-bottom:40px; }
+.toc h3{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin-bottom:10px; }
+.toc ol{ padding-left:18px; display:grid; gap:6px; font-size:13.5px; }
+.toc a{ color:var(--text); font-weight:600; }
+.toc a:hover{ color:var(--accent); }
+
+article section{ margin-bottom:34px; scroll-margin-top:80px; }
+article h2{ font-size:18px; font-weight:800; margin-bottom:12px; display:flex; align-items:baseline; gap:9px; }
+article h2 .num{ color:var(--accent); font-family:'Plus Jakarta Sans',sans-serif; }
+article h3{ font-size:14.5px; font-weight:700; margin:16px 0 6px; }
+article p, article li{ font-size:14px; line-height:1.75; color:var(--text-muted); }
+article p{ margin-bottom:12px; }
+article ul, article ol{ padding-left:20px; margin-bottom:12px; display:grid; gap:6px; }
+article strong{ color:var(--text); font-weight:700; }
+.callout{
+  background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:0 10px 10px 0;
+  padding:12px 16px; font-size:13.5px; color:var(--text); margin:14px 0;
+}
+.callout.warn{ background:#E14C7414; border-left-color:var(--rose); }
+.contact-box{
+  background:var(--bg-soft); border-radius:16px; padding:22px; margin-top:44px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.contact-box p{ margin:0; font-size:13.5px; color:var(--text-muted); }
+.contact-box .links{ display:flex; gap:10px; flex-wrap:wrap; }
+.btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700; }
+.btn-primary{ background:var(--accent); color:#fff; }
+.btn-outline{ border:1.5px solid var(--border); color:var(--text); }
+footer{ text-align:center; padding:24px; font-size:11.5px; color:var(--text-faint); border-top:1px solid var(--border-soft); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand"><span class="brand-dot"></span><b>tumerchmo</b></a>
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Volver a la tienda
+  </a>
+</nav>
+
+<div class="wrap">
+  <h1>Términos y condiciones</h1>
+  <p class="updated">Última actualización: <span id="updated-date"></span> · Aplica al uso de tumerchmo.com</p>
+
+  <div class="toc">
+    <h3>Contenido</h3>
+    <ol>
+      <li><a href="#aceptacion">Aceptación de estos términos</a></li>
+      <li><a href="#servicios">Qué es tumerchmo</a></li>
+      <li><a href="#pagos">Condiciones de pago</a></li>
+      <li><a href="#saldo">Saldo a favor en tu cuenta</a></li>
+      <li><a href="#pedidos">Verificación y resultado de tus pedidos</a></li>
+      <li><a href="#terceros">Herramientas y software de terceros</a></li>
+      <li><a href="#reembolsos">Reembolsos</a></li>
+      <li><a href="#cuenta">Tu cuenta</a></li>
+      <li><a href="#propiedad">Propiedad intelectual</a></li>
+      <li><a href="#privacidad">Aviso de privacidad</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ol>
+  </div>
+
+  <article>
+    <section id="aceptacion">
+      <h2><span class="num">1.</span> Aceptación de estos términos</h2>
+      <p>Al crear una cuenta, iniciar sesión o hacer un pedido en tumerchmo.com, aceptas quedar sujeto a estos Términos y condiciones. Si no estás de acuerdo con alguno de ellos, te pedimos no usar la plataforma. Si el uso de estos servicios está restringido por las leyes de tu país, tú eres responsable de verificarlo antes de usarlos.</p>
+    </section>
+
+    <section id="servicios">
+      <h2><span class="num">2.</span> Qué es tumerchmo</h2>
+      <p>tumerchmo es una tienda en línea de servicios de desbloqueo y reparación para equipos móviles (por ejemplo, liberación por IMEI, herramientas de activación, licencias de software especializado, entre otros). Los servicios los procesan técnicos verificados o proveedores externos con los que trabajamos; nosotros coordinamos el pedido, el cobro y el seguimiento.</p>
+    </section>
+
+    <section id="pagos">
+      <h2><span class="num">3.</span> Condiciones de pago</h2>
+      <p>Todos los pagos se procesan de forma segura a través de <strong>Stripe</strong>. Nosotros nunca vemos ni almacenamos los datos de tu tarjeta. Al pagar, confirmas que:</p>
+      <ul>
+        <li>Estás autorizado a usar el método de pago con el que compras.</li>
+        <li>Los fondos con los que pagas provienen de una fuente lícita.</li>
+        <li>Tienes saldo o crédito suficiente para cubrir el cobro.</li>
+      </ul>
+      <div class="callout">Si notas un cargo que no reconoces o un problema con tu pago, escríbenos dentro de las <strong>24 horas</strong> siguientes a través de soporte para que podamos revisarlo a tiempo.</div>
+    </section>
+
+    <section id="saldo">
+      <h2><span class="num">4.</span> Saldo a favor en tu cuenta</h2>
+      <p>Cuando un pedido no se puede completar por parte del proveedor, te regresamos el monto pagado como <strong>saldo a favor</strong> en tu cuenta de tumerchmo, en vez de un reembolso automático a tu tarjeta. Este saldo:</p>
+      <ul>
+        <li>No expira -- se queda disponible en tu cuenta el tiempo que necesites.</li>
+        <li>Se aplica automáticamente a tu siguiente compra, cubriendo total o parcialmente el precio.</li>
+        <li>Puedes consultarlo en cualquier momento desde el menú de tu cuenta.</li>
+      </ul>
+      <p>Si prefieres un reembolso a tu método de pago original en vez de saldo, consulta la sección de <a href="#reembolsos">Reembolsos</a>.</p>
+    </section>
+
+    <section id="pedidos">
+      <h2><span class="num">5.</span> Verificación y resultado de tus pedidos</h2>
+      <p>Cada pedido pasa por los siguientes estados: <strong>pagado</strong> → <strong>en proceso</strong> → <strong>completado</strong> o <strong>fallido</strong>. Te avisamos por correo cuando tu pedido se completa o cuando falla.</p>
+      <p>Si tu pedido lleva más tiempo de lo esperado, o tienes dudas sobre su estado, puedes escribirnos a soporte indicando:</p>
+      <ol>
+        <li>El servicio que compraste.</li>
+        <li>El IMEI, número de serie, ECID o dato que registraste al pedirlo.</li>
+        <li>Una breve descripción del problema.</li>
+      </ol>
+      <p>En algunos casos podemos pedirte evidencia (foto o video) del equipo para revisar tu caso con el proveedor correspondiente.</p>
+    </section>
+
+    <section id="terceros">
+      <h2><span class="num">6.</span> Herramientas y software de terceros</h2>
+      <p>Algunos servicios incluyen licencias, créditos o accesos a herramientas desarrolladas por terceros. La venta de estos productos no incluye asesoría sobre cómo usarlos -- se asume que cuentas con el conocimiento técnico necesario para operarlos. Cualquier daño derivado de un mal uso es tu responsabilidad.</p>
+      <p>El correcto funcionamiento de una herramienta de un tercero depende de su propio desarrollador. Nuestro rol se limita a confirmar que tu compra, activación o crédito se procesó correctamente con ese proveedor.</p>
+    </section>
+
+    <section id="reembolsos">
+      <h2><span class="num">7.</span> Reembolsos</h2>
+      <p>Puedes solicitar el reembolso de tu saldo disponible (no usado en compras) escribiéndonos a soporte. Ten en cuenta:</p>
+      <ul>
+        <li>Un pedido ya <strong>en proceso o completado</strong> no es reembolsable, salvo que se determine que falló por parte del proveedor.</li>
+        <li>Las solicitudes de reembolso se atienden en un plazo de 1 a 5 días hábiles.</li>
+        <li>Los reembolsos a tarjeta solo proceden si el saldo correspondiente sigue íntegro en tu cuenta (no se ha usado en otra compra).</li>
+      </ul>
+    </section>
+
+    <section id="cuenta">
+      <h2><span class="num">8.</span> Tu cuenta</h2>
+      <p>Eres responsable de mantener segura tu cuenta y de todas las acciones realizadas desde ella. Evita compartir tu correo y contraseña con terceros. Si sospechas que tu cuenta fue comprometida, avísanos de inmediato para ayudarte a asegurarla.</p>
+    </section>
+
+    <section id="propiedad">
+      <h2><span class="num">9.</span> Propiedad intelectual</h2>
+      <p>El nombre "tumerchmo", su logotipo y el diseño de este sitio son propiedad de tumerchmo. Las marcas, herramientas o software de terceros mencionados en la tienda pertenecen a sus respectivos dueños; no estamos afiliados a ellos más que como intermediarios de venta.</p>
+    </section>
+
+    <section id="privacidad">
+      <h2><span class="num">10.</span> Aviso de privacidad</h2>
+      <p>Recopilamos únicamente la información necesaria para procesar tu pedido y darte soporte: tu correo, y los datos del equipo que tú mismo proporcionas al pedir un servicio (por ejemplo IMEI, número de serie o ECID). No vendemos ni compartimos tu información con terceros, salvo cuando sea necesario para completar tu pedido (por ejemplo, con el proveedor del servicio) o cuando la ley lo requiera.</p>
+      <p>Puedes solicitarnos en cualquier momento que corrijamos o eliminemos tus datos, escribiéndonos a soporte.</p>
+    </section>
+
+    <section id="contacto">
+      <h2><span class="num">11.</span> Contacto</h2>
+      <p>¿Dudas sobre estos términos o sobre un pedido? Estamos para ayudarte.</p>
+    </section>
+  </article>
+
+  <div class="contact-box">
+    <p>soporte@tumerchmo.com · Respondemos también por WhatsApp</p>
+    <div class="links">
+      <a class="btn btn-outline" href="mailto:soporte@tumerchmo.com">Escribir correo</a>
+      <a class="btn btn-primary" href="https://wa.me/526624639310" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<footer>© <span id="footer-year"></span> tumerchmo · <a href="index.html">Volver a la tienda</a></footer>
+
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+document.getElementById('updated-date').textContent = new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'long', year:'numeric' });
+</script>
+</body>
+</html>
